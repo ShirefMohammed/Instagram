@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Lemonada:wght@300;500;700&display=swap');
+
+:root {
+  --white: #fff;
+  --black: #000;
+  --common-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .1);
+  --common-transition: .2s;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-size: 16px;
+  font-weight: 300;
+  font-family: 'Lemonada', cursive;
+}
+
+body {
+  color: var(--black);
+  background-color: var(--white);
+  transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
+  -webkit-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
+  -moz-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
+  -ms-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
+  -o-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+label, button {
+  cursor: pointer;
+}
+
+/* START ANIMATION */
+
+.fade_up {
+  animation: fade_up var(--common-transition) ease;
+  -webkit-animation: fade_up var(--common-transition) ease;
+}
+
+@keyframes fade_up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    -webkit-transform: translateY(10px);
+    -moz-transform: translateY(10px);
+    -ms-transform: translateY(10px);
+    -o-transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+  }
+}
+
+/* END ANIMATION */
+
+/* START COMPONENTS */
+/* **************** */
+/* END COMPONENTS */

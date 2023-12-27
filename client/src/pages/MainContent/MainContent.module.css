@@ -1,0 +1,14 @@
+.main_content {
+  display: flex;
+}
+
+.current_page {
+  width: 100%;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .current_page {
+    padding-bottom: 80px;
+  }
+}

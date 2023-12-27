@@ -1,0 +1,84 @@
+<============> Social Media App Structure <============>
+
+<======================> Server <======================>
+
+(1) Server Setup                                        🗸🗸
+	- connect to db                                       🗸🗸
+	- .env                                                🗸🗸
+	- handle cors                                         🗸🗸
+	- handle 404 && errors middlewares                    🗸🗸
+	- project structure && mongodb && postman && packages 🗸🗸
+
+(2) Authentication                                      🗸🗸
+	milterOptions                                         🗸🗸
+	register                                              🗸🗸
+	login                                                 🗸🗸
+	refresh                                               🗸🗸
+	logout                                                🗸🗸
+	verify account using email (optional...)              
+
+(3) UsersRouters && Controllers 
+	- getUsers                    🗸🗸
+	- searchUsers                 🗸🗸
+	- getUser                     🗸🗸
+	- updateUser                  🗸🗸
+	- deleteUser                  🗸🗸
+	- getFollowers                🗸🗸
+	- removeFollower              🗸🗸
+	- getFollowings               🗸🗸
+	- FollowUser                  🗸🗸
+	- removeFollowing             🗸🗸
+	- getCreatedPosts             🗸🗸
+	- getLikedPosts               🗸🗸
+	- getSavedPosts               🗸🗸
+	- getCreatedComments          🗸🗸
+	- getCreatedReports           🗸🗸
+	- getSuggestedUsers           🗸🗸
+	- handleNotifications         
+  Notification {
+    from: senderId,
+    to: userId;,
+    type: "newFollower" || "newComment" || "newMessage",
+    message: string,
+    post: id,
+    chat: id,
+    message: id, // last unread message
+    seen: false,
+  }
+
+(3) PostsRouters && Controllers 🗸🗸
+	- createPost                  🗸🗸
+	- getPost                     🗸🗸
+	- updatePost                  🗸🗸
+	- deletePost                  🗸🗸
+	- getPostLikes                🗸🗸
+	- addPostLike                 🗸🗸
+	- removePostLike              🗸🗸
+	- savePost                    🗸🗸
+	- unsavePost                  🗸🗸
+	- getPostComments             🗸🗸
+	- addPostComment              🗸🗸
+	- updatePostComment           🗸🗸
+	- removePostComment           🗸🗸
+	- getPosts                    🗸🗸
+	- getExploredPosts            🗸🗸
+	- getSuggestedPosts           🗸🗸
+
+(4) ReportsRouter && Controllers  🗸🗸
+	- getReports,                   🗸🗸
+	- createReport,                 🗸🗸
+	- handleReportAccess,           🗸🗸
+	- getReport,                    🗸🗸
+	- updateReport,                 🗸🗸
+	- deleteReport,                 🗸🗸
+
+(5) chatRouters && Controllers (wait...)
+	- create chat
+	- read chats
+	- delete chat
+	- send message
+	- control message
+
+<======================> Client <======================>
+
+(1) Client Setup

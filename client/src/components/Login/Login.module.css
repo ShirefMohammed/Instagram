@@ -1,0 +1,87 @@
+.login_form {
+  height: 100%;
+  padding: 0 40px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.login_form .error_message {
+  color: firebrick;
+  background-color: lightpink;
+  text-transform: capitalize;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.login_form input {
+  background-color: #eee;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.login_form button {
+  color: #fff;
+  background-color: #512da8;
+  font-size: 12px;
+  padding: 6px 45px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.login_form button.hidden {
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.login_form button[disabled="false"] {
+  cursor: pointer;
+}
+
+.login_form .persistCheck {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login_form .persistCheck input[type="checkbox"] {
+  width: fit-content;
+  accent-color: #512da8;
+}
+
+.login_form .persistCheck label {
+  font-size: 13px;
+  margin: 0;
+}
+

@@ -1,0 +1,153 @@
+.register_form {
+  height: 100%;
+  padding: 0 40px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.register_form .error_message {
+  color: firebrick;
+  background-color: lightpink;
+  text-transform: capitalize;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.register_form>div {
+  width: 100%;
+  position: relative;
+}
+
+.register_form>div>span.check_mark {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -o-transform: translateY(-50%);
+}
+
+.register_form input {
+  background-color: #eee;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 13px;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.register_form>div>p.instructions {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 99;
+  width: 100%;
+  font-size: 0.75rem;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  -webkit-border-radius: 0.5rem;
+  -moz-border-radius: 0.5rem;
+  -ms-border-radius: 0.5rem;
+  -o-border-radius: 0.5rem;
+}
+
+.register_form>div>p.instructions>svg {
+  margin-right: 0.25rem;
+}
+
+.register_form>div>p.instructions>span {
+  font-size: 0.75rem;
+}
+
+.register_form .valid {
+  color: limegreen;
+}
+
+.register_form .invalid {
+  color: red;
+}
+
+.register_form button {
+  color: #fff;
+  background-color: #512da8;
+  font-size: 12px;
+  padding: 6px 45px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}
+
+.register_form button.hidden {
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.register_form button[disabled="false"] {
+  cursor: pointer;
+}
+
+.register_form .avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.register_form .avatar img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.register_form .persistCheck {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.register_form .persistCheck input[type="checkbox"] {
+  width: fit-content;
+  accent-color: #512da8;
+}
+
+.register_form .persistCheck label {
+  font-size: 13px;
+  margin: 0;
+}
