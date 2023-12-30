@@ -81,4 +81,60 @@
 
 <======================> Client <======================>
 
-(1) Client Setup
+(1) Client Setup                                      🗸🗸
+	- create react vite app                             🗸🗸
+	- handle icon, download font, handle packages       🗸🗸
+	- handle main.jsx file                              🗸🗸
+	- handle redux toolkit, slices and store            🗸🗸
+	- handle api for axios and axiosPrivate             🗸🗸
+	- create assets, component, hooks and pages folders 🗸🗸
+	- create assets, component, hooks and pages folders 🗸🗸
+
+(2) Hooks                                             🗸🗸
+	- create useAxiosPrivate                            🗸🗸
+	* {
+		how useAxiosPrivate works
+		you declare axiosPrivate = useAxiosPrivate()
+		then start sending req for api which need accessToken
+		if accessToken expired then axiosPrivate will get new accessToken
+		by refreshToken jwt in cookies if jwt also expired
+		then the catch scope in component will setUser({})
+		and navigate to /authentication to login again
+		accessToken and refreshToken expired in status 403
+	  }
+	- create useRefreshToken                            🗸🗸
+	* {
+		how useRefreshToken works
+		you declare refresh = useRefreshToken()
+		then start sending get req if expired will return 403 error
+		you should catch it in used component
+		and setUser({}) and navigate /authentication
+		else you will get accessToken and data
+		and setUser({...user, ...data});
+	  }
+    
+	- create useLogout                                  🗸🗸
+	* {
+		how useLogout works
+		you declare logout = useLogout()
+		then setUser({} and ) start sending get req to remove jwt
+		then navigate /authentication
+	  }
+	- create useNotify                                  🗸🗸
+	* {
+		how useNotify works
+		you declare notify = useNotify()
+		notify (status, message) status = ["info", "success", "error"]
+	  }
+	- create useChangeTheme                             🗸🗸
+	* {
+		how useChangeTheme works
+		you declare changeTheme = useChangeTheme()
+		then toggle between light and dark theme
+	  }
+
+(2) Pages                                             🗸🗸
+	- create useAxiosPrivate                            🗸🗸
+	* {
+		how useAxiosPrivate works
+	  }
