@@ -38,9 +38,7 @@ const ExploredPosts = () => {
 
   return (
     <section style={{
-      padding: "40px",
-      border: "1px solid gray",
-      borderRadius: "6px",
+      padding: "40px"
     }}>
       <h2>Posts</h2>
       {
@@ -59,7 +57,8 @@ const ExploredPosts = () => {
                           key={i}
                           src={imageUrl}
                           alt="post image"
-                          style={{width: "300px"}}
+                          style={{width: "100%"}}
+                          loading="lazy"
                         />
                       })
                       : ""

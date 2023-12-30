@@ -43,7 +43,7 @@ const MainContent = () => {
             <Route path="/createReport" element={"createReport"} />
           </Route>
 
-          {/* catch all */}
+          {/* Catch all */}
           <Route path="*" element={<NoTFoundPage />} />
         </Routes>
       </section>

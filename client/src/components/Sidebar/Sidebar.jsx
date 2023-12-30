@@ -113,7 +113,7 @@ const Sidebar = () => {
               : (<li>
                 <Link
                   to="/authentication"
-                  className={pathname === "/profile" ? style.active_link : ""}
+                  className={pathname === "/authentication" ? style.active_link : ""}
                 >
                   <FontAwesomeIcon icon={faArrowRightToBracket} />
                   <span>login</span>

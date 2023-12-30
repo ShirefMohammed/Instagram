@@ -3,6 +3,8 @@
 :root {
   --white: #fff;
   --black: #000;
+  --main-btn-color: #512da8;
+  --main-input-bg: #eee;
   --common-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .1);
   --common-transition: .2s;
 }
@@ -17,16 +19,6 @@
   font-family: 'Lemonada', cursive;
 }
 
-body {
-  color: var(--black);
-  background-color: var(--white);
-  transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
-  -webkit-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
-  -moz-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
-  -ms-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
-  -o-transition: color var(--common-transition) ease, background-color var(--common-transition) ease;
-}
-
 a {
   text-decoration: none;
   color: inherit;
@@ -36,8 +28,10 @@ label, button {
   cursor: pointer;
 }
 
-/* START ANIMATION */
+/* Start component */
+/* End component */
 
+/* Start animations */
 .fade_up {
   animation: fade_up var(--common-transition) ease;
   -webkit-animation: fade_up var(--common-transition) ease;
@@ -62,9 +56,4 @@ label, button {
     -o-transform: translateY(0);
   }
 }
-
-/* END ANIMATION */
-
-/* START COMPONENTS */
-/* **************** */
-/* END COMPONENTS */
+/* End animations */

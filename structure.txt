@@ -83,8 +83,8 @@
 
 (1) Client Setup                                      🗸🗸
 	- create react vite app                             🗸🗸
-	- handle icon, download font, handle packages       🗸🗸
-	- handle main.jsx file                              🗸🗸
+	- handle icon, font, packages                       🗸🗸
+	- handle main.jsx, App.jsx, index.css file          🗸🗸
 	- handle redux toolkit, slices and store            🗸🗸
 	- handle api for axios and axiosPrivate             🗸🗸
 	- create assets, component, hooks and pages folders 🗸🗸
@@ -133,8 +133,25 @@
 		then toggle between light and dark theme
 	  }
 
-(2) Pages                                             🗸🗸
-	- create useAxiosPrivate                            🗸🗸
-	* {
-		how useAxiosPrivate works
-	  }
+(3) Pages                                             🗸🗸
+	- create Authentication                             🗸🗸
+	- create Unauthorized                               🗸🗸
+	- create NotFoundPage                               🗸🗸
+	- create MainContent                                🗸🗸
+	- create CreatePost                                 🗸🗸
+	- create UpdatePost                                 🗸🗸
+	- create CreteReport                                
+	- create UpdateReport                               
+	- create Home                                       
+	- create Search                                     
+	- create Explore                                    
+	- create Profile                                    
+	- create Settings                                   
+	- create Post                                       
+
+(4) Components                                        🗸🗸
+	- create Register                                   🗸🗸
+	- create login                                      🗸🗸
+	- create Sidebar                                    🗸🗸
+	- create RequireAuth                                🗸🗸
+	- create PersistLogin                               🗸🗸
