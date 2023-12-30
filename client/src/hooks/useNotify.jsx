@@ -1,7 +1,18 @@
 import { toast } from "react-toastify";
 
 const useNotify = () => {
-  const theme = localStorage.getItem("theme");
+  const localStorageTheme = localStorage.getItem("theme");
+  let theme;
+
+  if (
+    localStorageTheme === "light"
+    || localStorageTheme === "dark"
+  ) {
+    theme = localStorageTheme;
+  } else {
+    theme = "light";
+  }
+
   const toastOptions = {
     position: "top-right",
     autoClose: 5000,
@@ -14,7 +25,7 @@ const useNotify = () => {
   };
 
   const notify = (status, message) => {
-    if(status === "success") {
+    if (status === "success") {
       toast.success(message, toastOptions);
     } else if (status === "info") {
       toast.info(message, toastOptions);

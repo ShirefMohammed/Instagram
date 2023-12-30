@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-let persist = localStorage.getItem("persist") === "true" ? true : false;
+const persist = localStorage.getItem("persist") === "true" ? true : false;
 
 const userSlice = createSlice({
   name: 'userSlice',
