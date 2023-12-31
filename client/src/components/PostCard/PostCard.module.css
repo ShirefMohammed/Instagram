@@ -1,0 +1,89 @@
+.post_card {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+  border: 1px solid var(--main-input-bg);
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.post_card .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post_card .header a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.post_card .header a img {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.post_card .header a span {
+  font-size: 13px;
+}
+
+.post_card .header a span {
+  font-size: 13px;
+}
+
+.post_card .header a span:hover {
+  text-decoration: underline;
+}
+
+.post_card a.image_container img {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+}
+
+.post_card .controllers {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.post_card .controllers span.post_date {
+  font-size: 13px;
+}
+
+.post_card .controllers .actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.post_card .controllers .actions button {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+.post_card .controllers .actions svg {
+  font-size: 18px;
+}
+
+.post_card a.description_container p {
+  font-size: 14px;
+  line-height: 1.6;
+}

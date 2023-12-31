@@ -140,10 +140,11 @@
 	- create MainContent                                🗸🗸
 	- create CreatePost                                 🗸🗸
 	- create UpdatePost                                 🗸🗸
-	- create CreteReport                                
-	- create UpdateReport                               
+	- create CreteReport                                🗸🗸
+	- create Report                                     🗸🗸
+	- create UpdateReport                               🗸🗸
 	- create Home                                       
-	- create Search                                     
+	- create Search                                     🗸🗸
 	- create Explore                                    
 	- create Profile                                    
 	- create Settings                                   
@@ -155,3 +156,5 @@
 	- create Sidebar                                    🗸🗸
 	- create RequireAuth                                🗸🗸
 	- create PersistLogin                               🗸🗸
+	- create UserCard                                   🗸🗸
+	- create PostCard                                   🗸🗸

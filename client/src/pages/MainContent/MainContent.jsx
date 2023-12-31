@@ -8,8 +8,12 @@ import {
 // Pages
 import {
   Home,
+  Search,
   CreatePost,
   UpdatePost,
+  CreateReport,
+  Report,
+  UpdateReport,
   NoTFoundPage,
 } from '../';
 // Style
@@ -28,19 +32,23 @@ const MainContent = () => {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/search" element={"search"} />
+          <Route path="/search" element={<Search />} />
           <Route path="/explore" element={"explore"} />
 
           {/* Protected Routes */}
           <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
             <Route path="/chat" element={"chat"} />
             <Route path="/notifications" element={"notifications"} />
+            {/* Posts Routes */}
             <Route path="/createPost" element={<CreatePost />} />
             <Route path="/posts/:id/update" element={<UpdatePost />} />
             <Route path="/profile" element={"profile"} />
             <Route path="/settings" element={"settings"} />
             <Route path="/settings/saved" element={"/settings/saved"} />
-            <Route path="/createReport" element={"createReport"} />
+            {/* Reports Routes */}
+            <Route path="/createReport" element={<CreateReport />} />
+            <Route path="/reports/:id" element={<Report />} />
+            <Route path="/reports/:id/update" element={<UpdateReport />} />
           </Route>
 
           {/* Catch all */}

@@ -11,6 +11,7 @@ import {
   MainContent,
   Authentication,
   Unauthorized,
+  NoServerResponse,
 } from "./pages";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/*" element={<MainContent />} />
           <Route path="/authentication" element={<Authentication />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/noServerResponse" element={<NoServerResponse />} />
 
           {/* Protected Routes */}
           {/* Will Added Later */}
@@ -42,6 +44,7 @@ function App() {
         draggable
         pauseOnHover
         theme="light"
+        style={{ minWidth: "375px" }}
       />
     </BrowserRouter>
   )

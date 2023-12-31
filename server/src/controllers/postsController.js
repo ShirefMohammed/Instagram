@@ -174,7 +174,6 @@ const multerOptions = () => {
   }
 }
 
-/* (Create - Get - Update - Delete) ** Post */
 const createPost = asyncHandler(
   async (req, res) => {
     const creatorId = req.userInfo.userId;
@@ -338,7 +337,6 @@ const deletePost = asyncHandler(
     });
   }
 );
-/* **************************************** */
 
 const getPostLikes = asyncHandler(
   async (req, res) => {

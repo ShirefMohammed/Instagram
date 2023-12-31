@@ -1,0 +1,40 @@
+.no_server_response{
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.no_server_response h2 {
+  font-weight: 500;
+}
+
+.no_server_response p {
+  margin-bottom: 10px;
+}
+
+.no_server_response .buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.no_server_response .buttons button {
+  color: #000;
+  font-size: 12px;
+  padding: 6px 45px;
+  background-color: transparent;
+  border: 1px solid #b1b1b1;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+}

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useAxiosPrivate } from "../hooks";
 import { setUser } from "../store/slices/userSlice";
+import PostCard from "./PostCard/PostCard";
 
 const ExploredPosts = () => {
   const [posts, setPosts] = useState();
@@ -38,36 +39,23 @@ const ExploredPosts = () => {
 
   return (
     <section style={{
-      padding: "40px"
+      padding: "30px 15px",
+      width: "100%",
+      minHeight: "100%"
     }}>
-      <h2>Posts</h2>
       {
         posts?.length ?
-          <ul>
+          <div style={{ width:"fit-content", margin: "auto" }}>
             {
-              posts.map(post => {
-                return <li key={post._id}>
-                  <p>creator: {post.creator.name}</p>
-                  <p>title: {post.title}</p>
-                  <p>content: {post.content}</p>
-                  {
-                    post?.images && post.images.length > 0 ?
-                      post.images.map((imageUrl, i) => {
-                        return <img
-                          key={i}
-                          src={imageUrl}
-                          alt="post image"
-                          style={{width: "100%"}}
-                          loading="lazy"
-                        />
-                      })
-                      : ""
-                  }
-                </li>
-              })
+              posts.map(post =>
+                <div key={post._id}>
+                  <PostCard post={post} />
+                  <br />
+                </div>
+              )
             }
-          </ul>
-          : <p>No users to display</p>
+          </div>
+          : ""
       }
     </section>
   )

@@ -107,7 +107,7 @@ const handleReportAccess = asyncHandler(
       !userInfo.roles.includes(ROLES_LIST.Admin)
       && userInfo.userId != report.sender._id
     ) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -124,7 +124,11 @@ const handleReportAccess = asyncHandler(
 
 const getReport = asyncHandler(
   async (req, res) => {
-    res.json(req.report);
+    res.json({
+      status: httpStatusText.SUCCESS,
+      message: "successful fetching report",
+      data: req.report
+    });
   }
 );
 
