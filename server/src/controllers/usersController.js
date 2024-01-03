@@ -86,7 +86,7 @@ const getSuggestedUsers = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
     let exceptedUsers = req.body?.exceptedUsers || [];
-    const limit = +req.query?.limit || 10;
+    const limit = +req.query?.limit || 5;
 
     const user = await UserModel.findById(userId, "followings");
 
@@ -489,7 +489,7 @@ const FollowUser = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "you follow this user successfully",
+      message: "user followed successfully",
       data: null
     });
   }
@@ -529,7 +529,7 @@ const removeFollowing = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "you unfollow this user successfully",
+      message: "user unFollowed successfully",
       data: null
     });
   }

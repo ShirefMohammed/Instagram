@@ -143,9 +143,9 @@
 	- create CreteReport                                🗸🗸
 	- create Report                                     🗸🗸
 	- create UpdateReport                               🗸🗸
-	- create Home                                       
+	- create Home                                       🗸🗸
 	- create Search                                     🗸🗸
-	- create Explore                                    
+	- create Explore                                    🗸🗸
 	- create Profile                                    
 	- create Settings                                   
 	- create Post                                       

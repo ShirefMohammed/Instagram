@@ -15,6 +15,7 @@ const CreateReport = () => {
     setErrMsg("");
   }, [content]);
 
+  // Create Post
   const handleSubmit = async (e) => {
     e.preventDefault();
 

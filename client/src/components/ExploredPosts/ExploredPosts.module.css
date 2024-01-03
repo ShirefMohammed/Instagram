@@ -1,0 +1,43 @@
+.explored_posts {
+  padding: 25px 15px 15px 15px;
+  width: 100%;
+  min-height: 100%;
+}
+
+@media (max-width: 768px) {
+  .explored_posts {
+    padding: 20px 15px 15px 15px;
+  }
+}
+
+.explored_posts .posts_container {
+  width: fit-content;
+  margin: auto;
+}
+
+.explored_posts .posts_container>div {
+  margin-bottom: 20px;
+}
+
+.explored_posts .posts_container button.load_more_posts_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: auto;
+  color: #0095f6;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.explored_posts .posts_container p.no_more_posts_message {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 13px;
+}

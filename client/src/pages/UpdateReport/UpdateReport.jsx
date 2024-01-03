@@ -42,6 +42,7 @@ const CreateReport = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Create report
   const handleSubmit = async (e) => {
     e.preventDefault();
 

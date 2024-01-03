@@ -51,8 +51,13 @@ const getPosts = asyncHandler(
 
 const getExploredPosts = asyncHandler(
   async (req, res) => {
-    const exceptedPosts = req.body?.exceptedPosts || [];
+    const exceptedPosts = req.query?.exceptedPosts ?
+      req.query.exceptedPosts?.split(",")
+      : [];
     const limit = +req.query?.limit || 10;
+
+    console.log(exceptedPosts)
+    console.log(exceptedPosts.map(id => new mongoose.Types.ObjectId(id)));
 
     const posts = await PostModel.aggregate([
       {
@@ -127,17 +132,18 @@ const getSuggestedPosts = asyncHandler(
       })
       .sort({ updatedAt: -1 });
 
-    if (posts.length > 0) {
-      posts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-          post.images = imagesUrl;
-          post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
-        }
-      });
-    }
+    posts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        const imagesUrl = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+        post.images = imagesUrl;
+      }
+      post.creator.avatar = new URL(
+        `${post.creator.avatar}`,
+        `${process.env.SERVER_URL}/api/uploads/`
+      )
+    });
 
     res.json({
       status: httpStatusText.SUCCESS,

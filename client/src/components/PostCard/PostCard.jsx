@@ -17,6 +17,7 @@ import {
   useNotify
 } from "../../hooks";
 import defaultAvatar from "../../assets/defaultAvatar.png";
+import defaultPostImage from "../../assets/defaultPostImage.png";
 import style from "./PostCard.module.css";
 
 const PostCard = ({ post }) => {
@@ -84,7 +85,10 @@ const PostCard = ({ post }) => {
         to={`/posts/${post?._id}`}
         className={style.image_container}
       >
-        <img src={post?.images[0]} alt="post image" />
+        <img
+          src={post?.images[0] || defaultPostImage}
+          alt="post image"
+        />
       </Link>
 
       {/* Controllers */}

@@ -52,6 +52,8 @@
   -moz-transform: translateX(-50%);
   -ms-transform: translateX(-50%);
   -o-transform: translateX(-50%);
+  filter: opacity(.2);
+  -webkit-filter: opacity(.2);
 }
 
 .create_post .images_container .images li {
@@ -83,7 +85,7 @@
 }
 
 .create_post .images_container .images li img {
-  width: 100%;
+  filter: opacity(0.2);
 }
 
 .create_post .images_container input[type="file"] {

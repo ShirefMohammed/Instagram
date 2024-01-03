@@ -1,3 +1,4 @@
+// Modules
 import { Route, Routes } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 // Components
@@ -9,6 +10,7 @@ import {
 import {
   Home,
   Search,
+  Explore,
   CreatePost,
   UpdatePost,
   CreateReport,
@@ -16,7 +18,7 @@ import {
   UpdateReport,
   NoTFoundPage,
 } from '../';
-// Style
+// Css style
 import style from "./MainContent.module.css";
 
 const MainContent = () => {
@@ -33,7 +35,7 @@ const MainContent = () => {
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/explore" element={"explore"} />
+          <Route path="/explore" element={<Explore />} />
 
           {/* Protected Routes */}
           <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
