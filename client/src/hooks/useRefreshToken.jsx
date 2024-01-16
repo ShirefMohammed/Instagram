@@ -1,5 +1,8 @@
+// Modules
 import { useSelector, useDispatch } from 'react-redux';
+// Store
 import { setUser } from '../store/slices/userSlice';
+// Api axios
 import axios from '../api/axios';
 
 const useRefreshToken = () => {

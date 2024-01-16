@@ -54,10 +54,8 @@ const getExploredPosts = asyncHandler(
     const exceptedPosts = req.query?.exceptedPosts ?
       req.query.exceptedPosts?.split(",")
       : [];
-    const limit = +req.query?.limit || 10;
 
-    console.log(exceptedPosts)
-    console.log(exceptedPosts.map(id => new mongoose.Types.ObjectId(id)));
+    const limit = +req.query?.limit || 10;
 
     const posts = await PostModel.aggregate([
       {
@@ -166,8 +164,8 @@ const multerOptions = () => {
   });
 
   const fileFilter = (req, file, cb) => {
-    const imageType = file.mimetype.split('/')[0];
-    if (imageType === 'image') {
+    const fileType = file.mimetype.split('/')[0];
+    if (fileType === 'image') {
       return cb(null, true)
     } else {
       return cb(null, false)
@@ -185,8 +183,6 @@ const createPost = asyncHandler(
     const creatorId = req.userInfo.userId;
     const content = req.body?.content;
     let images = req?.files;
-
-    console.log(images)
 
     const IsCreatorExist = await UserModel.exists({ _id: creatorId });
     if (!IsCreatorExist) {
@@ -215,6 +211,10 @@ const createPost = asyncHandler(
       images: images,
     });
 
+    newPost.images = newPost.images.map((image) => {
+      return `${process.env.SERVER_URL}/api/uploads/${image}`;
+    });
+
     res.json({
       status: httpStatusText.SUCCESS,
       message: "Post created successfully",
@@ -230,7 +230,7 @@ const getPost = asyncHandler(
     const post = await PostModel.findById(postId)
       .populate({ path: "creator", select: "_id name avatar" })
       .select("_id creator content images createdAt updatedAt");
-    // you can handle fetching likes and comments length optional
+    // you can handle fetching likes and comments length *optional
 
     if (!post) {
       return res.status(404).json({
@@ -242,10 +242,9 @@ const getPost = asyncHandler(
 
     post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`
 
-    let postImages = post.images.map(image => {
+    post.images = post.images.map(image => {
       return `${process.env.SERVER_URL}/api/uploads/${image}`;
     });
-    post.images = postImages;
 
     res.json({
       status: httpStatusText.SUCCESS,
@@ -260,8 +259,6 @@ const updatePost = asyncHandler(
     const userInfo = req.userInfo;
     const postId = req?.params?.id;
     const content = req.body?.content;
-
-    console.log(userInfo, postId, content)
 
     const post = await PostModel.findById(postId);
 
@@ -284,7 +281,6 @@ const updatePost = asyncHandler(
     await PostModel.findByIdAndUpdate(
       postId,
       { content: content },
-      { new: true }
     )
 
     res.json({
@@ -321,10 +317,10 @@ const deletePost = asyncHandler(
       });
     }
 
-    if (post?.comments && post.comments.length > 0) {
-      await CommentModel.deleteMany({ post: postId });
-    }
+    // Delete all post comments
+    await CommentModel.deleteMany({ post: postId });
 
+    // Delete post images from server
     if (post?.images && post.images.length > 0) {
       post.images.map((image) => {
         fs.unlink(
@@ -334,6 +330,7 @@ const deletePost = asyncHandler(
       });
     }
 
+    // Delete the post
     await post.deleteOne();
 
     res.json({
@@ -352,8 +349,6 @@ const getPostLikes = asyncHandler(
     const limit = query?.limit || 20;
     const page = query?.page || 1;
     const skip = (page - 1) * limit;
-
-    const sort = query?.sort || -1;
 
     const post = await PostModel.findById(postId)
       .select("likes")
@@ -474,7 +469,6 @@ const savePost = asyncHandler(
     const userId = req.userInfo.userId;
 
     const IsPostExist = await PostModel.exists({ _id: postId });
-    const user = await UserModel.findById(userId, "savedPosts");
 
     if (!IsPostExist) {
       return res.status(404).json({
@@ -483,6 +477,8 @@ const savePost = asyncHandler(
         data: null
       });
     }
+
+    const user = await UserModel.findById(userId, "savedPosts");
 
     if (!user) {
       return res.status(404).json({
@@ -511,8 +507,6 @@ const unsavePost = asyncHandler(
     const userId = req.userInfo.userId;
 
     const IsPostExist = await PostModel.exists({ _id: postId });
-    const user = await UserModel.findById(userId, "savedPosts");
-    console.log(IsPostExist)
 
     if (!IsPostExist) {
       return res.status(404).json({
@@ -521,6 +515,8 @@ const unsavePost = asyncHandler(
         data: null
       });
     }
+
+    const user = await UserModel.findById(userId, "savedPosts");
 
     if (!user) {
       return res.status(404).json({
@@ -570,7 +566,7 @@ const getPostComments = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "successful fetching post comments",
+      message: "successful fetching comments",
       data: comments
     });
   }
@@ -591,7 +587,6 @@ const addPostComment = asyncHandler(
     }
 
     const IsPostExist = await PostModel.exists({ _id: postId });
-    const ISUserExist = await UserModel.exists({ _id: userId });
 
     if (!IsPostExist) {
       return res.status(404).json({
@@ -600,6 +595,8 @@ const addPostComment = asyncHandler(
         data: null
       });
     }
+
+    const ISUserExist = await UserModel.exists({ _id: userId });
 
     if (!ISUserExist) {
       return res.status(404).json({
@@ -617,7 +614,7 @@ const addPostComment = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "comment added successfully",
+      message: "Comment added successfully",
       data: newComment
     });
   }
@@ -633,7 +630,7 @@ const updatePostComment = asyncHandler(
     if (!commentId) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "comment id required",
+        message: "Comment id required",
         data: null
       });
     }
@@ -641,7 +638,7 @@ const updatePostComment = asyncHandler(
     if (!content) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "comment content required",
+        message: "Comment content required",
         data: null
       });
     }
@@ -651,7 +648,7 @@ const updatePostComment = asyncHandler(
     if (!comment) {
       return res.status(404).json({
         status: httpStatusText.ERROR,
-        message: "comment not found",
+        message: "Comment not found",
         data: null
       });
     }
@@ -669,7 +666,7 @@ const updatePostComment = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "comment updated successfully",
+      message: "Comment updated successfully",
       data: comment
     });
   }
@@ -684,23 +681,28 @@ const removePostComment = asyncHandler(
     if (!commentId) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "comment id required",
+        message: "Comment ID required",
         data: null
       });
     }
 
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
+      .populate({ path: "post", select: "creator" });
 
     if (!comment) {
       return res.status(404).json({
         status: httpStatusText.ERROR,
-        message: "comment not found",
+        message: "Comment not found",
         data: null
       });
     }
 
-    if (userId != comment.creator || !roles.includes(ROLES_LIST.Admin)) {
-      return res.status(401).json({
+    if (
+      userId != comment.creator
+      || userId != comment.post.creator
+      || !roles.includes(ROLES_LIST.Admin)
+    ) {
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -711,7 +713,7 @@ const removePostComment = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "comment deleted successfully",
+      message: "Comment deleted successfully",
       data: null
     });
   }

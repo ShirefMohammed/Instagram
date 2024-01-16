@@ -1,7 +1,10 @@
+// Modules
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { axiosPrivate } from "../api/axios";
+// Hooks
 import { useRefreshToken } from "../hooks";
+// Api axios
+import { axiosPrivate } from "../api/axios";
 
 const useAxiosPrivate = () => {
   const user = useSelector(state => state.user);

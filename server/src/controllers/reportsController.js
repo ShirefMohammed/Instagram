@@ -13,7 +13,7 @@ const getReports = asyncHandler(
 
     const sort = query?.sort || -1;
 
-    const reports = await ReportModel.find()
+    let reports = await ReportModel.find()
       .skip(skip)
       .limit(limit)
       .populate({
@@ -22,11 +22,14 @@ const getReports = asyncHandler(
       })
       .sort({ updatedAt: sort });
 
-    reports.map((report) => {
-      report.sender.avatar = new URL(
-        report.sender.avatar,
-        `${process.env.SERVER_URL}/api/uploads/`
-      ).toString();
+    reports = reports.map((report) => {
+      if (report) {
+        report.sender.avatar = new URL(
+          report.sender.avatar,
+          `${process.env.SERVER_URL}/api/uploads/`
+        ).toString();
+        return report;
+      }
     });
 
     res.json({

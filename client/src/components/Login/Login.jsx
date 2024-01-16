@@ -1,10 +1,15 @@
+// Modules
 import { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { MoonLoader } from 'react-spinners';
+// Hooks
 import { useNotify } from "../../hooks";
+// Store
 import { setUser } from "../../store/slices/userSlice";
+// Css style
 import style from "./Login.module.css";
+// Api axios
 import axios from "../../api/axios";
 
 const LOGIN_URL = `/auth/login`;
@@ -26,10 +31,11 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');
 
+  // Focus on email filed
   useEffect(() => {
     setTimeout(() => {
       emailRef.current.focus();
-    }, 1);
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -44,6 +50,7 @@ const Login = () => {
     localStorage.setItem("persist", user?.persist);
   }, [user?.persist]);
 
+  // Login
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -133,6 +140,7 @@ const Login = () => {
       <button
         type='submit'
         disabled={loading ? true : false}
+        style={loading ? { opacity: .5, cursor: 'revert' } : {}}
       >
         <span>Login</span>
         {loading && <MoonLoader color="#fff" size={15} />}

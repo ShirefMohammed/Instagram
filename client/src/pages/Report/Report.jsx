@@ -1,3 +1,4 @@
+// Modules
 import { useEffect, useState } from "react";
 import {
   Link,
@@ -5,12 +6,14 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
+// Api axios
 import { useAxiosPrivate } from "../../hooks";
+// Css style
 import style from "./Report.module.css";
 
 const Report = () => {
-  const [content, setContent] = useState("");
   const { id } = useParams();
+  const [content, setContent] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();

@@ -1,12 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Lemonada:wght@300;500;700&display=swap');
 
 :root {
-  --white: #fff;
-  --black: #000;
   --main-btn-color: #512da8;
   --main-input-bg: #eee;
-  --common-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, .1);
-  --common-transition: .2s;
 }
 
 * {
@@ -28,13 +24,10 @@ label, button {
   cursor: pointer;
 }
 
-/* Start component */
-/* End component */
-
 /* Start animations */
 .fade_up {
-  animation: fade_up var(--common-transition) ease;
-  -webkit-animation: fade_up var(--common-transition) ease;
+  animation: fade_up .3s ease;
+  -webkit-animation: fade_up .3s ease;
 }
 
 @keyframes fade_up {

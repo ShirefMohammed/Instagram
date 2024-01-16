@@ -37,23 +37,32 @@ const MainContent = () => {
           <Route path="/search" element={<Search />} />
           <Route path="/explore" element={<Explore />} />
 
-          {/* Protected Routes */}
+          {/* Protected Routes only user can access them */}
           <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
-            <Route path="/chat" element={"chat"} />
-            <Route path="/notifications" element={"notifications"} />
-            {/* Posts Routes */}
-            <Route path="/createPost" element={<CreatePost />} />
-            <Route path="/posts/:id/update" element={<UpdatePost />} />
-            <Route path="/profile" element={"profile"} />
-            <Route path="/settings" element={"settings"} />
-            <Route path="/settings/saved" element={"/settings/saved"} />
             {/* Reports Routes */}
             <Route path="/createReport" element={<CreateReport />} />
             <Route path="/reports/:id" element={<Report />} />
             <Route path="/reports/:id/update" element={<UpdateReport />} />
+
+            {/* Posts Routes */}
+            <Route path="/createPost" element={<CreatePost />} />
+            <Route path="/posts/:id/update" element={<UpdatePost />} />
+
+            {/* Profile Routes */}
+            <Route path="/profile" element={"profile"} />
+
+            {/* Settings Routes */}
+            <Route path="/settings" element={"settings"} />
+            <Route path="/settings/saved" element={"/settings/saved"} />
+
+            {/* Chat Routes */}
+            <Route path="/chat" element={"chat"} />
+
+            {/* Notifications Routes */}
+            <Route path="/notifications" element={"notifications"} />
           </Route>
 
-          {/* Catch all */}
+          {/* Catch all page not found */}
           <Route path="*" element={<NoTFoundPage />} />
         </Routes>
       </section>

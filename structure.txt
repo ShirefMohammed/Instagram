@@ -1,21 +1,23 @@
-<============> Social Media App Structure <============>
+<============>      Social Media App Structure      <============>
 
-<======================> Server <======================>
+<======================>      Server      <======================>
+------------------------------------------------------------------
 
-(1) Server Setup                                        🗸🗸
-	- connect to db                                       🗸🗸
-	- .env                                                🗸🗸
-	- handle cors                                         🗸🗸
-	- handle 404 && errors middlewares                    🗸🗸
-	- project structure && mongodb && postman && packages 🗸🗸
+(1) Server Setup                                                🗸🗸
+- connect to db                                                 🗸🗸
+- .env                                                          🗸🗸
+- handle cors                                                   🗸🗸
+- handle 404 && errors middlewares                              🗸🗸
+- project structure && mongodb && postman && packages           🗸🗸
+------------------------------------------------------------------
 
-(2) Authentication                                      🗸🗸
-	milterOptions                                         🗸🗸
-	register                                              🗸🗸
-	login                                                 🗸🗸
-	refresh                                               🗸🗸
-	logout                                                🗸🗸
-	verify account using email (optional...)              
+(2) Authentication                                              🗸🗸
+- milterOptions                                                 🗸🗸
+- register                                                      🗸🗸
+- login                                                         🗸🗸
+- refresh                                                       🗸🗸
+- logout                                                        🗸🗸
+------------------------------------------------------------------
 
 (3) UsersRouters && Controllers 
 	- getUsers                    🗸🗸
@@ -45,116 +47,168 @@
     message: id, // last unread message
     seen: false,
   }
+------------------------------------------------------------------
 
-(3) PostsRouters && Controllers 🗸🗸
-	- createPost                  🗸🗸
-	- getPost                     🗸🗸
-	- updatePost                  🗸🗸
-	- deletePost                  🗸🗸
-	- getPostLikes                🗸🗸
-	- addPostLike                 🗸🗸
-	- removePostLike              🗸🗸
-	- savePost                    🗸🗸
-	- unsavePost                  🗸🗸
-	- getPostComments             🗸🗸
-	- addPostComment              🗸🗸
-	- updatePostComment           🗸🗸
-	- removePostComment           🗸🗸
-	- getPosts                    🗸🗸
-	- getExploredPosts            🗸🗸
-	- getSuggestedPosts           🗸🗸
+(3) Posts                                                      🗸🗸
+- getPosts                                                     🗸🗸
+- getSuggestedPosts                                            🗸🗸
+- getExploredPosts                                             🗸🗸
+- createPost                                                   🗸🗸
+- getPost                                                      🗸🗸
+- updatePost                                                   🗸🗸
+- deletePost                                                   🗸🗸
+- getPostLikes                                                 🗸🗸
+- addPostLike                                                  🗸🗸
+- removePostLike                                               🗸🗸
+- savePost                                                     🗸🗸
+- unsavePost                                                   🗸🗸
+- getPostComments                                              🗸🗸
+- addPostComment                                               🗸🗸
+- updatePostComment                                            🗸🗸
+- removePostComment                                            🗸🗸
+------------------------------------------------------------------
 
-(4) ReportsRouter && Controllers  🗸🗸
-	- getReports,                   🗸🗸
-	- createReport,                 🗸🗸
-	- handleReportAccess,           🗸🗸
-	- getReport,                    🗸🗸
-	- updateReport,                 🗸🗸
-	- deleteReport,                 🗸🗸
+(4) Reports                                                    🗸🗸
+- createReport                                                 🗸🗸
+- getReports                                                   🗸🗸
+- getReport                                                    🗸🗸
+- updateReport                                                 🗸🗸
+- deleteReport                                                 🗸🗸
+------------------------------------------------------------------
 
-(5) chatRouters && Controllers (wait...)
-	- create chat
-	- read chats
-	- delete chat
-	- send message
-	- control message
+(5) chat
+Coming soon
+------------------------------------------------------------------
 
-<======================> Client <======================>
+<======================>      Client      <======================>
+------------------------------------------------------------------
 
-(1) Client Setup                                      🗸🗸
-	- create react vite app                             🗸🗸
-	- handle icon, font, packages                       🗸🗸
-	- handle main.jsx, App.jsx, index.css file          🗸🗸
-	- handle redux toolkit, slices and store            🗸🗸
-	- handle api for axios and axiosPrivate             🗸🗸
-	- create assets, component, hooks and pages folders 🗸🗸
-	- create assets, component, hooks and pages folders 🗸🗸
+(1) Client Setup                                               🗸🗸
+- create react vite app                                        🗸🗸
+- handle icon, font, packages                                  🗸🗸
+- handle main.jsx, App.jsx, index.css file                     🗸🗸
+- handle redux toolkit, slices and store                       🗸🗸
+- handle api for axios and axiosPrivate                        🗸🗸
+- create assets, component, hooks and pages folders            🗸🗸
+------------------------------------------------------------------
 
-(2) Hooks                                             🗸🗸
-	- create useAxiosPrivate                            🗸🗸
-	* {
-		how useAxiosPrivate works
-		you declare axiosPrivate = useAxiosPrivate()
-		then start sending req for api which need accessToken
-		if accessToken expired then axiosPrivate will get new accessToken
-		by refreshToken jwt in cookies if jwt also expired
-		then the catch scope in component will setUser({})
-		and navigate to /authentication to login again
-		accessToken and refreshToken expired in status 403
-	  }
-	- create useRefreshToken                            🗸🗸
-	* {
-		how useRefreshToken works
-		you declare refresh = useRefreshToken()
-		then start sending get req if expired will return 403 error
-		you should catch it in used component
-		and setUser({}) and navigate /authentication
-		else you will get accessToken and data
-		and setUser({...user, ...data});
-	  }
-    
-	- create useLogout                                  🗸🗸
-	* {
-		how useLogout works
-		you declare logout = useLogout()
-		then setUser({} and ) start sending get req to remove jwt
-		then navigate /authentication
-	  }
-	- create useNotify                                  🗸🗸
-	* {
-		how useNotify works
-		you declare notify = useNotify()
-		notify (status, message) status = ["info", "success", "error"]
-	  }
-	- create useChangeTheme                             🗸🗸
-	* {
-		how useChangeTheme works
-		you declare changeTheme = useChangeTheme()
-		then toggle between light and dark theme
-	  }
+(2) Hooks                                                      🗸🗸
+- create useAxiosPrivate                                       🗸🗸
+{
+  how useAxiosPrivate works
+  you declare axiosPrivate = useAxiosPrivate()
+  then start sending req for api which need accessToken
+  if accessToken expired then axiosPrivate will get new accessToken
+  by refreshToken jwt in cookies if jwt also expired
+  then the catch scope in component will setUser({})
+  and navigate to /authentication to login again
+  accessToken and refreshToken expired in status 403
+}
+- create useRefreshToken                                       🗸🗸
+{
+  how useRefreshToken works
+  you declare refresh = useRefreshToken()
+  then start sending get req if expired will return 403 error
+  you should catch it in used component
+  and setUser({}) and navigate /authentication
+  else you will get accessToken and data
+  and setUser({...user, ...data});
+}
+- create useLogout                                             🗸🗸
+{
+  how useLogout works
+  you declare logout = useLogout()
+  then setUser({}) and start sending get req to remove jwt
+  then navigate /authentication
+}
+- create useNotify                                             🗸🗸
+{
+  how useNotify works
+  you declare notify = useNotify()
+  notify (status, message) status = ["info", "success", "error"]
+}
+------------------------------------------------------------------
 
-(3) Pages                                             🗸🗸
-	- create Authentication                             🗸🗸
-	- create Unauthorized                               🗸🗸
-	- create NotFoundPage                               🗸🗸
-	- create MainContent                                🗸🗸
-	- create CreatePost                                 🗸🗸
-	- create UpdatePost                                 🗸🗸
-	- create CreteReport                                🗸🗸
-	- create Report                                     🗸🗸
-	- create UpdateReport                               🗸🗸
-	- create Home                                       🗸🗸
-	- create Search                                     🗸🗸
-	- create Explore                                    🗸🗸
-	- create Profile                                    
-	- create Settings                                   
-	- create Post                                       
+(3) Pages                                                      🗸🗸
+- create NotFoundPage                                          🗸🗸
+- create Unauthorized                                          🗸🗸
+- create NoServerResponse                                      🗸🗸
+- create Authentication                                        🗸🗸
+- create MainContent                                           🗸🗸
+- create CreteReport                                           🗸🗸
+- create Report                                                🗸🗸
+- create UpdateReport                                          🗸🗸
+- create CreatePost                                            🗸🗸  
+- create UpdatePost                                            🗸🗸
+- create Home                                                  🗸🗸
+- create Search                                                🗸🗸
+- create Explore                                               🗸🗸
+- create Profile                                               
+- create Settings                                              
+- create Post                                                  
+------------------------------------------------------------------
 
-(4) Components                                        🗸🗸
-	- create Register                                   🗸🗸
-	- create login                                      🗸🗸
-	- create Sidebar                                    🗸🗸
-	- create RequireAuth                                🗸🗸
-	- create PersistLogin                               🗸🗸
-	- create UserCard                                   🗸🗸
-	- create PostCard                                   🗸🗸
+(4) Components                                                 🗸🗸
+- Register                                                     🗸🗸
+- login                                                        🗸🗸
+- Sidebar                                                      🗸🗸
+- RequireAuth                                                  🗸🗸
+- PersistLogin                                                 🗸🗸
+- UserCard                                                     🗸🗸  
+- PostCard                                                     🗸🗸
+- SuggestedPosts                                               🗸🗸
+- ExploredPosts                                                🗸🗸
+------------------------------------------------------------------
+
+
+# PREPARED
+{ Review my backend }
+
+{ Post }
+view post details {
+  creator,
+  images,
+  controllers,
+  content,
+  likes,
+  comments,
+  addLike,
+  save,
+  addComment,
+  updatedComments,
+  deleteComment,
+}
+*URL/posts/id
+
+{ User account public }
+view any user account
+*URL/users/id
+
+{ User Profile Private }
+view current user account
+*URL/profile
+
+{ Edit User Profile Private }
+edit current user account
+*URL/profile/edit
+
+{ Settings } {
+  get followers,
+  delete follower,
+  get followings,
+  delete following,
+  get created posts,
+  update created post,
+  delete created post,
+  get liked posts,
+  remove like,
+  get saved posts,
+  unsave,
+  get created comments,
+  update comments,
+  delete comments,
+  get reports
+  update report
+  delete report
+}
+*URL/settings

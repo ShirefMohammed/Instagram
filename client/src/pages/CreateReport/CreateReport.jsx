@@ -1,6 +1,9 @@
+// Modules
 import { useEffect, useRef, useState } from "react";
 import { MoonLoader } from "react-spinners";
+// Hooks
 import { useAxiosPrivate, useNotify } from "../../hooks";
+// Css style
 import style from "./CreateReport.module.css";
 
 const CreateReport = () => {
@@ -15,7 +18,7 @@ const CreateReport = () => {
     setErrMsg("");
   }, [content]);
 
-  // Create Post
+  // Create Report
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -40,7 +43,7 @@ const CreateReport = () => {
     catch (err) {
       if (!err?.response) setErrMsg('No Server Response');
       const message = err.response?.data?.message;
-      message ? setErrMsg(message) : setErrMsg('Post not created');
+      message ? setErrMsg(message) : setErrMsg('Report not created');
       errRef.current.focus();
     }
 
@@ -84,6 +87,7 @@ const CreateReport = () => {
       <button
         type='submit'
         disabled={loading ? true : false}
+        style={loading ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Send</span>
         {loading && <MoonLoader color="#fff" size={15} />}

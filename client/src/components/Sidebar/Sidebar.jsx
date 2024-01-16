@@ -1,5 +1,6 @@
+// Modules
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,24 +15,20 @@ import {
   faGear,
   faBookmark,
   faFileCircleExclamation,
-  faCircleHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
+// Hooks
 import { useLogout } from "../../hooks";
+// Images
 import instagramSvgText from "../../assets/instagramSvgText.png";
 import defaultAvatar from "../../assets/defaultAvatar.png";
+// Css style
 import style from "./Sidebar.module.css";
 
 const Sidebar = () => {
   const [openMoreList, setOpenMoreList] = useState(false);
   const user = useSelector(state => state.user);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const logout = useLogout();
-
-  const signOut = async () => {
-    await logout();
-    navigate('/authentication');
-  }
 
   return (
     <aside className={style.sidebar}>
@@ -127,8 +124,8 @@ const Sidebar = () => {
       <div className={style.more_list}>
         {
           openMoreList &&
-          (<nav>
-            <ul className={`fade_up ${style.links}`}>
+          <nav className="fade_up">
+            <ul className={style.links}>
               <li>
                 <Link
                   to="/settings"
@@ -156,18 +153,12 @@ const Sidebar = () => {
                   <span>Report</span>
                 </Link>
               </li>
-              <li> {/* Will Be Handled Soon */}
-                <Link to="/">
-                  <FontAwesomeIcon icon={faCircleHalfStroke} />
-                  <span>Switch Theme</span>
-                </Link>
-              </li>
               {
                 user?.accessToken &&
                 (<li>
                   <Link
                     to="/"
-                    onClick={signOut}
+                    onClick={logout}
                   >
                     <FontAwesomeIcon icon={faArrowRightToBracket} />
                     <span>logout</span>
@@ -175,8 +166,9 @@ const Sidebar = () => {
                 </li>)
               }
             </ul>
-          </nav>)
+          </nav>
         }
+
         <button
           className={style.more_btn}
           type="button"

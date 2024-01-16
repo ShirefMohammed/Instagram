@@ -7,9 +7,6 @@ const postSchema = new mongoose.Schema(
       required: true,
       ref: "users"
     },
-    title: {
-      type: String,
-    },
     content: {
       type: String,
     },

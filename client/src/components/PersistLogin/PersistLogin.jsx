@@ -1,8 +1,12 @@
+// Modules
 import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { useRefreshToken } from "../../hooks";
 import { useSelector } from "react-redux";
+// Hooks
+import { useRefreshToken } from "../../hooks";
+// Css style
 import style from "./PersistLogin.module.css";
+// Images
 import InstagramSvgIcon from "../../assets/InstagramSvgIcon.svg";
 
 const PersistLogin = () => {
@@ -42,8 +46,7 @@ const PersistLogin = () => {
               />
               <div className={style.creator}>
                 <span>Created by</span>
-                <Link
-                  to="https://shiref-mohammed.onrender.com/">
+                <Link to="https://shiref-mohammed.onrender.com/">
                   Shiref Mohammed
                 </Link>
               </div>

@@ -47,11 +47,3 @@ const userSchema = new mongoose.Schema(
 
 const UserModel = mongoose.model("users", userSchema);
 module.exports = UserModel;
-
-/**
-  {
-    notifications,
-    sharedPosts(optional...),
-    verified(optional...)
-  }
- */

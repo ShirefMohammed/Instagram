@@ -12,11 +12,11 @@ const {
   deleteReport,
 } = require("../controllers/reportsController");
 
-// getReports is Only Available For Admin
-// createReport is Only Available For User
-// getReport is Available For Both Admin and Report Sender
-// updateReport is Available For Only Report Sender
-// deleteReport is Available For Both Admin and Report Sender
+// getReports is only available for Admin
+// createReport is only available for User
+// getReport is available for both Admin and report sender
+// updateReport is available for only report sender
+// deleteReport is available for both Admin and report sender
 
 router.route('/')
   .get(

@@ -24,29 +24,30 @@ const {
   removePostComment,
 } = require("../controllers/postsController");
 
-// getPosts is Only Available For Admin
-// getExploredPosts is Available For All
-// getSuggestedPosts is Available For All
+// getPosts is only available for Admin
+// getExploredPosts is available for all
+// getSuggestedPosts is available for all
 
-// createPost is Only Available For User
-// getPost is Available For All
-// updatePost is Only Available For Creator
-// deletePost is Available For Creator and Admin
+// createPost is only available for User
+// getPost is available for all
+// updatePost is only available for creator
+// deletePost is available for creator and Admin
 
-// getPostLikes is Available For All
-// addPostLike is Only Available For User
-// removePostLike is Only Available For User
+// getPostLikes is available for all
+// addPostLike is only available for User
+// removePostLike is only available for User
 
-// savePost is Only Available For User
-// unsavePost is Only Available For User
+// savePost is only available for User
+// unsavePost is only available for User
 
-// getPostComments is Available For All
-// addPostComment is Only Available For User
-// updatePostComment is Only Available For Creator
-// removePostComment is Available For Both Creator and Admin
+// getPostComments is available for all
+// addPostComment is only available for User
+// updatePostComment is only available for comment creator
+// removePostComment is available for comment creator, post creator and Admin
 
 const { storage, fileFilter } = multerOptions();
 const upload = multer({ storage, fileFilter });
+
 router.route('/')
   .get(
     verifyJWT,

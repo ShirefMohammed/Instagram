@@ -1,17 +1,22 @@
+// Modules
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { MoonLoader } from "react-spinners";
+// Hooks
 import { useAxiosPrivate, useNotify } from "../../hooks";
+// Css style
 import style from "./UpdateReport.module.css";
 
 const CreateReport = () => {
+  const { id } = useParams();
+  
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const { id } = useParams();
+  
+  const errRef = useRef();
   const navigate = useNavigate();
   const location = useLocation();
-  const errRef = useRef();
   const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
 
@@ -42,7 +47,7 @@ const CreateReport = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Create report
+  // Update report
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -65,7 +70,7 @@ const CreateReport = () => {
     catch (err) {
       if (!err?.response) setErrMsg('No Server Response');
       const message = err.response?.data?.message;
-      message ? setErrMsg(message) : setErrMsg('Post not created');
+      message ? setErrMsg(message) : setErrMsg('Report not updated');
       errRef.current.focus();
     }
 
@@ -107,6 +112,7 @@ const CreateReport = () => {
       <button
         type='submit'
         disabled={loading ? true : false}
+        style={loading ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Save Updates</span>
         {loading && <MoonLoader color="#fff" size={15} />}

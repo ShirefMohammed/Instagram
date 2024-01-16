@@ -1,3 +1,4 @@
+// Modules
 import { useRef, useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -8,13 +9,20 @@ import {
   faInfoCircle
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setUser } from "../../store/slices/userSlice";
+// Hooks
 import { useNotify } from "../../hooks";
+// Store
+import { setUser } from "../../store/slices/userSlice";
+// Default avatar image
 import defaultAvatar from "../../assets/defaultAvatar.png";
+// Css style
 import style from "./Register.module.css";
+// Api axios
 import axios from "../../api/axios";
 
 const REGISTER_URL = "/auth/register";
+
+// Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
@@ -51,10 +59,11 @@ const Register = () => {
   const [avatar, setAvatar] = useState();
   const [avatarHover, setAvatarHover] = useState(false);
 
+  // Focus on name input
   useEffect(() => {
     setTimeout(() => {
       nameRef.current.focus();
-    }, 1);
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -82,6 +91,7 @@ const Register = () => {
     localStorage.setItem("persist", user?.persist);
   }, [user?.persist]);
 
+  // Register
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -309,13 +319,14 @@ const Register = () => {
           type="file"
           accept=".jpeg, .jpg, .png, .jfif"
           multiple={false}
+          aria-describedby="avatarFileNote"
           onChange={(e) => setAvatar(e.target.files[0])}
           onMouseEnter={() => setAvatarHover(true)}
           onMouseLeave={() => setAvatarHover(false)}
         />
         {
           avatarHover ?
-            <p id="confirmNote" className={style.instructions}>
+            <p id="avatarFileNote" className={style.instructions}>
               <FontAwesomeIcon icon={faInfoCircle} />
               Optional.
             </p>
@@ -338,6 +349,7 @@ const Register = () => {
       <button
         type="submit"
         disabled={loading ? true : false}
+        style={loading ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Register</span>
         {loading && <MoonLoader color="#fff" size={15} />}

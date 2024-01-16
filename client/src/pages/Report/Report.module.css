@@ -16,7 +16,7 @@
   resize: none;
   border: none;
   outline: none;
-  background-color: var(--main-input-bg);
+  background-color: #eee;
   width: 100%;
   height: calc(100vh - 220px);
   font-size: 13px;

@@ -1,5 +1,8 @@
+// Modules
 import { useState } from "react";
+// Components
 import { Login, Register } from "../../components";
+// Css style
 import style from "./Authentication.module.css";
 
 const Authentication = () => {
@@ -7,18 +10,20 @@ const Authentication = () => {
 
   return (
     <section className={style.authentication_page}>
-      <div className={
-        `${style.container}
-        ${authType === "register" ? style.active : ""}`
-      }>
+      <div className={`${style.container}
+        ${authType === "register" ? style.active : ""}`}
+      >
+        {/* Login */}
         <div className={`${style.form_container} ${style.login}`}>
           <Login />
         </div>
 
+        {/* Register */}
         <div className={`${style.form_container} ${style.register}`}>
           <Register />
         </div>
 
+        {/* Toggle UI */}
         <div className={style.toggle_container}>
           <div className={style.toggle}>
             <div className={`${style.toggle_panel} ${style.toggle_left}`}>
@@ -53,6 +58,7 @@ const Authentication = () => {
           </div>
         </div>
 
+        {/* Toggle btn in small screen */}
         <button
           className={style.toggle_btn}
           type="button"

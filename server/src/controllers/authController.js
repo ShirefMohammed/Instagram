@@ -7,6 +7,11 @@ const asyncHandler = require("../middleware/asyncHandler");
 const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 
+// Regular expressions
+const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 const multerOptions = () => {
   const diskStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -20,8 +25,8 @@ const multerOptions = () => {
   });
 
   const fileFilter = (req, file, cb) => {
-    const imageType = file.mimetype.split('/')[0];
-    if (imageType === 'image') {
+    const fileType = file.mimetype.split('/')[0];
+    if (fileType === 'image') {
       return cb(null, true)
     } else {
       return cb(null, false)
@@ -40,15 +45,44 @@ const register = asyncHandler(
 
     // If Fields are Empty Generate Client Error
     if (!name || !email || !password) {
+      // Remove avatar
       if (req?.file) {
         fs.unlink(
           path.join(__dirname, "..", "uploads", req.file.filename),
           () => { }
         );
       }
+
       return res.status(400).json({
         status: httpStatusText.ERROR,
         message: "All fields are required",
+        data: null
+      });
+    }
+
+    // If name not valid
+    if (!NAME_REGEX.test(name)) {
+      return res.status(400).json({
+        status: httpStatusText.ERROR,
+        message: `Name must be 4 to 24 characters, Must begin with a letter, Letters, numbers, underscores, hyphens allowed, No spaces.`,
+        data: null
+      });
+    }
+
+    // If email not valid
+    if (!EMAIL_REGEX.test(email)) {
+      return res.status(400).json({
+        status: httpStatusText.ERROR,
+        message: `Enter valid email.`,
+        data: null
+      });
+    }
+
+    // If password not valid
+    if (!PASS_REGEX.test(password)) {
+      return res.status(400).json({
+        status: httpStatusText.ERROR,
+        message: `Password must be 8 to 24 characters, Must include uppercase and lowercase letters , a number and a special character, Allowed special characters: !, @, #, $, %`,
         data: null
       });
     }
@@ -57,12 +91,14 @@ const register = asyncHandler(
 
     // If User With Same Email Exists Return Conflict
     if (user) {
+      // Remove avatar
       if (req?.file) {
         fs.unlink(
           path.join(__dirname, "..", "uploads", req.file.filename),
           () => { }
         );
       }
+
       return res.status(409).json({
         status: httpStatusText.ERROR,
         message: "User with same email already exists",
@@ -115,7 +151,8 @@ const register = asyncHandler(
     res.json({
       status: httpStatusText.SUCCESS,
       message: "successful register",
-      data: { 
+      data: {
+        _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         avatar: `${process.env.SERVER_URL}/api/uploads/${newUser.avatar}`,
@@ -141,9 +178,9 @@ const login = asyncHandler(
 
     const user = await UserModel.findOne({ email: email });
 
-    // Check If User Exists
+    // Check If User not Exists
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         status: httpStatusText.ERROR,
         message: "User does not exist",
         data: null
@@ -152,7 +189,7 @@ const login = asyncHandler(
 
     const IsPasswordMatch = await bcrypt.compare(password, user.password);
 
-    // Check If Password Match
+    // Check If Password not Match
     if (!IsPasswordMatch) {
       return res.status(401).json({
         status: httpStatusText.ERROR,
@@ -229,6 +266,7 @@ const login = asyncHandler(
       status: httpStatusText.SUCCESS,
       message: "successful login",
       data: {
+        _id: user._id,
         name: user.name,
         email: user.email,
         avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
@@ -293,7 +331,7 @@ const refresh = asyncHandler(
 
     const refreshTokenArray = user.refreshToken.filter(rt => rt !== cookies.jwt);
 
-    // evaluate jwt 
+    // evaluate jwt
     jwt.verify(
       cookies.jwt,
       process.env.REFRESH_TOKEN_SECRET,
@@ -342,12 +380,13 @@ const refresh = asyncHandler(
           sameSite: "None", // cross-site cookie
           maxAge: 7 * 24 * 60 * 60 * 1000,
         });
-        
+
         // Send User Data to Client
         res.json({
           status: httpStatusText.SUCCESS,
           message: "successful refresh token",
           data: {
+            _id: user._id,
             name: user.name,
             email: user.email,
             avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
