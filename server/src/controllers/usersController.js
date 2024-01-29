@@ -11,6 +11,10 @@ const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 const ROLES_LIST = require("../utils/roles_list");
 
+// Regular expressions
+const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+
 const getUsers = asyncHandler(
   async (req, res) => {
     const query = req.query;
@@ -85,7 +89,7 @@ const searchUsers = asyncHandler(
 const getSuggestedUsers = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
-    let exceptedUsers = req.body?.exceptedUsers || [];
+    let exceptedUsers = req.query?.exceptedUsers?.split(",") || [];
     const limit = +req.query?.limit || 5;
 
     const user = await UserModel.findById(userId, "followings");
@@ -171,8 +175,8 @@ const multerOptions = () => {
   });
 
   const fileFilter = (req, file, cb) => {
-    const imageType = file.mimetype.split('/')[0];
-    if (imageType === 'image') {
+    const fileType = file.mimetype.split('/')[0];
+    if (fileType === 'image') {
       return cb(null, true)
     } else {
       return cb(null, false)
@@ -193,14 +197,15 @@ const updateUser = asyncHandler(
     const avatar = req?.file?.filename;
 
     if (userInfo.userId != userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
       });
     }
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(userId)
+      .select("_id name email password avatar links bio");
 
     if (!user) {
       return res.status(404).json({
@@ -213,26 +218,42 @@ const updateUser = asyncHandler(
     let message = "account updated successFully";
     let updatedFields = {};
 
+    // Update name
     if (name) {
-      updatedFields = { ...updatedFields, name: name };
-    }
-
-    if (oldPassword && !newPassword) {
-      message += ", also password is not updated as new password required";
-    }
-    if (!oldPassword && newPassword) {
-      message += ", also password is not updated as old password required";
-    }
-    if (oldPassword && newPassword) {
-      const IsPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-      if (!IsPasswordMatch) {
-        message += ", also password is not updated as old password is wrong";
+      // If name not valid
+      if (!NAME_REGEX.test(name)) {
+        message += ", and Name is not updated as Name must be 4 to 24 characters, Must begin with a letter, Letters, numbers, underscores, hyphens allowed, No spaces.";
       } else {
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-        updatedFields = { ...updatedFields, password: hashedPassword };
+        updatedFields = { ...updatedFields, name: name };
       }
     }
 
+    // Update password
+    if (oldPassword && !newPassword) {
+      message += ", and password is not updated as new password required";
+    }
+
+    if (!oldPassword && newPassword) {
+      message += ", and password is not updated as old password required";
+    }
+
+    if (oldPassword && newPassword) {
+      const IsPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+
+      if (!IsPasswordMatch) {
+        message += ", and password is not updated as old password is wrong";
+      } else {
+        // If password not valid
+        if (!PASS_REGEX.test(newPassword)) {
+          message += `, and Password is not updated as Password must be 8 to 24 characters, Must include uppercase and lowercase letters , a number and a special character, Allowed special characters: !, @, #, $, %`;
+        } else {
+          const hashedPassword = await bcrypt.hash(newPassword, 10);
+          updatedFields = { ...updatedFields, password: hashedPassword };
+        }
+      }
+    }
+
+    // Update avatar
     if (avatar) {
       if (user.avatar !== "defaultAvatar.png") {
         fs.unlink(
@@ -243,19 +264,34 @@ const updateUser = asyncHandler(
       updatedFields = { ...updatedFields, avatar: avatar };
     }
 
+    // Update bio
     if (bio) {
-      updatedFields = { ...updatedFields, bio: bio };
+      if (bio.length > 250) {
+        message += `, and bio is not updated as Bio must be at most 250 characters`;
+      } else {
+        updatedFields = { ...updatedFields, bio: bio };
+      }
     }
 
+    // Update links
     if (links) {
-      updatedFields = { ...updatedFields, links: links };
+      if (links.length > 3) {
+        message += `, new link not added as you add all allowed number of links 3 links`;
+      } else {
+        updatedFields = { ...updatedFields, links: links };
+      }
     }
 
+    // Update user account
     const updatedUser = await UserModel.findByIdAndUpdate(
       userId,
       updatedFields,
       { new: true }
-    );
+    )
+      .select("_id name email avatar bio links");
+
+    // Set avatar url
+    updatedUser.avatar = `${process.env.SERVER_URL}/api/uploads/${updatedUser.avatar}`;
 
     res.json({
       status: httpStatusText.SUCCESS,
@@ -283,7 +319,7 @@ const deleteUser = asyncHandler(
       userId != userInfo.userId
       && !userInfo.roles.includes(ROLES_LIST.Admin)
     ) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -310,6 +346,7 @@ const deleteUser = asyncHandler(
       });
     }
 
+    // Delete user avatar
     if (user.avatar !== "defaultAvatar.png") {
       fs.unlink(
         path.join(__dirname, "..", "uploads", user.avatar),
@@ -317,8 +354,9 @@ const deleteUser = asyncHandler(
       );
     }
 
+    // delete user posts images and posts comments
     const posts = await PostModel.find({ creator: user._id }, "images");
-    posts.map((post) => {
+    posts.map(async (post) => {
       if (post?.images && post.images.length > 0) {
         post.images.map((image) => {
           fs.unlink(
@@ -327,10 +365,22 @@ const deleteUser = asyncHandler(
           );
         });
       }
+      await CommentModel.deleteMany({ post: post._id });
     });
+
+    // Delete user posts
     await PostModel.deleteMany({ creator: user._id });
+
+    // Delete user reports
     await ReportModel.deleteMany({ sender: user._id });
+
+    // Delete user comments
     await CommentModel.deleteMany({ creator: user._id });
+
+    // Delete user notification
+    // soon
+
+    // Delete user
     await UserModel.deleteOne({ _id: userId });
 
     res.json({
@@ -367,7 +417,7 @@ const getFollowers = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "successful fetching user followers",
+      message: "successful fetching followers",
       data: followers
     });
   }
@@ -382,13 +432,13 @@ const removeFollower = asyncHandler(
     if (!removedFollowerId) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "follower id you want to remove from your followers required",
+        message: "follower id required",
         data: null
       });
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -407,7 +457,7 @@ const removeFollower = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "user removed from you followers successfully",
+      message: "user removed from your followers",
       data: null
     });
   }
@@ -439,7 +489,7 @@ const getFollowings = asyncHandler(
 
     res.json({
       status: httpStatusText.SUCCESS,
-      message: "successful fetching users that user follows",
+      message: "successful fetching followings",
       data: followings
     });
   }
@@ -454,13 +504,13 @@ const FollowUser = asyncHandler(
     if (!newFollowedId) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "user id of user you want to follow required",
+        message: "user id required",
         data: null
       });
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -504,13 +554,13 @@ const removeFollowing = asyncHandler(
     if (!removedFollowingId) {
       return res.status(400).json({
         status: httpStatusText.ERROR,
-        message: "user id you want to unfollow required",
+        message: "user id required",
         data: null
       });
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -582,7 +632,7 @@ const getLikedPosts = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -617,12 +667,14 @@ const getLikedPosts = asyncHandler(
     if (likedPosts.length > 0) {
       likedPosts.map((post) => {
         if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
+          post.images = post.images.map((image) => {
             return `${process.env.SERVER_URL}/api/uploads/${image}`;
           });
-          post.images = imagesUrl;
-          post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
         }
+        post.creator.avatar = new URL(
+          post.creator.avatar,
+          `${process.env.SERVER_URL}/api/uploads/`
+        );
       });
     }
 
@@ -645,7 +697,7 @@ const getSavedPosts = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -680,12 +732,14 @@ const getSavedPosts = asyncHandler(
     if (savedPosts.length > 0) {
       savedPosts.map((post) => {
         if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
+          post.images = post.images.map((image) => {
             return `${process.env.SERVER_URL}/api/uploads/${image}`;
           });
-          post.images = imagesUrl;
-          post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
         }
+        post.creator.avatar = new URL(
+          post.creator.avatar,
+          `${process.env.SERVER_URL}/api/uploads/`
+        );
       });
     }
 
@@ -708,7 +762,7 @@ const getCreatedComments = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -742,7 +796,7 @@ const getCreatedReports = asyncHandler(
       userId != userInfo.userId
       && !userInfo.roles.includes(ROLES_LIST.Admin)
     ) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null

@@ -138,7 +138,7 @@ const getReport = asyncHandler(
 const updateReport = asyncHandler(
   async (req, res) => {
     if (req?.userInfo?.userId != req?.report?.sender?._id) {
-      return res.status(401).json({
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null

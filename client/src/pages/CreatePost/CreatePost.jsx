@@ -1,9 +1,13 @@
+// Modules
 import { useEffect, useRef, useState } from 'react';
-import { useNotify, useAxiosPrivate } from '../../hooks';
 import { MoonLoader } from "react-spinners";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+// Hooks
+import { useNotify, useAxiosPrivate } from '../../hooks';
+// Images
 import uploadImageIcon from "../../assets/uploadImageIcon.svg";
+// Css style
 import style from './CreatePost.module.css';
 
 const CreatePost = () => {
@@ -11,6 +15,7 @@ const CreatePost = () => {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
+
   const errRef = useRef();
   const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
@@ -27,12 +32,13 @@ const CreatePost = () => {
     setImages(images.filter(image => image !== e));
   }
 
+  // Create post
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       if (images.length === 0) {
-        return notify("info", "You should select one image at least");
+        return notify("info", "Select one image at least");
       } else if (images.length > 12) {
         return notify("info", "Max images is 12");
       }
@@ -110,12 +116,12 @@ const CreatePost = () => {
       <div className={style.images_container}>
         {
           images.length === 0 ?
-            <img
+            (<img
               className={style.upload_images_icon}
               src={uploadImageIcon}
               alt="upload images icon"
-            />
-            : <ul className={style.images}>
+            />)
+            : (<ul className={style.images}>
               {
                 images.map((image, i) => {
                   return <li key={i}>
@@ -132,8 +138,9 @@ const CreatePost = () => {
                   </li>
                 })
               }
-            </ul>
+            </ul>)
         }
+
         <input
           type="file"
           id="upload_images_input"
@@ -141,8 +148,9 @@ const CreatePost = () => {
           multiple={true}
           onChange={selectImages}
         />
+
         <label htmlFor="upload_images_input">
-          upload images
+          upload images from your machine
         </label>
       </div>
 
@@ -150,6 +158,7 @@ const CreatePost = () => {
       <button
         type='submit'
         disabled={loading ? true : false}
+        style={loading ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Create</span>
         {loading && <MoonLoader color="#fff" size={15} />}

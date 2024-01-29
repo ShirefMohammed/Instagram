@@ -1,3 +1,5 @@
+Remember line 169 add follow button for profile page
+
 <============>      Social Media App Structure      <============>
 
 <======================>      Server      <======================>
@@ -19,34 +21,34 @@
 - logout                                                        🗸🗸
 ------------------------------------------------------------------
 
-(3) UsersRouters && Controllers 
-	- getUsers                    🗸🗸
-	- searchUsers                 🗸🗸
-	- getUser                     🗸🗸
-	- updateUser                  🗸🗸
-	- deleteUser                  🗸🗸
-	- getFollowers                🗸🗸
-	- removeFollower              🗸🗸
-	- getFollowings               🗸🗸
-	- FollowUser                  🗸🗸
-	- removeFollowing             🗸🗸
-	- getCreatedPosts             🗸🗸
-	- getLikedPosts               🗸🗸
-	- getSavedPosts               🗸🗸
-	- getCreatedComments          🗸🗸
-	- getCreatedReports           🗸🗸
-	- getSuggestedUsers           🗸🗸
-	- handleNotifications         
-  Notification {
-    from: senderId,
-    to: userId;,
-    type: "newFollower" || "newComment" || "newMessage",
-    message: string,
-    post: id,
-    chat: id,
-    message: id, // last unread message
-    seen: false,
-  }
+(3) Users                                                       🗸🗸
+- getUsers                                                      🗸🗸
+- searchUsers                                                   🗸🗸
+- getUser                                                       🗸🗸
+- updateUser                                                    🗸🗸
+- deleteUser                                                    🗸🗸
+- getFollowers                                                  🗸🗸
+- removeFollower                                                🗸🗸
+- getFollowings                                                 🗸🗸
+- FollowUser                                                    🗸🗸
+- removeFollowing                                               🗸🗸
+- getCreatedPosts                                               🗸🗸
+- getLikedPosts                                                 🗸🗸
+- getSavedPosts                                                 🗸🗸
+- getCreatedComments                                            🗸🗸
+- getCreatedReports                                             🗸🗸
+- getSuggestedUsers                                             🗸🗸
+- handleNotifications                                           
+Notification {
+  from: senderId,
+  to: userId;,
+  type: "newFollower" || "newComment" || "newMessage",
+  message: string,
+  post: id,
+  chat: id,
+  message: id, // last unread message
+  seen: false,
+}
 ------------------------------------------------------------------
 
 (3) Posts                                                      🗸🗸
@@ -93,7 +95,7 @@ Coming soon
 ------------------------------------------------------------------
 
 (2) Hooks                                                      🗸🗸
-- create useAxiosPrivate                                       🗸🗸
+- useAxiosPrivate                                              🗸🗸
 {
   how useAxiosPrivate works
   you declare axiosPrivate = useAxiosPrivate()
@@ -104,7 +106,7 @@ Coming soon
   and navigate to /authentication to login again
   accessToken and refreshToken expired in status 403
 }
-- create useRefreshToken                                       🗸🗸
+- useRefreshToken                                              🗸🗸
 {
   how useRefreshToken works
   you declare refresh = useRefreshToken()
@@ -114,14 +116,14 @@ Coming soon
   else you will get accessToken and data
   and setUser({...user, ...data});
 }
-- create useLogout                                             🗸🗸
+- useLogout                                                    🗸🗸
 {
   how useLogout works
   you declare logout = useLogout()
   then setUser({}) and start sending get req to remove jwt
   then navigate /authentication
 }
-- create useNotify                                             🗸🗸
+- useNotify                                                    🗸🗸
 {
   how useNotify works
   you declare notify = useNotify()
@@ -130,22 +132,23 @@ Coming soon
 ------------------------------------------------------------------
 
 (3) Pages                                                      🗸🗸
-- create NotFoundPage                                          🗸🗸
-- create Unauthorized                                          🗸🗸
-- create NoServerResponse                                      🗸🗸
-- create Authentication                                        🗸🗸
-- create MainContent                                           🗸🗸
-- create CreteReport                                           🗸🗸
-- create Report                                                🗸🗸
-- create UpdateReport                                          🗸🗸
-- create CreatePost                                            🗸🗸  
-- create UpdatePost                                            🗸🗸
-- create Home                                                  🗸🗸
-- create Search                                                🗸🗸
-- create Explore                                               🗸🗸
-- create Profile                                               
-- create Settings                                              
-- create Post                                                  
+- NotFoundPage                                                 🗸🗸
+- Unauthorized                                                 🗸🗸
+- NoServerResponse                                             🗸🗸
+- Authentication                                               🗸🗸
+- MainContent                                                  🗸🗸
+- CreteReport                                                  🗸🗸
+- Report                                                       🗸🗸
+- UpdateReport                                                 🗸🗸
+- CreatePost                                                   🗸🗸
+- UpdatePost                                                   🗸🗸
+- Home                                                         🗸🗸
+- Search                                                       🗸🗸
+- Explore                                                      🗸🗸
+- Post                                                         🗸🗸
+- Profile                                                      🗸🗸
+- EditProfile                                                  
+- Settings                                                     
 ------------------------------------------------------------------
 
 (4) Components                                                 🗸🗸
@@ -154,7 +157,7 @@ Coming soon
 - Sidebar                                                      🗸🗸
 - RequireAuth                                                  🗸🗸
 - PersistLogin                                                 🗸🗸
-- UserCard                                                     🗸🗸  
+- UserCard                                                     🗸🗸
 - PostCard                                                     🗸🗸
 - SuggestedPosts                                               🗸🗸
 - ExploredPosts                                                🗸🗸

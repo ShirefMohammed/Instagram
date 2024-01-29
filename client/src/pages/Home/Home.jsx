@@ -1,19 +1,13 @@
 /* eslint-disable react/prop-types */
 // Modules
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PuffLoader } from "react-spinners";
-import { jwtDecode } from "jwt-decode";
 // Components
-import {
-  SuggestedPosts
-} from "../../components";
+import { SuggestedPosts } from "../../components";
 // Hooks
-import {
-  useAxiosPrivate,
-  useNotify
-} from "../../hooks";
+import { useAxiosPrivate, useHandleErrors, useNotify } from "../../hooks";
 // Default avatar image
 import defaultAvatar from "../../assets/defaultAvatar.png";
 // Css style
@@ -32,13 +26,13 @@ const Home = () => {
       </div>
 
       {/* Left side - Suggested Users to follow */}
-      {
-        user?.accessToken ?
-          <div className={style.left_side}>
+      <>
+        {
+          user?.accessToken ? (<div className={style.left_side}>
             <SuggestedUsers />
-          </div>
-          : ""
-      }
+          </div>) : ""
+        }
+      </>
     </div>
   )
 }
@@ -46,30 +40,31 @@ const Home = () => {
 // Followings Component to show some User Followings
 const Followings = () => {
   const user = useSelector(state => state.user);
+
   const [followings, setFollowings] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
 
-  // Decode accessToken to get user id
-  const decoded = user?.accessToken ? jwtDecode(user?.accessToken) : undefined;
-
-  // Fetch Suggested Users
+  // Fetch followings Users
   useEffect(() => {
-    const fetchSuggestedUsers = async () => {
+    const fetchFollowingsUsers = async () => {
       try {
         if (!user?.accessToken) return null;
         setLoading(true);
         const res = await axiosPrivate.get(
-          `/users/${decoded?.userInfo?.userId}/followings`
+          `/users/${user?._id}/followings`
         );
         setFollowings(res?.data?.data || []);
       } catch (err) {
-        console.log(err)
+        handleErrors.handleNoServerResponse(err);
+        handleErrors.handleServerError(err);
       } finally {
         setLoading(false);
       }
     }
-    fetchSuggestedUsers();
+    fetchFollowingsUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,13 +73,13 @@ const Followings = () => {
       {
         // While fetching user followings
         loading ?
-          <div className={style.loading_container}>
+          (<div className={style.loading_container}>
             <PuffLoader color="#000" size={25} />
-          </div>
+          </div>)
 
           // If user login and have followings
           : followings?.length && followings.length > 0 ?
-            <ul>
+            (<ul>
               {
                 followings.map((following) => {
                   if (following?._id) {
@@ -99,7 +94,7 @@ const Followings = () => {
                   }
                 })
               }
-            </ul>
+            </ul>)
 
             // No thing
             : ""
@@ -112,7 +107,9 @@ const Followings = () => {
 const SuggestedUsers = () => {
   const user = useSelector(state => state.user);
   const [suggestedUsers, setSuggestedUsers] = useState([]);
+
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
 
   // Fetch Suggested Users
   useEffect(() => {
@@ -122,7 +119,8 @@ const SuggestedUsers = () => {
         const res = await axiosPrivate.get("/users/suggest");
         setSuggestedUsers(res?.data?.data || []);
       } catch (err) {
-        console.log(err)
+        handleErrors.handleNoServerResponse(err);
+        handleErrors.handleServerError(err);
       }
     }
     fetchSuggestedUsers();
@@ -138,9 +136,9 @@ const SuggestedUsers = () => {
         {
           suggestedUsers.map((suggestedUser) => {
             if (suggestedUser?._id) {
-              return <li key={suggestedUser._id}>
+              return (<li key={suggestedUser._id}>
                 <SuggestedUserCard suggestedUser={suggestedUser} />
-              </li>
+              </li>)
             }
           })
         }
@@ -157,30 +155,22 @@ const SuggestedUserCard = ({ suggestedUser }) => {
   const [loading, setLoading] = useState(false);
 
   const axiosPrivate = useAxiosPrivate();
-  const location = useLocation();
-  const navigate = useNavigate();
+  const handleErrors = useHandleErrors();
   const notify = useNotify();
-
-  // Decode accessToken to get user id
-  const decoded = user?.accessToken ? jwtDecode(user?.accessToken) : undefined;
 
   // Follow user
   const followUser = async (newFollowedId) => {
     try {
       setLoading(true);
       const res = await axiosPrivate.post(
-        `users/${decoded?.userInfo?.userId}/followings`,
+        `users/${user?._id}/followings`,
         { newFollowedId: newFollowedId }
       );
       setFollowedUsers([...followedUsers, newFollowedId]);
       notify("success", res?.data?.message);
     } catch (err) {
-      if (err?.response?.status === 403) {
-        navigate(
-          "/authentication",
-          { state: { from: location }, replace: true }
-        )
-      }
+      handleErrors.handleNoServerResponse(err);
+      handleErrors.handleServerError(err);
     } finally {
       setLoading(false);
     }
@@ -192,18 +182,14 @@ const SuggestedUserCard = ({ suggestedUser }) => {
       setLoading(true);
       const res = await axiosPrivate({
         method: 'delete',
-        url: `users/${decoded?.userInfo?.userId}/followings`,
+        url: `users/${user?._id}/followings`,
         data: { removedFollowingId: removedFollowingId }
       });
       setFollowedUsers(followedUsers.filter(id => id !== removedFollowingId));
       notify("success", res?.data?.message);
     } catch (err) {
-      if (err?.response?.status === 403) {
-        navigate(
-          "/authentication",
-          { state: { from: location }, replace: true }
-        )
-      }
+      handleErrors.handleNoServerResponse(err);
+      handleErrors.handleServerError(err);
     } finally {
       setLoading(false);
     }
@@ -223,29 +209,33 @@ const SuggestedUserCard = ({ suggestedUser }) => {
       </Link>
 
       {/* follow && unfollow buttons */}
-      {
-        !followedUsers.includes(suggestedUser._id) ?
-          <button
-            type="button"
-            onClick={() => followUser(suggestedUser._id)}
-          >
-            {
-              loading ?
-                <PuffLoader color="#000" size={17} />
-                : <span className={style.follow}>follow</span>
-            }
-          </button>
-          : <button
-            type="button"
-            onClick={() => unfollowUser(suggestedUser._id)}
-          >
-            {
-              loading ?
-                <PuffLoader color="#000" size={17} />
-                : <span className={style.unfollow}>unfollow</span>
-            }
-          </button>
-      }
+      <>
+        {
+          !followedUsers.includes(suggestedUser._id) ?
+            <button
+              type="button"
+              disabled={loading ? true : false}
+              onClick={() => followUser(suggestedUser._id)}
+            >
+              {
+                loading ?
+                  <PuffLoader color="#000" size={17} />
+                  : <span className={style.follow}>follow</span>
+              }
+            </button>
+            : <button
+              type="button"
+              disabled={loading ? true : false}
+              onClick={() => unfollowUser(suggestedUser._id)}
+            >
+              {
+                loading ?
+                  <PuffLoader color="#000" size={17} />
+                  : <span className={style.unfollow}>unfollow</span>
+              }
+            </button>
+        }
+      </>
     </div>
   )
 }

@@ -128,14 +128,13 @@ const getSuggestedPosts = asyncHandler(
         path: "creator",
         select: "_id name email avatar roles"
       })
-      .sort({ updatedAt: -1 });
+      .sort({ createdAt: -1 });
 
     posts.map((post) => {
       if (post?.images && post.images.length > 0) {
-        const imagesUrl = post.images.map((image) => {
+        post.images = post.images.map((image) => {
           return `${process.env.SERVER_URL}/api/uploads/${image}`;
         });
-        post.images = imagesUrl;
       }
       post.creator.avatar = new URL(
         `${post.creator.avatar}`,
@@ -308,11 +307,11 @@ const deletePost = asyncHandler(
 
     if (
       !userInfo.roles.includes(ROLES_LIST.Admin)
-      || userInfo.userId != post.creator
+      && userInfo.userId != post.creator
     ) {
       return res.status(403).json({
         status: httpStatusText.ERROR,
-        message: `You don't have access to delete this post`,
+        message: `You don't have access to delete`,
         data: null
       });
     }
@@ -389,7 +388,6 @@ const addPostLike = asyncHandler(
     const userId = req.userInfo.userId;
 
     const post = await PostModel.findById(postId, "likes");
-    const user = await UserModel.findById(userId, "likedPosts");
 
     if (!post) {
       return res.status(404).json({
@@ -398,6 +396,8 @@ const addPostLike = asyncHandler(
         data: null
       });
     }
+
+    const user = await UserModel.findById(userId, "likedPosts");
 
     if (!user) {
       return res.status(404).json({
@@ -431,7 +431,6 @@ const removePostLike = asyncHandler(
     const userId = req.userInfo.userId;
 
     const post = await PostModel.findById(postId, "likes");
-    const user = await UserModel.findById(userId, "likedPosts");
 
     if (!post) {
       return res.status(404).json({
@@ -440,6 +439,8 @@ const removePostLike = asyncHandler(
         data: null
       });
     }
+
+    const user = await UserModel.findById(userId, "likedPosts");
 
     if (!user) {
       return res.status(404).json({
@@ -542,7 +543,7 @@ const getPostComments = asyncHandler(
     const postId = req?.params?.id;
     const query = req.query;
 
-    const limit = query?.limit || 20;
+    const limit = query?.limit || 5;
     const page = query?.page || 1;
     const skip = (page - 1) * limit;
 
@@ -554,6 +555,10 @@ const getPostComments = asyncHandler(
       .populate({
         path: "creator",
         select: "_id name email avatar"
+      })
+      .populate({
+        path: "post",
+        select: "_id creator"
       })
       .sort({ createdAt: sort });
 
@@ -612,6 +617,23 @@ const addPostComment = asyncHandler(
       content: content
     });
 
+    // Populate the 'creator' field
+    await newComment.populate({
+      path: 'creator',
+      select: "_id name email avatar"
+    });
+
+    newComment.creator.avatar = new URL(
+      newComment.creator.avatar,
+      `${process.env.SERVER_URL}/api/uploads/`
+    );
+
+    // Populate the 'post' field
+    await newComment.populate({
+      path: 'post',
+      select: "_id creator"
+    });
+
     res.json({
       status: httpStatusText.SUCCESS,
       message: "Comment added successfully",
@@ -643,7 +665,15 @@ const updatePostComment = asyncHandler(
       });
     }
 
-    const comment = await CommentModel.findById(commentId);
+    const comment = await CommentModel.findById(commentId)
+      .populate({
+        path: 'creator',
+        select: "_id name email avatar"
+      })
+      .populate({
+        path: 'post',
+        select: "_id creator"
+      })
 
     if (!comment) {
       return res.status(404).json({
@@ -653,8 +683,8 @@ const updatePostComment = asyncHandler(
       });
     }
 
-    if (userId != comment.creator || postId != comment.post) {
-      return res.status(401).json({
+    if (userId != comment.creator._id || postId != comment.post._id) {
+      return res.status(403).json({
         status: httpStatusText.ERROR,
         message: "Forbidden",
         data: null
@@ -663,6 +693,11 @@ const updatePostComment = asyncHandler(
 
     comment.content = content;
     await comment.save();
+
+    comment.creator.avatar = new URL(
+      comment.creator.avatar,
+      `${process.env.SERVER_URL}/api/uploads/`
+    );
 
     res.json({
       status: httpStatusText.SUCCESS,
@@ -699,8 +734,8 @@ const removePostComment = asyncHandler(
 
     if (
       userId != comment.creator
-      || userId != comment.post.creator
-      || !roles.includes(ROLES_LIST.Admin)
+      && userId != comment.post.creator
+      && !roles.includes(ROLES_LIST.Admin)
     ) {
       return res.status(403).json({
         status: httpStatusText.ERROR,

@@ -1,24 +1,23 @@
 // Modules
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { MoonLoader } from "react-spinners";
 // Hooks
-import { useAxiosPrivate, useNotify } from "../../hooks";
+import { useAxiosPrivate, useHandleErrors, useNotify } from "../../hooks";
 // Css style
 import style from "./UpdateReport.module.css";
 
 const CreateReport = () => {
   const { id } = useParams();
-  
+
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  
+
   const errRef = useRef();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
+  const notify = useNotify();
 
   useEffect(() => {
     setErrMsg("");
@@ -30,17 +29,8 @@ const CreateReport = () => {
         const res = await axiosPrivate.get(`reports/${id}`);
         setContent(res?.data?.data?.content || "");
       } catch (err) {
-        if (!err?.response) {
-          navigate(
-            '/noServerResponse',
-            { state: { from: location }, replace: true }
-          );
-        } else if (err?.response?.status === 403) {
-          navigate(
-            '/unauthorized',
-            { state: { from: location }, replace: true }
-          );
-        }
+        handleErrors.handleNoServerResponse(err);
+        handleErrors.handleServerError(err);
       }
     }
     fetchReport();
@@ -88,16 +78,18 @@ const CreateReport = () => {
       <h2>Update report</h2>
 
       {/* Error Message */}
-      {
-        errMsg &&
-        <p
-          ref={errRef}
-          className={style.error_message}
-          aria-live="assertive"
-        >
-          {errMsg}
-        </p>
-      }
+      <>
+        {
+          errMsg &&
+          <p
+            ref={errRef}
+            className={style.error_message}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+        }
+      </>
 
       {/* Content */}
       <textarea
@@ -105,8 +97,7 @@ const CreateReport = () => {
         id="content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-      >
-      </textarea>
+      ></textarea>
 
       {/* Submit btn */}
       <button

@@ -24,26 +24,26 @@ const {
   getCreatedReports,
 } = require("../controllers/usersController");
 
-// getUsers, Admins or Editors is Only Available for Admin
-// searchUsers Users is Available for All
-// getSuggestedUsers Users is Available for All verified
+// getUsers, users, admins or editors is only available for admin
+// searchUsers Users is available for all
+// getSuggestedUsers Users is available for verified users
 
-// getUser is Available for All
-// updateUser is Only Available for Owner
-// deleteUser is Available for Both Owner and Admin
+// getUser is available for all
+// updateUser is only available for account owner
+// deleteUser is available for both account owner and admin
 
-// getFollowers is Available for All
-// removeFollower is Only Available for Owner
+// getFollowers is available for all
+// removeFollower is only available for account owner
 
-// getFollowings is Available for All
-// FollowUser is Available for verified Users
-// removeFollowing is Only Available for Owner
+// getFollowings is available for all
+// followUser is available for verified users
+// removeFollowing is only available for account owner
 
-// getCreatedPosts is Available for All
-// getLikedPosts is Available for Owner
-// getSavedPosts is Available for Owner
-// getCreatedComments is Available for Owner
-// getCreatedReports is Available for Both Owner and Admin
+// getCreatedPosts is available for all
+// getLikedPosts is available for account owner
+// getSavedPosts is available for account owner
+// getCreatedComments is available for account owner
+// getCreatedReports is available for both account owner and admin
 
 router.route('/')
   .get(
@@ -65,6 +65,7 @@ router.route('/suggest')
 
 const { storage, fileFilter } = multerOptions();
 const upload = multer({ storage, fileFilter });
+
 router.route('/:id')
   .get(
     getUser

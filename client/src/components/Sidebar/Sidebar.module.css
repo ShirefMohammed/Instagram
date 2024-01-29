@@ -30,6 +30,7 @@
 
 .sidebar .logo img {
   width: 100px;
+  user-select: none;
 }
 
 .sidebar .links {
@@ -69,6 +70,7 @@
 .sidebar .links li a img.avatar {
   width: 25px;
   height: 25px;
+  user-select: none;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;

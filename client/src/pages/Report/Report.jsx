@@ -1,22 +1,17 @@
 // Modules
 import { useEffect, useState } from "react";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams, } from "react-router-dom";
 // Api axios
-import { useAxiosPrivate } from "../../hooks";
+import { useAxiosPrivate, useHandleErrors } from "../../hooks";
 // Css style
 import style from "./Report.module.css";
 
 const Report = () => {
   const { id } = useParams();
   const [content, setContent] = useState("");
-  const navigate = useNavigate();
-  const location = useLocation();
+
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -24,17 +19,11 @@ const Report = () => {
         const res = await axiosPrivate.get(`reports/${id}`);
         setContent(res?.data?.data?.content || "");
       } catch (err) {
-        if (!err?.response) {
-          navigate(
-            '/noServerResponse',
-            { state: { from: location }, replace: true }
-          );
-        } else if (err?.response?.status === 403) {
-          navigate(
-            '/unauthorized',
-            { state: { from: location }, replace: true }
-          );
-        }
+        handleErrors.handleNoServerResponse(err);
+        handleErrors.handleServerError(err);
+        handleErrors.handleUnauthorized(err);
+        handleErrors.handleForbidden(err);
+        handleErrors.handleNoResourceFound(err);
       }
     }
     fetchReport();

@@ -3,17 +3,19 @@ import { useState, useEffect } from "react";
 import { PuffLoader } from "react-spinners";
 // Component
 import { PostCard } from "../";
-// Axios
+// Hooks
+import { useHandleErrors } from "../../hooks";
+// Api axios
 import axios from "../../api/axios";
 // Css style
 import style from "./SuggestedPosts.module.css"
 
 const SuggestedPosts = () => {
   const limit = 10;
-
+  const [page, setPage] = useState(1);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const handleErrors = useHandleErrors();
 
   // Fetch suggested Posts
   useEffect(() => {
@@ -25,7 +27,8 @@ const SuggestedPosts = () => {
         );
         setPosts([...posts, ...res.data.data]);
       } catch (err) {
-        console.error(err);
+        handleErrors.handleNoServerResponse(err);
+        handleErrors.handleServerError(err);
       } finally {
         setLoading(false);
       }
@@ -40,45 +43,48 @@ const SuggestedPosts = () => {
         posts?.length ?
           (<div className={style.posts_container}>
             {/* Posts */}
-            {
-              posts.length > 0 ?
-                posts.map(post => {
-                  return <PostCard key={post._id} post={post} />
-                })
-                : ""
-            }
+            <>
+              {
+                posts.length > 0 ?
+                  posts.map(post => {
+                    return <PostCard key={post._id} post={post} />
+                  })
+                  : ""
+              }
+            </>
 
             {/* Loading More Posts Button */}
-            {
-              // While fetching posts || If there are posts in db
-              loading || page * limit === posts.length ?
-                (<button
-                  type="button"
-                  className={style.load_more_posts_btn}
-                  onClick={() => {
-                    setLoading(true)
-                    setPage(prev => prev + 1)
-                  }}
-                >
-                  {
-                    loading ?
-                      <PuffLoader color="#000" size={25} />
-                      : "More"
-                  }
-                </button>)
+            <>
+              {
+                // While fetching posts || If there are posts in db
+                loading || page * limit === posts.length ?
+                  (<button
+                    type="button"
+                    className={style.load_more_posts_btn}
+                    disabled={loading ? true : false}
+                    onClick={() => {
+                      setLoading(true)
+                      setPage(prev => prev + 1)
+                    }}
+                  >
+                    {
+                      loading ?
+                        <PuffLoader color="#000" size={25} />
+                        : "More"
+                    }
+                  </button>)
 
-                // If user reaches last post
-                : page * limit > posts.length ?
-                  (<p className={style.no_more_posts_message}>
-                    You reached last post
-                  </p>)
+                  // If user reaches last post
+                  : page * limit > posts.length ?
+                    (<p className={style.no_more_posts_message}>
+                      You reached last post
+                    </p>)
 
-                  // No thing
-                  : ""
-            }
-          </div>)
-
-          : ""
+                    // No thing
+                    : ""
+              }
+            </>
+          </div>) : ""
       }
     </div>
   )

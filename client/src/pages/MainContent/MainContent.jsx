@@ -12,11 +12,15 @@ import {
   Search,
   Explore,
   CreatePost,
+  Post,
   UpdatePost,
   CreateReport,
   Report,
   UpdateReport,
   NoTFoundPage,
+  Profile,
+  UpdateProfile,
+  Settings,
 } from '../';
 // Css style
 import style from "./MainContent.module.css";
@@ -36,6 +40,8 @@ const MainContent = () => {
           <Route path="/" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/posts/:id" element={<Post />} />
+          <Route path="/users/:id" element={<Profile />} />
 
           {/* Protected Routes only user can access them */}
           <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
@@ -49,11 +55,10 @@ const MainContent = () => {
             <Route path="/posts/:id/update" element={<UpdatePost />} />
 
             {/* Profile Routes */}
-            <Route path="/profile" element={"profile"} />
+            <Route path="/users/:id/update" element={<UpdateProfile />} />
 
             {/* Settings Routes */}
-            <Route path="/settings" element={"settings"} />
-            <Route path="/settings/saved" element={"/settings/saved"} />
+            <Route path="/settings/:tab" element={<Settings />} />
 
             {/* Chat Routes */}
             <Route path="/chat" element={"chat"} />

@@ -1,3 +1,11 @@
+.loading_container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .explored_posts {
   padding: 25px 15px 15px 15px;
   width: 100%;

@@ -29,12 +29,15 @@ const PASS_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Register = () => {
   const user = useSelector(state => state.user);
+
+  const nameRef = useRef();
+  const [loading, setLoading] = useState(false);
+
   const dispatch = useDispatch();
   const notify = useNotify();
-  const [loading, setLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState('');
-  const nameRef = useRef();
+
   const errRef = useRef();
+  const [errMsg, setErrMsg] = useState('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -156,16 +159,18 @@ const Register = () => {
       onSubmit={handleSubmit}
     >
       {/* Error Message */}
-      {
-        errMsg &&
-        <p
-          ref={errRef}
-          className={style.error_message}
-          aria-live="assertive"
-        >
-          {errMsg}
-        </p>
-      }
+      <>
+        {
+          errMsg &&
+          <p
+            ref={errRef}
+            className={style.error_message}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+        }
+      </>
 
       {/* Form Title */}
       <h2>Register</h2>

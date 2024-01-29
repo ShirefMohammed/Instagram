@@ -12,6 +12,8 @@ import {
   Authentication,
   Unauthorized,
   NoServerResponse,
+  ServerError,
+  NoResourceFound,
 } from "./pages";
 
 function App() {
@@ -24,8 +26,11 @@ function App() {
           {/* Public Routes */}
           <Route path="/*" element={<MainContent />} />
           <Route path="/authentication" element={<Authentication />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
+          {/* Handle Error Routes */}
+          <Route path="/serverError" element={<ServerError />} />
           <Route path="/noServerResponse" element={<NoServerResponse />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/noResourceFound" element={<NoResourceFound />} />
 
           {/* Protected Routes */}
           {/* Will Added Later */}

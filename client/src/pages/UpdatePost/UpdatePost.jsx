@@ -1,18 +1,31 @@
-import { useEffect, useState } from 'react';
+// Modules
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useNotify, useAxiosPrivate } from '../../hooks';
 import { MoonLoader } from "react-spinners";
+// Hooks
+import { useNotify, useAxiosPrivate } from '../../hooks';
+// Css style
 import style from './UpdatePost.module.css';
 
 const CreatePost = () => {
   const { id } = useParams();
+
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
+
   const [loadingData, setLoadingData] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+
   const [errorFetching, setErrorFetching] = useState("");
+  const [errorUpdating, setErrorUpdating] = useState("");
+
+  const errRef = useRef();
   const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
+
+  useEffect(() => {
+    setErrorUpdating("");
+  }, [content])
 
   // Fetching post data
   useEffect(() => {
@@ -58,15 +71,12 @@ const CreatePost = () => {
     }
 
     catch (err) {
-      console.log(err);
-      if (!err?.response) {
-        notify("error", "NO Server Response");
-      } else {
-        const message = err.response?.data?.message;
-        message ?
-          notify("error", message)
-          : notify("error", "Post not updated");
-      }
+      if (!err?.response) setErrorUpdating('No Server Response');
+      const message = err.response?.data?.message;
+      message ?
+        setErrorUpdating(message)
+        : setErrorUpdating('Post not updated');
+      errRef.current.focus();
     }
 
     finally {
@@ -97,6 +107,20 @@ const CreatePost = () => {
               {/* Page Title */}
               <h2>Update post</h2>
 
+              {/* Error Message */}
+              <>
+                {
+                  errorUpdating &&
+                  <p
+                    ref={errRef}
+                    className={style.error_message}
+                    aria-live="assertive"
+                  >
+                    {errorUpdating}
+                  </p>
+                }
+              </>
+
               {/* Content */}
               <textarea
                 name="content"
@@ -125,6 +149,7 @@ const CreatePost = () => {
               <button
                 type='submit'
                 disabled={loadingUpdate ? true : false}
+                style={loadingUpdate ? { opacity: .5, cursor: "revert" } : {}}
               >
                 <span>Update</span>
                 {loadingUpdate && <MoonLoader color="#fff" size={15} />}

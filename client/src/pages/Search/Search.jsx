@@ -1,14 +1,21 @@
+// Modules
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { MoonLoader } from "react-spinners";
-import { UserCard } from "../../components";
-import { useAxiosPrivate } from "../../hooks";
+// Hooks
+import { useAxiosPrivate, useHandleErrors } from "../../hooks";
+// Css style
 import style from "./Search.module.css";
+// Images
+import defaultAvatar from "../../assets/defaultAvatar.png";
 
 const Search = () => {
   const [searchKey, setSearchKey] = useState("");
   const [loading, setLoading] = useState("");
   const [users, setUsers] = useState([]);
+
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
 
   // Search about users
   const search = async (e) => {
@@ -21,7 +28,8 @@ const Search = () => {
       );
       setUsers(res?.data?.data);
     } catch (err) {
-      console.log(err);
+      handleErrors.handleNoServerResponse(err);
+      handleErrors.handleServerError(err);
     } finally {
       setLoading(false);
     }
@@ -46,28 +54,35 @@ const Search = () => {
       />
 
       {/* Search Results */}
-      {
-        // While fetching search results
-        loading ?
-          <div className={style.spinner_container}>
-            <MoonLoader color="#000" size={20} />
-          </div>
-
-          // If There is search results
-          : users?.length > 0 ?
-            <div className={style.search_result_container}>
-              {
-                users.map((user) =>
-                  <UserCard key={user?._id} user={user} />
-                )
-              }
+      <>
+        {
+          // While fetching search results
+          loading ?
+            <div className={style.spinner_container}>
+              <MoonLoader color="#000" size={20} />
             </div>
 
-            // If There is no search results
-            : <div style={{ textAlign: "center" }}>
-              Start searching about any user
-            </div>
-      }
+            // If There is search results
+            : users?.length > 0 ?
+              <div className={style.search_result_container}>
+                {
+                  users.map((user) =>
+                    user?._id ?
+                      (<div key={user._id} className={style.user_card}>
+                        <img src={user?.avatar || defaultAvatar} alt="avatar" />
+                        <Link to={`/users/${user?._id}`}>{user?.name}</Link>
+                      </div>)
+                      : ""
+                  )
+                }
+              </div>
+
+              // If There is no search results
+              : <div style={{ textAlign: "center" }}>
+                Start searching about any user
+              </div>
+        }
+      </>
     </form>
   )
 }

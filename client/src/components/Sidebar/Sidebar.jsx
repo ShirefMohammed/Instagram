@@ -25,9 +25,9 @@ import defaultAvatar from "../../assets/defaultAvatar.png";
 import style from "./Sidebar.module.css";
 
 const Sidebar = () => {
-  const [openMoreList, setOpenMoreList] = useState(false);
-  const user = useSelector(state => state.user);
   const { pathname } = useLocation();
+  const user = useSelector(state => state.user);
+  const [openMoreList, setOpenMoreList] = useState(false);
   const logout = useLogout();
 
   return (
@@ -96,7 +96,7 @@ const Sidebar = () => {
             user?.accessToken ?
               (<li>
                 <Link
-                  to="/profile"
+                  to={`/users/${user?._id}`}
                   className={pathname === "/profile" ? style.active_link : ""}
                 >
                   <img

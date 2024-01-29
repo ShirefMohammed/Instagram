@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
+// Modules
 import { useState } from "react";
 import {
   Link,
-  useLocation,
-  useNavigate
 } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,21 +11,25 @@ import {
   faComment,
   faHeart
 } from "@fortawesome/free-regular-svg-icons";
+// Hooks
 import {
   useAxiosPrivate,
+  useHandleErrors,
   useNotify
 } from "../../hooks";
+// Css style
+import style from "./PostCard.module.css";
+// Images
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import defaultPostImage from "../../assets/defaultPostImage.png";
-import style from "./PostCard.module.css";
 
 const PostCard = ({ post }) => {
   const [likeLoading, setLikeLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
+
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
   const notify = useNotify();
-  const navigate = useNavigate();
-  const location = useLocation();
 
   // Add like to post
   const addLike = async () => {
@@ -35,12 +38,10 @@ const PostCard = ({ post }) => {
       const res = await axiosPrivate.post(`posts/${post?._id}/likes`);
       notify("success", res?.data?.message);
     } catch (err) {
-      if (err?.response?.status === 403) {
-        navigate(
-          "/authentication",
-          { state: { from: location }, replace: true }
-        )
-      }
+      handleErrors.handleNoServerResponse(err);
+      handleErrors.handleServerError(err);
+      handleErrors.handleNoResourceFound(err);
+      handleErrors(err);
     } finally {
       setLikeLoading(false);
     }
@@ -53,12 +54,9 @@ const PostCard = ({ post }) => {
       const res = await axiosPrivate.post(`posts/${post?._id}/save`);
       notify("success", res?.data?.message);
     } catch (err) {
-      if (err?.response?.status === 403) {
-        navigate(
-          "/authentication",
-          { state: { from: location }, replace: true }
-        )
-      }
+      handleErrors.handleNoServerResponse(err);
+      handleErrors.handleServerError(err);
+      handleErrors.handleNoResourceFound(err);
     } finally {
       setSaveLoading(false);
     }
@@ -93,17 +91,23 @@ const PostCard = ({ post }) => {
 
       {/* Controllers */}
       <div className={style.controllers}>
+        {/* Created At */}
         <span className={style.post_date}>
           {new Date(post?.createdAt).toISOString().split('T')[0]}
         </span>
+
+        {/* Actions */}
         <div className={style.actions}>
+          {/* Comments */}
           <Link
             to={`/posts/${post?._id}`}
           >
             <FontAwesomeIcon icon={faComment} />
           </Link>
+          {/* Save */}
           <button
             type="button"
+            disabled={saveLoading ? true : false}
             onClick={savePost}
           >
             {
@@ -111,8 +115,10 @@ const PostCard = ({ post }) => {
                 : <FontAwesomeIcon icon={faBookmark} />
             }
           </button>
+          {/* Like */}
           <button
             type="button"
+            disabled={likeLoading ? true : false}
             onClick={addLike}
           >
             {
