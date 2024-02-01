@@ -24,26 +24,26 @@ const {
   removePostComment,
 } = require("../controllers/postsController");
 
-// getPosts is only available for Admin
+// getPosts is only available for admin
 // getExploredPosts is available for all
 // getSuggestedPosts is available for all
 
-// createPost is only available for User
+// createPost is only available for verified user
 // getPost is available for all
 // updatePost is only available for creator
-// deletePost is available for creator and Admin
+// deletePost is available for creator and admin
 
 // getPostLikes is available for all
-// addPostLike is only available for User
-// removePostLike is only available for User
+// addPostLike is only available for verified user
+// removePostLike is only available for verified user
 
-// savePost is only available for User
-// unsavePost is only available for User
+// savePost is only available for verified user
+// unsavePost is only available for verified user
 
 // getPostComments is available for all
-// addPostComment is only available for User
+// addPostComment is only available for verified user
 // updatePostComment is only available for comment creator
-// removePostComment is available for comment creator, post creator and Admin
+// removePostComment is available for comment creator, post creator and admin
 
 const { storage, fileFilter } = multerOptions();
 const upload = multer({ storage, fileFilter });
@@ -61,15 +61,9 @@ router.route('/')
     createPost
   );
 
-router.route('/explore')
-  .get(
-    getExploredPosts
-  );
+router.route('/explore').get(getExploredPosts);
 
-router.route('/suggest')
-  .get(
-    getSuggestedPosts
-  );
+router.route('/suggest').get(getSuggestedPosts);
 
 router.route('/:id')
   .get(

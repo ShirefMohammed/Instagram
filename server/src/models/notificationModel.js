@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require("mongoose"); // soon
 
 const notificationSchema = new mongoose.Schema(
   {

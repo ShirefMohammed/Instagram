@@ -8,6 +8,7 @@ const CommentModel = require('../models/commentModel');
 const UserModel = require('../models/userModel');
 const ROLES_LIST = require("../utils/roles_list");
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 const getPosts = asyncHandler(
   async (req, res) => {
@@ -27,33 +28,31 @@ const getPosts = asyncHandler(
         path: "creator",
         select: "_id name email avatar roles"
       })
-      .sort({ updatedAt: sort });
+      .sort({ createdAt: sort });
 
-    if (posts.length > 0) {
-      posts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-          post.images = imagesUrl;
-          post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
-        }
-      });
-    }
-
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching posts",
-      data: posts
+    posts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        post.images = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+        post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
+      }
     });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching posts",
+      posts
+    );
   }
 );
 
 const getExploredPosts = asyncHandler(
   async (req, res) => {
     const exceptedPosts = req.query?.exceptedPosts ?
-      req.query.exceptedPosts?.split(",")
-      : [];
+      req.query.exceptedPosts.split(",") : [];
 
     const limit = +req.query?.limit || 10;
 
@@ -92,23 +91,22 @@ const getExploredPosts = asyncHandler(
       },
     ]);
 
-    if (posts.length > 0) {
-      posts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-          post.images = imagesUrl;
-          post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
-        }
-      });
-    }
-
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching posts",
-      data: posts
+    posts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        post.images = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+        post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
+      }
     });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching posts",
+      posts
+    );
   }
 );
 
@@ -136,17 +134,16 @@ const getSuggestedPosts = asyncHandler(
           return `${process.env.SERVER_URL}/api/uploads/${image}`;
         });
       }
-      post.creator.avatar = new URL(
-        `${post.creator.avatar}`,
-        `${process.env.SERVER_URL}/api/uploads/`
-      )
+      post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching posts",
-      data: posts
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching posts",
+      posts
+    );
   }
 );
 
@@ -185,19 +182,11 @@ const createPost = asyncHandler(
 
     const IsCreatorExist = await UserModel.exists({ _id: creatorId });
     if (!IsCreatorExist) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Creator does not exist",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, "Creator does not exist", null);
     }
 
     if (images.length === 0) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "You should upload one image at least",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, "You should upload one image at least", null);
     }
 
     if (images) {
@@ -214,11 +203,13 @@ const createPost = asyncHandler(
       return `${process.env.SERVER_URL}/api/uploads/${image}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Post created successfully",
-      data: newPost,
-    });
+    sendResponse(
+      res,
+      201,
+      httpStatusText.SUCCESS,
+      "Post created successfully",
+      newPost
+    );
   }
 );
 
@@ -232,11 +223,7 @@ const getPost = asyncHandler(
     // you can handle fetching likes and comments length *optional
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id {${postId}} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`
@@ -245,11 +232,13 @@ const getPost = asyncHandler(
       return `${process.env.SERVER_URL}/api/uploads/${image}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching post",
-      data: post
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching post",
+      post
+    );
   }
 );
 
@@ -262,19 +251,11 @@ const updatePost = asyncHandler(
     const post = await PostModel.findById(postId);
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id {${postId}} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     if (userInfo.userId != post.creator) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: `You don't have access to update this post`,
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `You don't have access`, null);
     }
 
     await PostModel.findByIdAndUpdate(
@@ -282,11 +263,13 @@ const updatePost = asyncHandler(
       { content: content },
     )
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Post updated successfully",
-      data: { content: content }
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "Post updated successfully",
+      { content: content }
+    );
   }
 );
 
@@ -298,22 +281,14 @@ const deletePost = asyncHandler(
     const post = await PostModel.findById(postId);
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id {${postId}} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     if (
       !userInfo.roles.includes(ROLES_LIST.Admin)
       && userInfo.userId != post.creator
     ) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: `You don't have access to delete`,
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `You don't have access to delete`, null);
     }
 
     // Delete all post comments
@@ -332,11 +307,13 @@ const deletePost = asyncHandler(
     // Delete the post
     await post.deleteOne();
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Post deleted successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "Post deleted successfully",
+      null
+    );
   }
 );
 
@@ -361,11 +338,7 @@ const getPostLikes = asyncHandler(
       });
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     const usersLikedPost = post.likes;
@@ -374,11 +347,13 @@ const getPostLikes = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching people who liked this post",
-      data: usersLikedPost
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching people who liked this post",
+      usersLikedPost
+    );
   }
 );
 
@@ -390,21 +365,13 @@ const addPostLike = asyncHandler(
     const post = await PostModel.findById(postId, "likes");
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     const user = await UserModel.findById(userId, "likedPosts");
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with Id ${userId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
     }
 
     if (!post.likes.includes(userId)) {
@@ -417,11 +384,13 @@ const addPostLike = asyncHandler(
       await user.save();
     }
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "like added successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "like added successfully",
+      null
+    );
   }
 );
 
@@ -433,21 +402,13 @@ const removePostLike = asyncHandler(
     const post = await PostModel.findById(postId, "likes");
 
     if (!post) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     const user = await UserModel.findById(userId, "likedPosts");
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with Id ${userId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
     }
 
     post.likes = post.likes.filter(id => id != userId);
@@ -456,11 +417,13 @@ const removePostLike = asyncHandler(
     user.likedPosts = user.likedPosts.filter(id => id != postId);
     await user.save();
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "like removed successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "like removed successfully",
+      null
+    );
   }
 );
 
@@ -472,21 +435,13 @@ const savePost = asyncHandler(
     const IsPostExist = await PostModel.exists({ _id: postId });
 
     if (!IsPostExist) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
     const user = await UserModel.findById(userId, "savedPosts");
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with Id ${userId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
     }
 
     if (!user.savedPosts.includes(postId)) {
@@ -494,11 +449,13 @@ const savePost = asyncHandler(
       await user.save();
     }
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "post saved successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "post saved successfully",
+      null
+    );
   }
 );
 
@@ -510,31 +467,27 @@ const unsavePost = asyncHandler(
     const IsPostExist = await PostModel.exists({ _id: postId });
 
     if (!IsPostExist) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
+
     }
 
     const user = await UserModel.findById(userId, "savedPosts");
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with Id ${userId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
+
     }
 
     user.savedPosts = user.savedPosts.filter(id => id != postId);
     await user.save();
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "post unsaved successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "post unsaved successfully",
+      null
+    );
   }
 );
 
@@ -554,7 +507,7 @@ const getPostComments = asyncHandler(
       .limit(limit)
       .populate({
         path: "creator",
-        select: "_id name email avatar"
+        select: "_id name avatar"
       })
       .populate({
         path: "post",
@@ -569,11 +522,13 @@ const getPostComments = asyncHandler(
       );
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching comments",
-      data: comments
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching comments",
+      comments
+    );
   }
 );
 
@@ -584,31 +539,19 @@ const addPostComment = asyncHandler(
     const content = req?.body?.content;
 
     if (!content) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "comment content required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `Comment content required`, null);
     }
 
     const IsPostExist = await PostModel.exists({ _id: postId });
 
     if (!IsPostExist) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Post with Id ${postId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id ${postId} Not Found`, null);
     }
 
     const ISUserExist = await UserModel.exists({ _id: userId });
 
     if (!ISUserExist) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with Id ${userId} Not Found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
     }
 
     const newComment = await CommentModel.create({
@@ -620,7 +563,7 @@ const addPostComment = asyncHandler(
     // Populate the 'creator' field
     await newComment.populate({
       path: 'creator',
-      select: "_id name email avatar"
+      select: "_id name avatar"
     });
 
     newComment.creator.avatar = new URL(
@@ -634,11 +577,14 @@ const addPostComment = asyncHandler(
       select: "_id creator"
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Comment added successfully",
-      data: newComment
-    });
+
+    sendResponse(
+      res,
+      201,
+      httpStatusText.SUCCESS,
+      "Comment added successfully",
+      newComment
+    );
   }
 );
 
@@ -650,25 +596,17 @@ const updatePostComment = asyncHandler(
     const content = req?.body?.content;
 
     if (!commentId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "Comment id required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `Comment id required`, null);
     }
 
     if (!content) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "Comment content required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `Comment content required`, null);
     }
 
     const comment = await CommentModel.findById(commentId)
       .populate({
         path: 'creator',
-        select: "_id name email avatar"
+        select: "_id name avatar"
       })
       .populate({
         path: 'post',
@@ -676,19 +614,11 @@ const updatePostComment = asyncHandler(
       })
 
     if (!comment) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: "Comment not found",
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Comment not found`, null);
     }
 
     if (userId != comment.creator._id || postId != comment.post._id) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     comment.content = content;
@@ -699,11 +629,13 @@ const updatePostComment = asyncHandler(
       `${process.env.SERVER_URL}/api/uploads/`
     );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Comment updated successfully",
-      data: comment
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "Comment updated successfully",
+      comment
+    );
   }
 );
 
@@ -714,22 +646,14 @@ const removePostComment = asyncHandler(
     const commentId = req?.body?.commentId;
 
     if (!commentId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "Comment ID required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `Comment id required`, null);
     }
 
     const comment = await CommentModel.findById(commentId)
       .populate({ path: "post", select: "creator" });
 
     if (!comment) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: "Comment not found",
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Comment not found`, null);
     }
 
     if (
@@ -737,20 +661,18 @@ const removePostComment = asyncHandler(
       && userId != comment.post.creator
       && !roles.includes(ROLES_LIST.Admin)
     ) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     await comment.deleteOne();
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "Comment deleted successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "Comment deleted successfully",
+      null
+    );
   }
 );
 

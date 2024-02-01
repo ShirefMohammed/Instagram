@@ -1,5 +1,3 @@
-Remember line 169 add follow button for profile page
-
 <============>      Social Media App Structure      <============>
 
 <======================>      Server      <======================>
@@ -38,17 +36,6 @@ Remember line 169 add follow button for profile page
 - getCreatedComments                                            🗸🗸
 - getCreatedReports                                             🗸🗸
 - getSuggestedUsers                                             🗸🗸
-- handleNotifications                                           
-Notification {
-  from: senderId,
-  to: userId;,
-  type: "newFollower" || "newComment" || "newMessage",
-  message: string,
-  post: id,
-  chat: id,
-  message: id, // last unread message
-  seen: false,
-}
 ------------------------------------------------------------------
 
 (3) Posts                                                      🗸🗸
@@ -164,54 +151,32 @@ Coming soon
 ------------------------------------------------------------------
 
 
-# PREPARED
-{ Review my backend }
 
-{ Post }
-view post details {
-  creator,
-  images,
-  controllers,
-  content,
-  likes,
-  comments,
-  addLike,
-  save,
-  addComment,
-  updatedComments,
-  deleteComment,
+{
+  Remember:
+  1. line 169 add follow button in profile page.
+  2. handle delete user button for admin in profile page.
+  3. handle delete post button for admin in Post Page.
+  4. handle delete comment for admin in Post page.
+  5. handle delete report for admin in report page.
 }
-*URL/posts/id
 
-{ User account public }
-view any user account
-*URL/users/id
-
-{ User Profile Private }
-view current user account
-*URL/profile
-
-{ Edit User Profile Private }
-edit current user account
-*URL/profile/edit
-
-{ Settings } {
-  get followers,
-  delete follower,
-  get followings,
-  delete following,
-  get created posts,
-  update created post,
-  delete created post,
-  get liked posts,
-  remove like,
-  get saved posts,
-  unsave,
-  get created comments,
-  update comments,
-  delete comments,
-  get reports
-  update report
-  delete report
+{
+  Admin:
+  1. getReports, contactSender, DeleteReport.
+  2. getPosts, removePost, getPostComments, removePostComment.
+  3. getUsers, deleteUser.
 }
-*URL/settings
+
+{
+  Notification {
+    from: senderId,
+    to: userId;,
+    type: "newFollower" || "newComment" || "newMessage",
+    message: string,
+    post: id,
+    chat: id,
+    message: id, // last unread message
+    seen: false,
+  }
+}

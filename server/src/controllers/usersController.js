@@ -10,6 +10,7 @@ const ReportModel = require("../models/reportModel");
 const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 const ROLES_LIST = require("../utils/roles_list");
+const sendResponse = require("../utils/sendResponse");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -43,11 +44,13 @@ const getUsers = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching users",
-      data: users
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching users",
+      users
+    );
   }
 );
 
@@ -78,11 +81,13 @@ const searchUsers = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching users",
-      data: users
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching users",
+      users
+    );
   }
 );
 
@@ -96,7 +101,7 @@ const getSuggestedUsers = asyncHandler(
 
     if (!user) {
       return res.status(404).json({
-        status: httpStatusText.ERROR,
+        status: httpStatusText.FAIL,
         message: "user not found",
         data: null
       });
@@ -127,11 +132,13 @@ const getSuggestedUsers = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching users",
-      data: suggestedUsers
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching users",
+      suggestedUsers
+    );
   }
 );
 
@@ -145,20 +152,18 @@ const getUser = asyncHandler(
     );
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with id ${userId} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
     user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching user",
-      data: user
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching user",
+      user
+    );
   }
 );
 
@@ -196,23 +201,27 @@ const updateUser = asyncHandler(
     const { name, oldPassword, newPassword, bio, links } = req.body;
     const avatar = req?.file?.filename;
 
+    // Function to remove avatar
+    const removeAvatar = () => {
+      if (avatar) {
+        fs.unlink(
+          path.join(__dirname, "..", "uploads", avatar),
+          () => { }
+        );
+      }
+    };
+
     if (userInfo.userId != userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const user = await UserModel.findById(userId)
       .select("_id name email password avatar links bio");
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with id ${userId} not found`,
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
     let message = "account updated successFully";
@@ -293,11 +302,13 @@ const updateUser = asyncHandler(
     // Set avatar url
     updatedUser.avatar = `${process.env.SERVER_URL}/api/uploads/${updatedUser.avatar}`;
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: message,
-      data: updatedUser
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      message,
+      updatedUser
+    );
   }
 );
 
@@ -308,42 +319,26 @@ const deleteUser = asyncHandler(
     const { password } = req.body;
 
     if (!password) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: `password required to delete user ${userId}`,
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `password required to delete user ${userId}`, null);
     }
 
     if (
       userId != userInfo.userId
       && !userInfo.roles.includes(ROLES_LIST.Admin)
     ) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const user = await UserModel.findById(userId);
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with id ${userId} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
     const IsPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!IsPasswordMatch) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "wrong password",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, `wrong password`, null);
     }
 
     // Delete user avatar
@@ -383,11 +378,13 @@ const deleteUser = asyncHandler(
     // Delete user
     await UserModel.deleteOne({ _id: userId });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "account deleted successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "account deleted successfully",
+      null
+    );
   }
 );
 
@@ -415,11 +412,13 @@ const getFollowers = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching followers",
-      data: followers
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching followers",
+      followers
+    );
   }
 );
 
@@ -430,19 +429,11 @@ const removeFollower = asyncHandler(
     const { removedFollowerId } = req.body;
 
     if (!removedFollowerId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "follower id required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `follower id required`, null);
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     await UserModel.updateOne(
@@ -455,11 +446,13 @@ const removeFollower = asyncHandler(
       { $pull: { followings: userId } }
     );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "user removed from your followers",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "user removed from your followers",
+      null
+    );
   }
 );
 
@@ -487,11 +480,13 @@ const getFollowings = asyncHandler(
       user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching followings",
-      data: followings
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching followings",
+      followings
+    );
   }
 );
 
@@ -502,19 +497,11 @@ const FollowUser = asyncHandler(
     const { newFollowedId } = req.body;
 
     if (!newFollowedId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "user id required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `user id required`, null);
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     await UserModel.updateOne(
@@ -537,11 +524,13 @@ const FollowUser = asyncHandler(
       { $push: { followers: userId } }
     );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "user followed successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "user followed successfully",
+      null
+    );
   }
 );
 
@@ -552,19 +541,11 @@ const removeFollowing = asyncHandler(
     const { removedFollowingId } = req.body;
 
     if (!removedFollowingId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "user id required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `user id required`, null);
     }
 
     if (userId !== userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     await UserModel.updateOne(
@@ -577,11 +558,13 @@ const removeFollowing = asyncHandler(
       { $pull: { followers: userId } }
     );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "user unFollowed successfully",
-      data: null
-    });
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "user unFollowed successfully",
+      null
+    );
   }
 );
 
@@ -596,28 +579,27 @@ const getCreatedPosts = asyncHandler(
 
     const posts = await PostModel.find(
       { creator: userId },
-      "_id creator title content images",
+      "_id creator title content images createdAt updatedAt",
     )
       .skip(skip)
       .limit(limit)
-      .sort({ updatedAt: -1 });
+      .sort({ createdAt: -1 });
 
-    if (posts.length > 0) {
-      posts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          const imagesUrl = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-          post.images = imagesUrl;
-        }
-      });
-    }
-
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching created posts",
-      data: posts
+    posts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        post.images = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+      }
     });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching created posts",
+      posts
+    );
   }
 );
 
@@ -632,22 +614,14 @@ const getLikedPosts = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const user = await UserModel.findById(userId)
       .select("likedPosts")
       .populate({
         path: "likedPosts",
-        select: "_id creator title content images",
-        populate: {
-          path: "creator",
-          select: "_id name email avatar"
-        },
+        select: "_id creator title content images createdAt updatedAt",
         options: {
           skip: skip,
           limit: limit
@@ -655,34 +629,26 @@ const getLikedPosts = asyncHandler(
       });
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with id ${userId} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
     const likedPosts = user?.likedPosts || [];
 
-    if (likedPosts.length > 0) {
-      likedPosts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          post.images = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-        }
-        post.creator.avatar = new URL(
-          post.creator.avatar,
-          `${process.env.SERVER_URL}/api/uploads/`
-        );
-      });
-    }
-
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching liked posts",
-      data: likedPosts
+    likedPosts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        post.images = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+      }
     });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching liked posts",
+      likedPosts
+    );
   }
 );
 
@@ -697,22 +663,14 @@ const getSavedPosts = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const user = await UserModel.findById(userId)
       .select("savedPosts")
       .populate({
         path: "savedPosts",
-        select: "_id creator title content images",
-        populate: {
-          path: "creator",
-          select: "_id name email avatar"
-        },
+        select: "_id creator title content images createdAt updatedAt",
         options: {
           skip: skip,
           limit: limit
@@ -720,34 +678,26 @@ const getSavedPosts = asyncHandler(
       });
 
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `user with id ${userId} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
     const savedPosts = user?.savedPosts || [];
 
-    if (savedPosts.length > 0) {
-      savedPosts.map((post) => {
-        if (post?.images && post.images.length > 0) {
-          post.images = post.images.map((image) => {
-            return `${process.env.SERVER_URL}/api/uploads/${image}`;
-          });
-        }
-        post.creator.avatar = new URL(
-          post.creator.avatar,
-          `${process.env.SERVER_URL}/api/uploads/`
-        );
-      });
-    }
-
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching saved posts",
-      data: savedPosts
+    savedPosts.map((post) => {
+      if (post?.images && post.images.length > 0) {
+        post.images = post.images.map((image) => {
+          return `${process.env.SERVER_URL}/api/uploads/${image}`;
+        });
+      }
     });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching saved posts",
+      savedPosts
+    );
   }
 );
 
@@ -762,11 +712,7 @@ const getCreatedComments = asyncHandler(
     const skip = (page - 1) * limit;
 
     if (userId != userInfo.userId) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const createdComments = await CommentModel.find({ creator: userId })
@@ -774,11 +720,13 @@ const getCreatedComments = asyncHandler(
       .limit(limit)
       .sort({ updatedAt: -1 });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching created comments",
-      data: createdComments
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching created comments",
+      createdComments
+    );
   }
 );
 
@@ -796,11 +744,7 @@ const getCreatedReports = asyncHandler(
       userId != userInfo.userId
       && !userInfo.roles.includes(ROLES_LIST.Admin)
     ) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const createdReports = await ReportModel.find({ sender: userId })
@@ -808,11 +752,13 @@ const getCreatedReports = asyncHandler(
       .limit(limit)
       .sort({ updatedAt: -1 });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching created reports",
-      data: createdReports
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching created reports",
+      createdReports
+    );
   }
 );
 

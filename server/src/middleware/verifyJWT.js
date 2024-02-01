@@ -1,16 +1,13 @@
 const jwt = require("jsonwebtoken");
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 const verifyJWT = async (req, res, next) => {
   const authHeader = req?.headers?.authorization || req?.headers?.Authorization;
   // "Bearer token"
 
   if (!authHeader?.startsWith("Bearer ")) {
-    return res.status(401).json({
-      status: httpStatusText.ERROR,
-      message: "Unauthorized",
-      data: null
-    });
+    return sendResponse(res, 401, httpStatusText.FAIL, "Unauthorized", null);
   }
 
   const token = authHeader.split(" ")[1]; // ["Bearer", "token"]
@@ -20,11 +17,7 @@ const verifyJWT = async (req, res, next) => {
     process.env.ACCESS_TOKEN_SECRET,
     (err, decoded) => {
       if (err) {
-        return res.status(403).json({
-          status: httpStatusText.ERROR,
-          message: "Forbidden",
-          data: null
-        });
+        return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
       } else {
         req.userInfo = decoded.userInfo;
         next();

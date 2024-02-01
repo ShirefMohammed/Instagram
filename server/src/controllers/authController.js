@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("../middleware/asyncHandler");
 const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -43,67 +44,64 @@ const register = asyncHandler(
   async (req, res) => {
     const { name, email, password } = req.body;
 
-    // If Fields are Empty Generate Client Error
-    if (!name || !email || !password) {
-      // Remove avatar
+    // Function to remove avatar
+    const removeAvatar = () => {
       if (req?.file) {
         fs.unlink(
           path.join(__dirname, "..", "uploads", req.file.filename),
           () => { }
         );
       }
+    };
 
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "All fields are required",
-        data: null
-      });
+    // If Fields are Empty Generate Client Error
+    if (!name || !email || !password) {
+      removeAvatar();
+      return sendResponse(res, 400, httpStatusText.FAIL, "All fields are required", null);
     }
 
     // If name not valid
     if (!NAME_REGEX.test(name)) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: `Name must be 4 to 24 characters, Must begin with a letter, Letters, numbers, underscores, hyphens allowed, No spaces.`,
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(
+        res,
+        400,
+        httpStatusText.FAIL,
+        `Name must be 4 to 24 characters, Must begin with a letter, Letters, numbers, underscores, hyphens allowed, No spaces.`,
+        null
+      );
     }
 
     // If email not valid
     if (!EMAIL_REGEX.test(email)) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: `Enter valid email.`,
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(res, 400, httpStatusText.FAIL, `Enter valid email.`, null);
     }
 
     // If password not valid
     if (!PASS_REGEX.test(password)) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: `Password must be 8 to 24 characters, Must include uppercase and lowercase letters , a number and a special character, Allowed special characters: !, @, #, $, %`,
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(
+        res,
+        400,
+        httpStatusText.FAIL,
+        `Password must be 8 to 24 characters, Must include uppercase and lowercase letters , a number and a special character, Allowed special characters: !, @, #, $, %`,
+        null
+      );
     }
 
     const user = await UserModel.findOne({ email: email });
 
     // If User With Same Email Exists Return Conflict
     if (user) {
-      // Remove avatar
-      if (req?.file) {
-        fs.unlink(
-          path.join(__dirname, "..", "uploads", req.file.filename),
-          () => { }
-        );
-      }
-
-      return res.status(409).json({
-        status: httpStatusText.ERROR,
-        message: "User with same email already exists",
-        data: null
-      });
+      removeAvatar();
+      return sendResponse(
+        res,
+        409,
+        httpStatusText.FAIL,
+        `User with same email already exists`,
+        null
+      );
     }
 
     // Create Hash Password then Create User
@@ -148,17 +146,19 @@ const register = asyncHandler(
     });
 
     // Send User Data to Client
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful register",
-      data: {
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      `successful register`,
+      {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
         avatar: `${process.env.SERVER_URL}/api/uploads/${newUser.avatar}`,
         accessToken: accessToken,
       }
-    });
+    );
   }
 );
 
@@ -169,33 +169,21 @@ const login = asyncHandler(
 
     // If Fields are Empty Generate Client Error
     if (!email || !password) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "All fields are required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, "All fields are required", null);
     }
 
     const user = await UserModel.findOne({ email: email });
 
     // Check If User not Exists
     if (!user) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: "User does not exist",
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, "User does not exist", null);
     }
 
     const IsPasswordMatch = await bcrypt.compare(password, user.password);
 
     // Check If Password not Match
     if (!IsPasswordMatch) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Wrong Password",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, "Wrong Password", null);
     }
 
     // Get User Roles to Assign Them With accessToken
@@ -262,17 +250,19 @@ const login = asyncHandler(
     });
 
     // Send User Data to Client
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful login",
-      data: {
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      `successful login`,
+      {
         _id: user._id,
         name: user.name,
         email: user.email,
         avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
         accessToken: accessToken,
       }
-    });
+    );
   }
 );
 
@@ -282,11 +272,7 @@ const refresh = asyncHandler(
 
     // If There is no refreshToken cookies?.jwt
     if (!cookies?.jwt) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Unauthorized",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, "Unauthorized", null);
     }
 
     res.clearCookie("jwt", {
@@ -306,11 +292,7 @@ const refresh = asyncHandler(
         process.env.REFRESH_TOKEN_SECRET,
         async (err, decoded) => {
           if (err) {
-            return res.status(403).json({
-              status: httpStatusText.ERROR,
-              message: "Forbidden",
-              data: null
-            });
+            return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
           } else {
             console.log('attempted refresh token reuse!');
             const hackedUser = await UserModel.findOne({
@@ -322,11 +304,7 @@ const refresh = asyncHandler(
         }
       );
 
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
     }
 
     const refreshTokenArray = user.refreshToken.filter(rt => rt !== cookies.jwt);
@@ -342,12 +320,9 @@ const refresh = asyncHandler(
           await user.save();
         }
 
-        if (err || user._id != decoded.userId)
-          return res.status(403).json({
-            status: httpStatusText.ERROR,
-            message: "Forbidden",
-            data: null
-          });
+        if (err || user._id != decoded.userId) {
+          return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
+        }
 
         // Refresh token was still valid
         const roles = Object.values(user.roles).filter(Boolean);
@@ -382,17 +357,19 @@ const refresh = asyncHandler(
         });
 
         // Send User Data to Client
-        res.json({
-          status: httpStatusText.SUCCESS,
-          message: "successful refresh token",
-          data: {
+        sendResponse(
+          res,
+          200,
+          httpStatusText.SUCCESS,
+          `successful refresh token`,
+          {
             _id: user._id,
             name: user.name,
             email: user.email,
             avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
             accessToken: accessToken,
           }
-        });
+        );
       }
     );
   }
@@ -404,11 +381,7 @@ const logout = asyncHandler(
     const cookies = req.cookies;
 
     if (!cookies?.jwt) {
-      return res.json({
-        status: httpStatusText.SUCCESS,
-        message: "successful logout",
-        data: null
-      });
+      return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
     }
 
     // Is refreshToken in db?
@@ -423,11 +396,7 @@ const logout = asyncHandler(
         sameSite: "None",
       });
 
-      return res.json({
-        status: httpStatusText.SUCCESS,
-        message: "successful logout",
-        data: null
-      });
+      return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
     }
 
     // Delete refreshToken in db
@@ -440,11 +409,7 @@ const logout = asyncHandler(
       sameSite: "None",
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful logout",
-      data: null
-    });
+    return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
   }
 );
 

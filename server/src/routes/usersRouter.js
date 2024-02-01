@@ -25,8 +25,8 @@ const {
 } = require("../controllers/usersController");
 
 // getUsers, users, admins or editors is only available for admin
-// searchUsers Users is available for all
-// getSuggestedUsers Users is available for verified users
+// searchUsers users is available for all
+// getSuggestedUsers users is available for verified users
 
 // getUser is available for all
 // updateUser is only available for account owner
@@ -52,10 +52,7 @@ router.route('/')
     getUsers
   );
 
-router.route('/search')
-  .get(
-    searchUsers
-  );
+router.route('/search').get(searchUsers);
 
 router.route('/suggest')
   .get(

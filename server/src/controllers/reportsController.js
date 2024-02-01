@@ -2,6 +2,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 const ReportModel = require("../models/reportModel");
 const ROLES_LIST = require('../utils/roles_list');
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 const getReports = asyncHandler(
   async (req, res) => {
@@ -13,7 +14,7 @@ const getReports = asyncHandler(
 
     const sort = query?.sort || -1;
 
-    let reports = await ReportModel.find()
+    const reports = await ReportModel.find()
       .skip(skip)
       .limit(limit)
       .populate({
@@ -22,21 +23,21 @@ const getReports = asyncHandler(
       })
       .sort({ updatedAt: sort });
 
-    reports = reports.map((report) => {
-      if (report) {
-        report.sender.avatar = new URL(
-          report.sender.avatar,
-          `${process.env.SERVER_URL}/api/uploads/`
-        ).toString();
-        return report;
-      }
-    });
+    reports.map((report) => {
+      report.sender.avatar = new URL(
+        report.sender.avatar,
+        `${process.env.SERVER_URL}/api/uploads/`
+      ).toString();
+    }
+    );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching reports",
-      data: reports
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching reports",
+      reports
+    );
   }
 );
 
@@ -46,19 +47,11 @@ const createReport = asyncHandler(
     const content = req.body?.content;
 
     if (!userId) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Unauthorized",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, `Unauthorized`, null);
     }
 
     if (!content) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: "report content required",
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `report content required`, null);
     }
 
     const newReport = await ReportModel.create({
@@ -66,11 +59,13 @@ const createReport = asyncHandler(
       content: content,
     });
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "report created successfully",
-      data: newReport
-    });
+    sendResponse(
+      res,
+      201,
+      httpStatusText.SUCCESS,
+      "report created successfully",
+      newReport
+    );
   }
 );
 
@@ -80,41 +75,25 @@ const handleReportAccess = asyncHandler(
     const reportId = req?.params?.id;
 
     if (!userInfo) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: 'Unauthorized',
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, `Unauthorized`, null);
     }
 
     if (!reportId) {
-      return res.status(400).json({
-        status: httpStatusText.ERROR,
-        message: 'Report ID required',
-        data: null
-      });
+      return sendResponse(res, 400, httpStatusText.FAIL, `Report ID required`, null);
     }
 
     const report = await ReportModel.findById(reportId)
       .populate({ path: "sender", select: "_id name email avatar roles" });
 
     if (!report) {
-      return res.status(404).json({
-        status: httpStatusText.ERROR,
-        message: `Report with ID ${req.params.id} not found`,
-        data: null
-      });
+      return sendResponse(res, 404, httpStatusText.FAIL, `Report with ID ${req.params.id} not found`, null);
     }
 
     if (
       !userInfo.roles.includes(ROLES_LIST.Admin)
       && userInfo.userId != report.sender._id
     ) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     report.sender.avatar = `${process.env.SERVER_URL}/api/uploads/${report.sender.avatar}`;
@@ -127,22 +106,20 @@ const handleReportAccess = asyncHandler(
 
 const getReport = asyncHandler(
   async (req, res) => {
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "successful fetching report",
-      data: req.report
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "successful fetching report",
+      req.report
+    );
   }
 );
 
 const updateReport = asyncHandler(
   async (req, res) => {
     if (req?.userInfo?.userId != req?.report?.sender?._id) {
-      return res.status(403).json({
-        status: httpStatusText.ERROR,
-        message: "Forbidden",
-        data: null
-      });
+      return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
     const updatedReport = await ReportModel.findByIdAndUpdate(
@@ -151,22 +128,27 @@ const updateReport = asyncHandler(
       { new: true }
     );
 
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "report updated successfully",
-      data: updatedReport
-    });
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "report updated successfully",
+      updatedReport
+    );
   }
 );
 
 const deleteReport = asyncHandler(
   async (req, res) => {
     await ReportModel.deleteOne({ _id: req.report._id });
-    res.json({
-      status: httpStatusText.SUCCESS,
-      message: "report deleted successfully",
-      data: null
-    });
+
+    sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "report deleted successfully",
+      null
+    );
   }
 );
 

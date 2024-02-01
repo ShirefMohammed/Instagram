@@ -1,12 +1,9 @@
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 const handleErrors = (err, req, res, next) => {
   console.error(err);
-  res.status(500).json({
-    status: httpStatusText.ERROR,
-    message: "Internal server error",
-    data: null
-  });
+  sendResponse(res, 500, httpStatusText.ERROR, "Internal server error", null);
 };
 
 module.exports = handleErrors;

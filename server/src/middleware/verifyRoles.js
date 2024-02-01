@@ -5,21 +5,13 @@ const verifyRoles = (allowedRoles) => {
     const roles = req?.userInfo?.roles;
 
     if (!roles) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Unauthorized",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, "Unauthorized", null);
     }
 
     const isAllowed = roles.some(role => allowedRoles.includes(role));
 
     if (!isAllowed) {
-      return res.status(401).json({
-        status: httpStatusText.ERROR,
-        message: "Unauthorized",
-        data: null
-      });
+      return sendResponse(res, 401, httpStatusText.FAIL, "Unauthorized", null);
     } else {
       next();
     }
