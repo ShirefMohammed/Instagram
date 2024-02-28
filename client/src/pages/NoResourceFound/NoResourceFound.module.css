@@ -1,6 +1,7 @@
 .no_resource_found {
   width: 100%;
   min-height: 100vh;
+  padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,10 +14,12 @@
 
 .no_resource_found p {
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .no_resource_found .buttons {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 10px;

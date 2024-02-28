@@ -6,10 +6,10 @@
 }
 
 .create_post h2 {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .create_post .error_message {
@@ -17,53 +17,54 @@
   background-color: lightpink;
   text-transform: capitalize;
   width: 100%;
-  margin: 8px 0;
+  margin-bottom: 15px;
   padding: 10px 15px;
-  font-size: 13px;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.create_post textarea {
+  resize: none;
+  border: none;
+  outline: none;
+  background-color: #eee;
+  width: 100%;
+  height: 150px;
+  font-size: 14px;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
 
 .create_post .images_container {
   width: 100%;
   height: 400px;
-  padding: 10px 15px;
+  padding: 15px;
   overflow-y: auto;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   background-color: #eee;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
 
-.create_post .images_container .upload_images_icon {
-  width: 100px;
-  margin-top: 100px;
-  margin-bottom: 20px;
-  position: relative;
-  user-select: none;
-  left: 50%;
-  transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  filter: opacity(.1);
-  -webkit-filter: opacity(.1);
-}
-
-.create_post .images_container .images li {
+.create_post .images_container .images_list li {
   position: relative;
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
-.create_post .images_container .images li button {
+.create_post .images_container .images_list li button {
   border: none;
   outline: none;
   position: absolute;
@@ -74,7 +75,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
   color: #fff;
   cursor: pointer;
   background-color: #f00;
@@ -85,9 +85,30 @@
   -o-border-radius: 50%;
 }
 
-.create_post .images_container .images li img {
+.create_post .images_container .images_list li img {
   width: 100%;
   user-select: none;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.create_post .images_container .upload_images_icon {
+  width: 100px;
+  margin-top: 100px;
+  margin-bottom: 15px;
+  position: relative;
+  user-select: none;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  filter: opacity(.05);
+  -webkit-filter: opacity(.05);
 }
 
 .create_post .images_container input[type="file"] {
@@ -95,7 +116,8 @@
 }
 
 .create_post .images_container label {
-  font-size: 12px;
+  display: block;
+  font-size: 10px;
   color: #00f;
   text-decoration: underline;
   width: fit-content;
@@ -104,52 +126,30 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-}
-
-.create_post textarea {
-  resize: none;
-  border: none;
-  outline: none;
-  background-color: #eee;
-  width: 100%;
-  height: 150px;
-  font-size: 13px;
-  padding: 10px 15px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
 }
 
 .create_post button[type="submit"] {
   border: none;
   outline: none;
-  font-size: 12px;
-  color: #fff;
-  background-color: #512da8;
+  color: #000;
+  background: transparent;
+  border: 1px solid #ddd;
   padding: 6px 45px;
   margin: auto;
-  border: 1px solid transparent;
-  font-weight: 500;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.create_post button[type="submit"] span {
+  font-size: 14px;
+  font-weight: 500;
 }

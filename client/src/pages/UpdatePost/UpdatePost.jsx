@@ -1,163 +1,127 @@
-// Modules
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MoonLoader } from "react-spinners";
-// Hooks
-import { useNotify, useAxiosPrivate } from '../../hooks';
-// Css style
+import { useNotify, useAxiosPrivate, useHandleErrors } from '../../hooks';
 import style from './UpdatePost.module.css';
 
-const CreatePost = () => {
+const UpdatePost = () => {
   const { id } = useParams();
+
+  const errRef = useRef(null);
 
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
 
-  const [loadingData, setLoadingData] = useState(false);
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [fetchPostLoad, setFetchPostLoad] = useState(false);
+  const [updatePostLoad, setUpdatePostLoad] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const [errorFetching, setErrorFetching] = useState("");
-  const [errorUpdating, setErrorUpdating] = useState("");
-
-  const errRef = useRef();
-  const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
+  const handleErrors = useHandleErrors();
+  const notify = useNotify();
+
+  useEffect(() => setErrorMsg(""), [content]);
 
   useEffect(() => {
-    setErrorUpdating("");
-  }, [content])
-
-  // Fetching post data
-  useEffect(() => {
-    const fetchPost = async () => {
+    const fetchPostData = async () => {
       try {
-        setLoadingData(true);
-        const res = await axiosPrivate.get(`posts/${id}`);
-        setContent(res?.data?.data?.content);
-        setImages(res?.data?.data?.images);
-      }
-
-      catch (err) {
-        console.log(err)
-        setErrorFetching("This page is not available now, try refresh page or wait for while");
-      }
-
-      finally {
-        setLoadingData(false);
+        setFetchPostLoad(true);
+        const res = await axiosPrivate.get(`posts/${id}`); // public for all
+        setContent(res.data.data.content);
+        setImages(res.data.data.images);
+      } catch (err) {
+        handleErrors(err);
+      } finally {
+        setFetchPostLoad(false);
       }
     }
-    fetchPost();
+    fetchPostData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update post
-  const handleSubmit = async (e) => {
+  const updatePost = async (e) => {
     e.preventDefault();
 
     try {
-      setLoadingUpdate(true);
-
-      const response = await axiosPrivate.patch(
+      setUpdatePostLoad(true);
+      const res = await axiosPrivate.patch(
         `posts/${id}`,
         { content: content },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
       );
-
-      const message = response?.data?.message;
-      notify("success", message);
+      notify("success", res.data.message);
     }
 
     catch (err) {
-      if (!err?.response) setErrorUpdating('No Server Response');
+      if (!err?.response) setErrorMsg('No Server Response');
       const message = err.response?.data?.message;
-      message ?
-        setErrorUpdating(message)
-        : setErrorUpdating('Post not updated');
+      message ? setErrorMsg(message) : setErrorMsg('Post is not updated');
       errRef.current.focus();
     }
 
     finally {
-      setLoadingUpdate(false);
+      setUpdatePostLoad(false);
     }
   }
 
   return (
     <>
       {
-        // If fetching post data still loading
-        loadingData ?
-          (<div className={style.loading_container}>
-            <MoonLoader color="#000" size={25} />
-          </div>)
+        !fetchPostLoad ?
+          (<form
+            className={style.update_post}
+            onSubmit={updatePost}
+          >
+            <h2>Update post</h2>
 
-          // If error happened while fetching data
-          : errorFetching ?
-            (<div className={style.error_fetching_data}>
-              {errorFetching}
-            </div>)
+            <>
+              {
+                errorMsg &&
+                <p
+                  ref={errRef}
+                  className={style.error_message}
+                  aria-live="assertive"
+                >
+                  {errorMsg}
+                </p>
+              }
+            </>
 
-            // If all thing ready
-            : (<form
-              className={style.update_post}
-              onSubmit={handleSubmit}
+            <textarea
+              name="content"
+              id="content"
+              placeholder="Optional description for the post"
+              required={false}
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
             >
-              {/* Page Title */}
-              <h2>Update post</h2>
+            </textarea>
 
-              {/* Error Message */}
-              <>
-                {
-                  errorUpdating &&
-                  <p
-                    ref={errRef}
-                    className={style.error_message}
-                    aria-live="assertive"
-                  >
-                    {errorUpdating}
-                  </p>
-                }
-              </>
+            <ul className={style.images_container}>
+              {
+                images.map((image) => (
+                  <li key={image}>
+                    <img src={image} alt="image" />
+                  </li>
+                ))
+              }
+            </ul>
 
-              {/* Content */}
-              <textarea
-                name="content"
-                id="content"
-                placeholder="Description for post *optional"
-                required={false}
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-              >
-              </textarea>
+            <button
+              type='submit'
+              disabled={updatePostLoad ? true : false}
+              style={updatePostLoad ? { opacity: .5, cursor: "revert" } : {}}
+            >
+              <span>Save Updates</span>
+              {updatePostLoad && <MoonLoader color="#000" size={15} />}
+            </button>
+          </form>)
 
-              {/* Post Images */}
-              <div className={style.images_container}>
-                <ul className={style.images}>
-                  {
-                    images.map((image) =>
-                    (<li key={image}>
-                      <img src={image} alt="image" />
-                    </li>)
-                    )
-                  }
-                </ul>
-              </div>
-
-              {/* Submit btn */}
-              <button
-                type='submit'
-                disabled={loadingUpdate ? true : false}
-                style={loadingUpdate ? { opacity: .5, cursor: "revert" } : {}}
-              >
-                <span>Update</span>
-                {loadingUpdate && <MoonLoader color="#fff" size={15} />}
-              </button>
-            </form>)
+          : (<div className={style.loading_container}>
+            <MoonLoader color="#000" size={20} />
+          </div>)
       }
     </>
   )
 }
 
-export default CreatePost
+export default UpdatePost

@@ -30,7 +30,7 @@ router.route('/')
     createReport
   );
 
-router.route('/:id')
+router.route('/:reportId')
   .get(
     verifyJWT,
     handleReportAccess,

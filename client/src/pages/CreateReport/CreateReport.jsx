@@ -1,41 +1,34 @@
-// Modules
 import { useEffect, useRef, useState } from "react";
 import { MoonLoader } from "react-spinners";
-// Hooks
 import { useAxiosPrivate, useNotify } from "../../hooks";
-// Css style
 import style from "./CreateReport.module.css";
 
 const CreateReport = () => {
+  const errRef = useRef(null);
+
   const [content, setContent] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [createReportLoad, setCreateReportLoad] = useState(false);
   const [errMsg, setErrMsg] = useState("");
-  const errRef = useRef();
-  const notify = useNotify();
+
   const axiosPrivate = useAxiosPrivate();
+  const notify = useNotify();
 
-  useEffect(() => {
-    setErrMsg("");
-  }, [content]);
+  useEffect(() => setErrMsg(""), [content]);
 
-  // Create Report
-  const handleSubmit = async (e) => {
+  const createReport = async (e) => {
     e.preventDefault();
 
     try {
-      setLoading(true);
+      if (content === "") return notify("info", "Enter report content");
 
-      const response = await axiosPrivate.post(
+      setCreateReportLoad(true);
+
+      const res = await axiosPrivate.post(
         "reports",
         { content: content },
-        {
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true
-        }
       );
 
-      const message = response?.data?.message;
-      notify("success", message);
+      notify("success", res.data.message);
 
       setContent("");
     }
@@ -43,54 +36,52 @@ const CreateReport = () => {
     catch (err) {
       if (!err?.response) setErrMsg('No Server Response');
       const message = err.response?.data?.message;
-      message ? setErrMsg(message) : setErrMsg('Report not created');
+      message ? setErrMsg(message) : setErrMsg('Report is not created');
       errRef.current.focus();
     }
 
     finally {
-      setLoading(false);
+      setCreateReportLoad(false);
     }
   }
 
   return (
     <form
       className={style.create_report}
-      onSubmit={handleSubmit}
+      onSubmit={createReport}
     >
-      {/* Page Title */}
       <h2>Send report</h2>
 
-      {/* Error Message */}
-      {
-        errMsg &&
-        <p
-          ref={errRef}
-          className={style.error_message}
-          aria-live="assertive"
-        >
-          {errMsg}
-        </p>
-      }
+      <>
+        {
+          errMsg &&
+          <p
+            ref={errRef}
+            className={style.error_message}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+        }
+      </>
 
-      {/* Content */}
       <textarea
         name="content"
         id="content"
-        placeholder="Enter your report"
+        placeholder="Report content"
         required={true}
         value={content}
         onChange={(e) => setContent(e.target.value)}
       >
       </textarea>
 
-      {/* Submit btn */}
       <button
         type='submit'
-        disabled={loading ? true : false}
-        style={loading ? { opacity: .5, cursor: "revert" } : {}}
+        disabled={createReportLoad ? true : false}
+        style={createReportLoad ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Send</span>
-        {loading && <MoonLoader color="#fff" size={15} />}
+        {createReportLoad && <MoonLoader color="#000" size={15} />}
       </button>
     </form>
   )

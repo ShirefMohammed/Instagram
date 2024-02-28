@@ -1,10 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lemonada:wght@300;500;700&display=swap');
 
-:root {
-  --main-btn-color: #512da8;
-  --main-input-bg: #eee;
-}
-
 * {
   margin: 0;
   padding: 0;
@@ -23,30 +18,3 @@ a {
 label, button {
   cursor: pointer;
 }
-
-/* Start animations */
-.fade_up {
-  animation: fade_up .3s ease;
-  -webkit-animation: fade_up .3s ease;
-}
-
-@keyframes fade_up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-    -webkit-transform: translateY(10px);
-    -moz-transform: translateY(10px);
-    -ms-transform: translateY(10px);
-    -o-transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    -webkit-transform: translateY(0);
-    -moz-transform: translateY(0);
-    -ms-transform: translateY(0);
-    -o-transform: translateY(0);
-  }
-}
-/* End animations */

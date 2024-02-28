@@ -4,13 +4,16 @@ const postSchema = new mongoose.Schema(
   {
     creator: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: "users"
+      ref: "users",
+      required: true
     },
     content: {
-      type: String,
+      type: String
     },
-    images: [String],
+    images: {
+      type: [String],
+      required: true,
+    },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
   },
   {

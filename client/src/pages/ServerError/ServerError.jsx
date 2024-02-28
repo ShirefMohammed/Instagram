@@ -11,7 +11,9 @@ const ServerError = () => {
     <section className={style.server_error}>
       <div>
         <h2>Server Error</h2>
+
         <p>Some errors happened in server, try again after while</p>
+
         <div className={style.buttons}>
           <button onClick={goBack}>Go Back</button>
           <button onClick={goHome}>Go Home</button>

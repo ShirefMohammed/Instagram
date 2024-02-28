@@ -1,161 +1,21 @@
-/* Start Home */
 .home {
   width: 100%;
   display: flex;
   gap: 15px;
 }
 
-.home .right_side {
+.home .left_side {
+  width: 100%;
   flex: 2;
-  overflow: hidden;
 }
 
-.home .left_side {
+.home .right_side {
+  width: 100%;
   flex: 1;
 }
 
 @media(max-width: 1200px) {
-  .home .left_side {
+  .home .right_side {
     display: none;
   }
 }
-
-/* End Home */
-
-/* Start Followings */
-.followings {
-  width: 100%;
-  max-width: 600px;
-  overflow-x: auto;
-  padding: 25px 15px 0px 15px;
-  margin: auto;
-}
-
-@media (max-width: 991px) {
-  .followings {
-    max-width: 500px;
-    padding: 20px 5px 0px 5px;
-  }
-}
-
-.followings::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-}
-
-.followings .loading_container {
-  width: 100%;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.followings ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 15px;
-}
-
-.followings li a img {
-  width: 70px;
-  height: 70px;
-  padding: 2px;
-  object-fit: cover;
-  user-select: none;
-  border: 2px solid #eee;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-}
-
-@media(max-width: 768px) {
-  .followings li a img {
-    width: 60px;
-    height: 60px;
-  }
-}
-
-/* End Followings */
-
-/* Start SuggestedUsers */
-.home .suggested_users {
-  position: sticky;
-  top: 0;
-  padding: 30px 15px;
-}
-
-.home .suggested_users h2 {
-  color: #666;
-  text-transform: uppercase;
-  font-weight: 500;
-}
-
-.home .suggested_users ul {
-  height: 350px;
-  overflow-y: auto;
-}
-
-.home .suggested_users ul li {
-  width: 100%;
-}
-
-/* End SuggestedUsers */
-
-/* Start Suggested User Card */
-.user_card {
-  width: 100%;
-  padding: 12px 0;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user_card img {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  user-select: none;
-  border-radius: 50%;
-  -webkit-border-radius: 50%;
-  -moz-border-radius: 50%;
-  -ms-border-radius: 50%;
-  -o-border-radius: 50%;
-}
-
-.user_card a {
-  font-size: 13px;
-}
-
-.user_card a:hover {
-  text-decoration: underline;
-  color: #00f;
-}
-
-.user_card button {
-  border: none;
-  outline: none;
-  background: none;
-  margin-left: auto;
-  margin-right: 30px;
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user_card button span.follow {
-  font-size: 13px;
-  color: #0095f6;
-}
-
-.user_card button span.unfollow {
-  font-size: 13px;
-  color: #f00;
-}
-
-/* End Suggested User Card */

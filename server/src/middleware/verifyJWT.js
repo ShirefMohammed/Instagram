@@ -17,7 +17,13 @@ const verifyJWT = async (req, res, next) => {
     process.env.ACCESS_TOKEN_SECRET,
     (err, decoded) => {
       if (err) {
-        return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
+        return sendResponse(
+          res,
+          403,
+          httpStatusText.AccessTokenExpiredError,
+          "Forbidden",
+          null
+        );
       } else {
         req.userInfo = decoded.userInfo;
         next();

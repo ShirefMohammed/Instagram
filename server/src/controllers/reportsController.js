@@ -3,6 +3,7 @@ const ReportModel = require("../models/reportModel");
 const ROLES_LIST = require('../utils/roles_list');
 const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
+const createImagesUrl = require("../utils/createImagesUrl");
 
 const getReports = asyncHandler(
   async (req, res) => {
@@ -24,12 +25,8 @@ const getReports = asyncHandler(
       .sort({ updatedAt: sort });
 
     reports.map((report) => {
-      report.sender.avatar = new URL(
-        report.sender.avatar,
-        `${process.env.SERVER_URL}/api/uploads/`
-      ).toString();
-    }
-    );
+      report.sender.avatar = createImagesUrl([report.sender.avatar])[0];
+    });
 
     sendResponse(
       res,
@@ -63,7 +60,7 @@ const createReport = asyncHandler(
       res,
       201,
       httpStatusText.SUCCESS,
-      "report created successfully",
+      "report is created",
       newReport
     );
   }
@@ -72,7 +69,7 @@ const createReport = asyncHandler(
 const handleReportAccess = asyncHandler(
   async (req, res, next) => {
     const userInfo = req?.userInfo;
-    const reportId = req?.params?.id;
+    const reportId = req?.params?.reportId;
 
     if (!userInfo) {
       return sendResponse(res, 401, httpStatusText.FAIL, `Unauthorized`, null);
@@ -96,7 +93,7 @@ const handleReportAccess = asyncHandler(
       return sendResponse(res, 403, httpStatusText.FAIL, `Forbidden`, null);
     }
 
-    report.sender.avatar = `${process.env.SERVER_URL}/api/uploads/${report.sender.avatar}`;
+    report.sender.avatar = createImagesUrl([report.sender.avatar])[0];
 
     req.report = report;
 
@@ -132,7 +129,7 @@ const updateReport = asyncHandler(
       res,
       200,
       httpStatusText.SUCCESS,
-      "report updated successfully",
+      "report is updated",
       updatedReport
     );
   }
@@ -146,7 +143,7 @@ const deleteReport = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "report deleted successfully",
+      "report is deleted",
       null
     );
   }

@@ -85,7 +85,15 @@
   font-size: 18px;
 }
 
-.post_card a.description_container p {
-  font-size: 14px;
+.post_card .content p {
+  font-size: 13px;
   line-height: 1.6;
+}
+
+.post_card .content button {
+  outline: none;
+  border: none;
+  background: none;
+  font-size: 11px;
+  margin-left: 10px;
 }

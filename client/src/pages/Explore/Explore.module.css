@@ -1,4 +1,39 @@
-.explore {
+.posts_container {
+  width: fit-content;
+  padding: 15px;
+  margin: auto;
+}
+
+.posts_container>div {
+  margin-bottom: 15px;
+}
+
+.posts_container .load_more_posts_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: auto;
+  color: #000;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.posts_container .no_more_posts_message {
+  text-align: center;
+  font-size: 12px;
+}
+
+.loading_container {
   width: 100%;
   min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

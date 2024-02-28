@@ -11,6 +11,9 @@ const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 const ROLES_LIST = require("../utils/roles_list");
 const sendResponse = require("../utils/sendResponse");
+const createImagesUrl = require("../utils/createImagesUrl");
+const ChatModel = require("../models/chatModel");
+const MessageModel = require("../models/messageModel");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -27,10 +30,10 @@ const getUsers = asyncHandler(
     let searchQuery = {};
 
     if (query?.onlyEditors) {
-      searchQuery = { ...searchQuery, "roles.Editor": { $exists: true } }
+      searchQuery = { ...searchQuery, roles: { $in: [ROLES_LIST.Editor] } };
     }
     if (query?.onlyAdmins) {
-      searchQuery = { ...searchQuery, "roles.Admin": { $exists: true } }
+      searchQuery = { ...searchQuery, roles: { $in: [ROLES_LIST.Admin] } };
     }
 
     const users = await UserModel.find(
@@ -40,15 +43,15 @@ const getUsers = asyncHandler(
       .skip(skip)
       .limit(limit);
 
-    users.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+    users.forEach((user) => {
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
       res,
       200,
       httpStatusText.SUCCESS,
-      "successful fetching users",
+      "Successful fetching users",
       users
     );
   }
@@ -63,7 +66,7 @@ const searchUsers = asyncHandler(
     const skip = (page - 1) * limit;
 
     let searchQuery = {
-      "roles.User": { $exists: true },
+      roles: { $in: [ROLES_LIST.User] },
       $or: [
         { name: { $regex: query?.searchKey, $options: 'i' } },
         { email: { $regex: query?.searchKey, $options: 'i' } }
@@ -78,7 +81,7 @@ const searchUsers = asyncHandler(
       .limit(limit);
 
     users.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
@@ -129,7 +132,7 @@ const getSuggestedUsers = asyncHandler(
     ]);
 
     suggestedUsers.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
@@ -144,18 +147,18 @@ const getSuggestedUsers = asyncHandler(
 
 const getUser = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
 
-    const user = await UserModel.findById(
+    let user = await UserModel.findById(
       userId,
-      "_id name email avatar bio links"
+      "_id name email avatar roles bio links"
     );
 
     if (!user) {
       return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
-    user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+    user.avatar = createImagesUrl([user.avatar])[0];
 
     sendResponse(
       res,
@@ -197,7 +200,7 @@ const multerOptions = () => {
 const updateUser = asyncHandler(
   async (req, res) => {
     const userInfo = req.userInfo;
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const { name, oldPassword, newPassword, bio, links } = req.body;
     const avatar = req?.file?.filename;
 
@@ -221,7 +224,7 @@ const updateUser = asyncHandler(
 
     if (!user) {
       removeAvatar();
-      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
+      return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} is not found`, null);
     }
 
     let message = "account updated successFully";
@@ -300,7 +303,7 @@ const updateUser = asyncHandler(
       .select("_id name email avatar bio links");
 
     // Set avatar url
-    updatedUser.avatar = `${process.env.SERVER_URL}/api/uploads/${updatedUser.avatar}`;
+    updatedUser.avatar = createImagesUrl([updatedUser.avatar])[0];
 
     sendResponse(
       res,
@@ -314,13 +317,9 @@ const updateUser = asyncHandler(
 
 const deleteUser = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userInfo = req.userInfo;
     const { password } = req.body;
-
-    if (!password) {
-      return sendResponse(res, 400, httpStatusText.FAIL, `password required to delete user ${userId}`, null);
-    }
 
     if (
       userId != userInfo.userId
@@ -335,10 +334,16 @@ const deleteUser = asyncHandler(
       return sendResponse(res, 404, httpStatusText.FAIL, `user with id ${userId} not found`, null);
     }
 
-    const IsPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!userInfo.roles.includes(ROLES_LIST.Admin)) {
+      if (!password) {
+        return sendResponse(res, 400, httpStatusText.FAIL, `password required`, null);
+      }
 
-    if (!IsPasswordMatch) {
-      return sendResponse(res, 401, httpStatusText.FAIL, `wrong password`, null);
+      const IsPasswordMatch = await bcrypt.compare(password, user.password);
+
+      if (!IsPasswordMatch) {
+        return sendResponse(res, 401, httpStatusText.FAIL, `wrong password`, null);
+      }
     }
 
     // Delete user avatar
@@ -351,6 +356,7 @@ const deleteUser = asyncHandler(
 
     // delete user posts images and posts comments
     const posts = await PostModel.find({ creator: user._id }, "images");
+
     posts.map(async (post) => {
       if (post?.images && post.images.length > 0) {
         post.images.map((image) => {
@@ -372,8 +378,27 @@ const deleteUser = asyncHandler(
     // Delete user comments
     await CommentModel.deleteMany({ creator: user._id });
 
-    // Delete user notification
-    // soon
+    // Delete user chats
+    const chats = await ChatModel.find({
+      users: { $elemMatch: { $eq: req.userInfo.userId } }
+    });
+
+    for (const chat of chats) {
+      if (!chat.isGroupChat) {
+        await MessageModel.deleteMany({ chat: chat._id });
+        await ChatModel.deleteOne({ _id: chat._id });
+      } else {
+        if (
+          chat.groupAdmin == user._id
+          || chat.users.length === 2
+        ) {
+          await MessageModel.deleteMany({ chat: chat._id });
+          await ChatModel.deleteOne({ _id: chat._id });
+        } else {
+          await MessageModel.deleteMany({ sender: user._id });
+        }
+      }
+    }
 
     // Delete user
     await UserModel.deleteOne({ _id: userId });
@@ -382,7 +407,7 @@ const deleteUser = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "account deleted successfully",
+      "account is deleted",
       null
     );
   }
@@ -390,7 +415,7 @@ const deleteUser = asyncHandler(
 
 const getFollowers = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const query = req.query;
 
     const limit = query?.limit || 20;
@@ -409,7 +434,7 @@ const getFollowers = asyncHandler(
       });
 
     followers.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
@@ -422,14 +447,35 @@ const getFollowers = asyncHandler(
   }
 );
 
+const IsUserFollower = asyncHandler(
+  async (req, res) => {
+    const userId = req.params.userId;
+    const targetUserId = req.params.targetUserId;
+
+    // Check if the user with userId followed by user with targetUserId
+    const isFollower = await UserModel.exists({
+      _id: userId,
+      followers: targetUserId
+    });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "",
+      Boolean(isFollower)
+    );
+  }
+);
+
 const removeFollower = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
     const userInfo = req.userInfo;
-    const { removedFollowerId } = req.body;
+    const userId = req.params.userId;
+    const removedFollowerId = req.params.targetUserId;
 
     if (!removedFollowerId) {
-      return sendResponse(res, 400, httpStatusText.FAIL, `follower id required`, null);
+      return sendResponse(res, 400, httpStatusText.FAIL, `follower id is required`, null);
     }
 
     if (userId !== userInfo.userId) {
@@ -450,7 +496,7 @@ const removeFollower = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "user removed from your followers",
+      "user is removed from your followers",
       null
     );
   }
@@ -458,7 +504,7 @@ const removeFollower = asyncHandler(
 
 const getFollowings = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const query = req.query;
 
     const limit = query?.limit || 20;
@@ -477,7 +523,7 @@ const getFollowings = asyncHandler(
       });
 
     followings.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
@@ -492,9 +538,9 @@ const getFollowings = asyncHandler(
 
 const FollowUser = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
     const userInfo = req.userInfo;
-    const { newFollowedId } = req.body;
+    const userId = req.params.userId;
+    const newFollowedId = req.params.targetUserId;
 
     if (!newFollowedId) {
       return sendResponse(res, 400, httpStatusText.FAIL, `user id required`, null);
@@ -528,17 +574,18 @@ const FollowUser = asyncHandler(
       res,
       200,
       httpStatusText.SUCCESS,
-      "user followed successfully",
+      "user is followed",
       null
     );
   }
 );
 
 const removeFollowing = asyncHandler(
+  // unfollow
   async (req, res) => {
-    const userId = req.params.id;
     const userInfo = req.userInfo;
-    const { removedFollowingId } = req.body;
+    const userId = req.params.userId;
+    const removedFollowingId = req.params.targetUserId;
 
     if (!removedFollowingId) {
       return sendResponse(res, 400, httpStatusText.FAIL, `user id required`, null);
@@ -562,15 +609,36 @@ const removeFollowing = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "user unFollowed successfully",
+      "user is unFollowed",
       null
+    );
+  }
+);
+
+const IsUserFollowed = asyncHandler(
+  async (req, res) => {
+    const userId = req.params.userId;
+    const targetUserId = req.params.targetUserId;
+
+    // Check if the user with userId follows the user with targetUserId
+    const isFollowed = await UserModel.exists({
+      _id: userId,
+      followings: targetUserId
+    });
+
+    sendResponse(
+      res,
+      200,
+      httpStatusText.SUCCESS,
+      "",
+      Boolean(isFollowed)
     );
   }
 );
 
 const getCreatedPosts = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const query = req.query;
 
     const limit = query?.limit || 10;
@@ -586,11 +654,7 @@ const getCreatedPosts = asyncHandler(
       .sort({ createdAt: -1 });
 
     posts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-      }
+      post.images = createImagesUrl(post.images);
     });
 
     sendResponse(
@@ -605,7 +669,7 @@ const getCreatedPosts = asyncHandler(
 
 const getLikedPosts = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userInfo = req.userInfo;
     const query = req.query;
 
@@ -635,11 +699,7 @@ const getLikedPosts = asyncHandler(
     const likedPosts = user?.likedPosts || [];
 
     likedPosts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-      }
+      post.images = createImagesUrl(post.images);
     });
 
     sendResponse(
@@ -654,7 +714,7 @@ const getLikedPosts = asyncHandler(
 
 const getSavedPosts = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userInfo = req.userInfo;
     const query = req.query;
 
@@ -684,11 +744,7 @@ const getSavedPosts = asyncHandler(
     const savedPosts = user?.savedPosts || [];
 
     savedPosts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-      }
+      post.images = createImagesUrl(post.images);
     });
 
     sendResponse(
@@ -703,7 +759,7 @@ const getSavedPosts = asyncHandler(
 
 const getCreatedComments = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userInfo = req.userInfo;
     const query = req.query;
 
@@ -716,8 +772,16 @@ const getCreatedComments = asyncHandler(
     }
 
     const createdComments = await CommentModel.find({ creator: userId })
-      .limit(skip)
+      .skip(skip)
       .limit(limit)
+      .populate({
+        path: "creator",
+        select: "_id name avatar"
+      })
+      .populate({
+        path: "post",
+        select: "_id creator"
+      })
       .sort({ updatedAt: -1 });
 
     sendResponse(
@@ -732,7 +796,7 @@ const getCreatedComments = asyncHandler(
 
 const getCreatedReports = asyncHandler(
   async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId;
     const userInfo = req.userInfo;
     const query = req.query;
 
@@ -748,7 +812,7 @@ const getCreatedReports = asyncHandler(
     }
 
     const createdReports = await ReportModel.find({ sender: userId })
-      .limit(skip)
+      .skip(skip)
       .limit(limit)
       .sort({ updatedAt: -1 });
 
@@ -772,9 +836,11 @@ module.exports = {
   deleteUser,
   getFollowers,
   removeFollower,
+  IsUserFollower,
   getFollowings,
   FollowUser,
   removeFollowing,
+  IsUserFollowed,
   getCreatedPosts,
   getLikedPosts,
   getSavedPosts,

@@ -1,6 +1,7 @@
 .unauthorized{
   width: 100%;
   min-height: 100vh;
+  padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,9 +14,18 @@
 
 .unauthorized p {
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
-.unauthorized button {
+.unauthorized .buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.unauthorized .buttons button {
   color: #000;
   font-size: 12px;
   padding: 6px 45px;

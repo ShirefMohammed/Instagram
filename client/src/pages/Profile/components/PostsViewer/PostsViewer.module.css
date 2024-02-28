@@ -1,0 +1,72 @@
+.posts_viewer {
+  width: 100%;
+}
+
+.posts_viewer .viewer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.posts_viewer .viewer .post_card {
+  position: relative;
+}
+
+.posts_viewer .viewer .post_card::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -ms-transition: .3s;
+  -o-transition: .3s;
+}
+
+.posts_viewer .viewer .post_card:hover::before {
+  background-color: rgba(0, 0, 0, .3);
+}
+
+.posts_viewer .viewer .post_card img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  user-select: none;
+}
+
+.posts_viewer .load_more_posts_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: 10px auto;
+  color: #777;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.posts_viewer .no_more_posts_message {
+  color: #777;
+  text-align: center;
+  margin: 10px auto;
+  font-size: 12px;
+}
+
+.loading_container {
+  width: 100%;
+  min-height: 215px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,66 @@
+.chat_card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -ms-transition: .3s;
+  -o-transition: .3s;
+}
+
+.chat_card:hover,
+.chat_card.active {
+  background: #f5f5f5;
+}
+
+.chat_card .image_container {
+  position: relative;
+}
+
+.chat_card .image_container img {
+  width: 50px;
+  height: 50px;
+  user-select: none;
+  object-fit: cover;
+  border: 1px solid #eee;
+  align-self: center;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.chat_card .image_container .connection_status {
+  width: 10px;
+  height: 10px;
+  background: lime;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.chat_card .name {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.chat_card .latest_message {
+  font-size: 11px;
+  line-height: 1.4;
+  color: gray;
+}

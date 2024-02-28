@@ -11,7 +11,9 @@ const NoResourceFound = () => {
     <section className={style.no_resource_found}>
       <div>
         <h2>No Resource Found</h2>
-        <p>The resource you look for not found</p>
+
+        <p>The resource you look for is not found</p>
+
         <div className={style.buttons}>
           <button onClick={goBack}>Go Back</button>
           <button onClick={goHome}>Go Home</button>

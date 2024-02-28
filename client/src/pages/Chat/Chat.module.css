@@ -1,0 +1,23 @@
+.chat_page {
+  padding: 15px;
+  width: 100%;
+  max-width: 1400px;
+  min-height: 100vh;
+  margin: auto;
+  display: flex;
+  gap: 15px;
+}
+
+.chat_page .left_side {
+  flex: 1;
+}
+
+.chat_page .right_side {
+  flex: 2;
+}
+
+@media (max-width: 900px) {
+  .hide_md {
+    display: none;
+  }
+}

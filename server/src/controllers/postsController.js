@@ -9,6 +9,7 @@ const UserModel = require('../models/userModel');
 const ROLES_LIST = require("../utils/roles_list");
 const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
+const createImagesUrl = require("../utils/createImagesUrl");
 
 const getPosts = asyncHandler(
   async (req, res) => {
@@ -31,12 +32,8 @@ const getPosts = asyncHandler(
       .sort({ createdAt: sort });
 
     posts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-        post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
-      }
+      post.images = createImagesUrl(post.images);
+      post.creator.avatar = createImagesUrl([post.creator.avatar])[0];
     });
 
     sendResponse(
@@ -92,12 +89,8 @@ const getExploredPosts = asyncHandler(
     ]);
 
     posts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-        post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
-      }
+      post.images = createImagesUrl(post.images);
+      post.creator.avatar = createImagesUrl([post.creator.avatar])[0];
     });
 
     sendResponse(
@@ -129,12 +122,8 @@ const getSuggestedPosts = asyncHandler(
       .sort({ createdAt: -1 });
 
     posts.map((post) => {
-      if (post?.images && post.images.length > 0) {
-        post.images = post.images.map((image) => {
-          return `${process.env.SERVER_URL}/api/uploads/${image}`;
-        });
-      }
-      post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`;
+      post.images = createImagesUrl(post.images);
+      post.creator.avatar = createImagesUrl([post.creator.avatar])[0];
     });
 
     sendResponse(
@@ -182,10 +171,10 @@ const createPost = asyncHandler(
 
     const IsCreatorExist = await UserModel.exists({ _id: creatorId });
     if (!IsCreatorExist) {
-      return sendResponse(res, 401, httpStatusText.FAIL, "Creator does not exist", null);
+      return sendResponse(res, 404, httpStatusText.FAIL, "Creator does not exist", null);
     }
 
-    if (images.length === 0) {
+    if (images.length < 1) {
       return sendResponse(res, 400, httpStatusText.FAIL, "You should upload one image at least", null);
     }
 
@@ -199,15 +188,13 @@ const createPost = asyncHandler(
       images: images,
     });
 
-    newPost.images = newPost.images.map((image) => {
-      return `${process.env.SERVER_URL}/api/uploads/${image}`;
-    });
+    newPost.images = createImagesUrl(newPost.images);
 
     sendResponse(
       res,
       201,
       httpStatusText.SUCCESS,
-      "Post created successfully",
+      "Post is created",
       newPost
     );
   }
@@ -215,7 +202,7 @@ const createPost = asyncHandler(
 
 const getPost = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
 
     const post = await PostModel.findById(postId)
       .populate({ path: "creator", select: "_id name avatar" })
@@ -226,11 +213,8 @@ const getPost = asyncHandler(
       return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id {${postId}} not found`, null);
     }
 
-    post.creator.avatar = `${process.env.SERVER_URL}/api/uploads/${post.creator.avatar}`
-
-    post.images = post.images.map(image => {
-      return `${process.env.SERVER_URL}/api/uploads/${image}`;
-    });
+    post.creator.avatar = createImagesUrl([post.creator.avatar])[0];
+    post.images = createImagesUrl(post.images);
 
     sendResponse(
       res,
@@ -245,7 +229,7 @@ const getPost = asyncHandler(
 const updatePost = asyncHandler(
   async (req, res) => {
     const userInfo = req.userInfo;
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const content = req.body?.content;
 
     const post = await PostModel.findById(postId);
@@ -261,13 +245,13 @@ const updatePost = asyncHandler(
     await PostModel.findByIdAndUpdate(
       postId,
       { content: content },
-    )
+    );
 
     sendResponse(
       res,
       200,
       httpStatusText.SUCCESS,
-      "Post updated successfully",
+      "Post is updated",
       { content: content }
     );
   }
@@ -276,7 +260,7 @@ const updatePost = asyncHandler(
 const deletePost = asyncHandler(
   async (req, res) => {
     const userInfo = req.userInfo;
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
 
     const post = await PostModel.findById(postId);
 
@@ -311,7 +295,7 @@ const deletePost = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "Post deleted successfully",
+      "Post is deleted",
       null
     );
   }
@@ -319,7 +303,7 @@ const deletePost = asyncHandler(
 
 const getPostLikes = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const query = req.query;
 
     const limit = query?.limit || 20;
@@ -344,7 +328,7 @@ const getPostLikes = asyncHandler(
     const usersLikedPost = post.likes;
 
     usersLikedPost.map((user) => {
-      user.avatar = `${process.env.SERVER_URL}/api/uploads/${user.avatar}`;
+      user.avatar = createImagesUrl([user.avatar])[0];
     });
 
     sendResponse(
@@ -359,7 +343,7 @@ const getPostLikes = asyncHandler(
 
 const addPostLike = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const userId = req.userInfo.userId;
 
     const post = await PostModel.findById(postId, "likes");
@@ -388,7 +372,7 @@ const addPostLike = asyncHandler(
       res,
       200,
       httpStatusText.SUCCESS,
-      "like added successfully",
+      "like is added",
       null
     );
   }
@@ -396,7 +380,7 @@ const addPostLike = asyncHandler(
 
 const removePostLike = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const userId = req.userInfo.userId;
 
     const post = await PostModel.findById(postId, "likes");
@@ -421,7 +405,7 @@ const removePostLike = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "like removed successfully",
+      "like is removed",
       null
     );
   }
@@ -429,7 +413,7 @@ const removePostLike = asyncHandler(
 
 const savePost = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const userId = req.userInfo.userId;
 
     const IsPostExist = await PostModel.exists({ _id: postId });
@@ -453,7 +437,7 @@ const savePost = asyncHandler(
       res,
       200,
       httpStatusText.SUCCESS,
-      "post saved successfully",
+      "Post is saved",
       null
     );
   }
@@ -461,7 +445,7 @@ const savePost = asyncHandler(
 
 const unsavePost = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const userId = req.userInfo.userId;
 
     const IsPostExist = await PostModel.exists({ _id: postId });
@@ -485,7 +469,7 @@ const unsavePost = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "post unsaved successfully",
+      "post is unsaved",
       null
     );
   }
@@ -493,7 +477,7 @@ const unsavePost = asyncHandler(
 
 const getPostComments = asyncHandler(
   async (req, res) => {
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const query = req.query;
 
     const limit = query?.limit || 5;
@@ -516,10 +500,7 @@ const getPostComments = asyncHandler(
       .sort({ createdAt: sort });
 
     comments.map((comment) => {
-      comment.creator.avatar = new URL(
-        comment.creator.avatar,
-        `${process.env.SERVER_URL}/api/uploads/`
-      );
+      comment.creator.avatar = createImagesUrl([comment.creator.avatar])[0];
     });
 
     sendResponse(
@@ -535,7 +516,7 @@ const getPostComments = asyncHandler(
 const addPostComment = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
-    const postId = req?.params?.id;
+    const postId = req?.params?.postId;
     const content = req?.body?.content;
 
     if (!content) {
@@ -548,9 +529,9 @@ const addPostComment = asyncHandler(
       return sendResponse(res, 404, httpStatusText.FAIL, `Post with Id ${postId} Not Found`, null);
     }
 
-    const ISUserExist = await UserModel.exists({ _id: userId });
+    const IsUserExist = await UserModel.exists({ _id: userId });
 
-    if (!ISUserExist) {
+    if (!IsUserExist) {
       return sendResponse(res, 404, httpStatusText.FAIL, `user with Id ${userId} Not Found`, null);
     }
 
@@ -566,10 +547,7 @@ const addPostComment = asyncHandler(
       select: "_id name avatar"
     });
 
-    newComment.creator.avatar = new URL(
-      newComment.creator.avatar,
-      `${process.env.SERVER_URL}/api/uploads/`
-    );
+    newComment.creator.avatar = createImagesUrl([newComment.creator.avatar])[0];
 
     // Populate the 'post' field
     await newComment.populate({
@@ -577,12 +555,11 @@ const addPostComment = asyncHandler(
       select: "_id creator"
     });
 
-
     sendResponse(
       res,
       201,
       httpStatusText.SUCCESS,
-      "Comment added successfully",
+      "Comment is added",
       newComment
     );
   }
@@ -591,8 +568,8 @@ const addPostComment = asyncHandler(
 const updatePostComment = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
-    const postId = req?.params?.id;
-    const commentId = req?.body?.commentId;
+    const postId = req?.params?.postId;
+    const commentId = req?.params?.commentId;
     const content = req?.body?.content;
 
     if (!commentId) {
@@ -624,16 +601,13 @@ const updatePostComment = asyncHandler(
     comment.content = content;
     await comment.save();
 
-    comment.creator.avatar = new URL(
-      comment.creator.avatar,
-      `${process.env.SERVER_URL}/api/uploads/`
-    );
+    comment.creator.avatar = createImagesUrl([comment.creator.avatar])[0];
 
     sendResponse(
       res,
       200,
       httpStatusText.SUCCESS,
-      "Comment updated successfully",
+      "Comment is updated",
       comment
     );
   }
@@ -643,10 +617,10 @@ const removePostComment = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
     const roles = req.userInfo.roles;
-    const commentId = req?.body?.commentId;
+    const commentId = req?.params?.commentId;
 
     if (!commentId) {
-      return sendResponse(res, 400, httpStatusText.FAIL, `Comment id required`, null);
+      return sendResponse(res, 400, httpStatusText.FAIL, `Comment id is required`, null);
     }
 
     const comment = await CommentModel.findById(commentId)
@@ -670,7 +644,7 @@ const removePostComment = asyncHandler(
       res,
       204,
       httpStatusText.SUCCESS,
-      "Comment deleted successfully",
+      "Comment is deleted",
       null
     );
   }

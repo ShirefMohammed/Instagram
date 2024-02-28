@@ -14,9 +14,11 @@ const {
   deleteUser,
   getFollowers,
   removeFollower,
+  IsUserFollower,
   getFollowings,
   FollowUser,
   removeFollowing,
+  IsUserFollowed,
   getCreatedPosts,
   getLikedPosts,
   getSavedPosts,
@@ -33,9 +35,13 @@ const {
 // deleteUser is available for both account owner and admin
 
 // getFollowers is available for all
+
+// IsUserFollower is available for all
 // removeFollower is only available for account owner
 
 // getFollowings is available for all
+
+// IsUserFollowed is available for all
 // followUser is available for verified users
 // removeFollowing is only available for account owner
 
@@ -54,16 +60,12 @@ router.route('/')
 
 router.route('/search').get(searchUsers);
 
-router.route('/suggest')
-  .get(
-    verifyJWT,
-    getSuggestedUsers
-  );
+router.route('/suggest').get(verifyJWT, getSuggestedUsers);
 
 const { storage, fileFilter } = multerOptions();
 const upload = multer({ storage, fileFilter });
 
-router.route('/:id')
+router.route('/:userId')
   .get(
     getUser
   )
@@ -77,18 +79,22 @@ router.route('/:id')
     deleteUser
   );
 
-router.route('/:id/followers')
+router.route('/:userId/followers').get(getFollowers);
+
+router.route('/:userId/followers/:targetUserId')
   .get(
-    getFollowers
+    IsUserFollower
   )
   .delete(
     verifyJWT,
     removeFollower
   );
 
-router.route('/:id/followings')
+router.route('/:userId/followings').get(getFollowings);
+
+router.route('/:userId/followings/:targetUserId')
   .get(
-    getFollowings
+    IsUserFollowed
   )
   .post(
     verifyJWT,
@@ -99,30 +105,30 @@ router.route('/:id/followings')
     removeFollowing
   );
 
-router.route('/:id/createdPosts')
+router.route('/:userId/createdPosts')
   .get(
     getCreatedPosts
   );
 
-router.route('/:id/likedPosts')
+router.route('/:userId/likedPosts')
   .get(
     verifyJWT,
     getLikedPosts
   );
 
-router.route('/:id/savedPosts')
+router.route('/:userId/savedPosts')
   .get(
     verifyJWT,
     getSavedPosts
   );
 
-router.route('/:id/createdComments')
+router.route('/:userId/createdComments')
   .get(
     verifyJWT,
     getCreatedComments
   );
 
-router.route('/:id/createdReports')
+router.route('/:userId/createdReports')
   .get(
     verifyJWT,
     getCreatedReports

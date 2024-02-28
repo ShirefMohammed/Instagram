@@ -1,19 +1,6 @@
-// Modules
-import {
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import {
-  useDispatch,
-  useSelector,
-} from "react-redux";
-// Redux functions
-import { setUser } from "../store/slices/userSlice";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const useHandleErrors = () => {
-  const user = useSelector(state => state.user);
-  const dispatch = useDispatch();
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -44,16 +31,6 @@ const useHandleErrors = () => {
     }
   }
 
-  const handleForbidden = (err) => {
-    if (err?.response?.status === 403) {
-      dispatch(setUser({ persist: user?.persist }));
-      navigate(
-        "/authentication",
-        { state: { from: location }, replace: true }
-      )
-    }
-  }
-
   const handleNoResourceFound = (err) => {
     if (err?.response?.status === 404) {
       navigate(
@@ -63,13 +40,14 @@ const useHandleErrors = () => {
     }
   }
 
-  return {
-    handleNoServerResponse,
-    handleServerError,
-    handleUnauthorized,
-    handleForbidden,
-    handleNoResourceFound,
-  };
+  const handleErrors = (err) => {
+    handleNoServerResponse(err);
+    handleServerError(err);
+    handleUnauthorized(err);
+    handleNoResourceFound(err);
+  }
+
+  return handleErrors;
 }
 
 export default useHandleErrors

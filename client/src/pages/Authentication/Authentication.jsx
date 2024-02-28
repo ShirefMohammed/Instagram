@@ -1,82 +1,98 @@
-// Modules
 import { useState } from "react";
-// Components
-import { Login, Register } from "../../components";
-// Css style
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useLogout } from "../../hooks";
+import Login from "./components/Login/Login";
+import Register from "./components/Register/Register";
 import style from "./Authentication.module.css";
 
 const Authentication = () => {
-  const [authType, setAuthType] = useState("login");
+  const user = useSelector(state => state.user);
+
+  const [page, setPage] = useState("login");
+
+  const navigate = useNavigate();
+  const logout = useLogout();
+
+  const goBack = () => navigate(-1);
+  const goHome = () => navigate("/");
 
   return (
-    <section className={style.authentication_page}>
-      <div className={`${style.container}
-        ${authType === "register" ? style.active : ""}`}
-      >
-        {/* Login */}
-        <div className={`${style.form_container} ${style.login}`}>
-          <Login />
-        </div>
+    <>
+      {
+        !user?.accessToken ?
 
-        {/* Register */}
-        <div className={`${style.form_container} ${style.register}`}>
-          <Register />
-        </div>
+          (<section className={style.authentication_page} >
+            <div className={`${style.container} ${page === "register" ? style.active : ""}`}>
+              <div className={`${style.form_container} ${style.login}`}>
+                <Login />
+              </div>
 
-        {/* Toggle UI */}
-        <div className={style.toggle_container}>
-          <div className={style.toggle}>
-            <div className={`${style.toggle_panel} ${style.toggle_left}`}>
-              <h2>
-                Welcome Back!
-              </h2>
-              <p>
-                Enter your personal details to use all of site features
-              </p>
+              <div className={`${style.form_container} ${style.register}`}>
+                <Register />
+              </div>
+
+              <div className={style.toggle_container}>
+                <div className={style.toggle}>
+                  <div className={`${style.toggle_panel} ${style.toggle_left}`}>
+                    <h2>
+                      Welcome Back!
+                    </h2>
+                    <p>
+                      Enter your personal details to use all of site features
+                    </p>
+                    <button
+                      className={style.hidden}
+                      onClick={() => setPage("login")}
+                    >
+                      Sign In
+                    </button>
+                  </div>
+
+                  <div className={`${style.toggle_panel} ${style.toggle_right}`}>
+                    <h2>
+                      Hello, Friend!
+                    </h2>
+                    <p>
+                      Register with your personal details to use all of site features
+                    </p>
+                    <button
+                      className={style.hidden}
+                      onClick={() => setPage("register")}
+                    >
+                      Sign Up
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               <button
-                className={style.hidden}
-                onClick={() => setAuthType("login")}
+                className={style.toggle_btn}
+                type="button"
+                onClick={() => {
+                  page === "login" ? setPage("register") : setPage("login");
+                }}
               >
-                Sign In
+                {page === "login" ? (<span>Sign Up</span>) : (<span>Sign In</span>)}
               </button>
             </div>
+          </section >)
 
-            <div className={`${style.toggle_panel} ${style.toggle_right}`}>
-              <h2>
-                Hello, Friend!
-              </h2>
-              <p>
-                Register with your personal details to use all of site features
-              </p>
-              <button
-                className={style.hidden}
-                onClick={() => setAuthType("register")}
-              >
-                Sign Up
-              </button>
+          : (<section className={style.not_available_page}>
+            <div>
+              <h2>Not available page</h2>
+
+              <p>You have already authenticated, you can logout to reauthenticate.</p>
+
+              <div className={style.buttons}>
+                <button onClick={goBack}>Go Back</button>
+                <button onClick={goHome}>Go Home</button>
+                <button onClick={logout}>Log Out</button>
+              </div>
             </div>
-          </div>
-        </div>
-
-        {/* Toggle btn in small screen */}
-        <button
-          className={style.toggle_btn}
-          type="button"
-          onClick={() => {
-            if (authType === "login")
-              setAuthType("register");
-            else if (authType === "register")
-              setAuthType("login");
-          }}
-        >
-          {
-            authType === "login" ?
-              (<span>Sign Up</span>)
-              : (<span>Sign In</span>)
-          }
-        </button>
-      </div>
-    </section>
+          </section>)
+      }
+    </>
   )
 }
 

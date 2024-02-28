@@ -1,35 +1,84 @@
-.create_report {
+.report {
   padding: 15px;
   width: 100%;
   max-width: 600px;
   margin: auto;
 }
 
-.create_report h2 {
-  font-size: 20px;
+.report h2 {
+  font-size: 16px;
   font-weight: 500;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
-.create_report textarea {
+.report .error_message {
+  color: firebrick;
+  background-color: lightpink;
+  text-transform: capitalize;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.report textarea {
   resize: none;
   border: none;
   outline: none;
   background-color: #eee;
   width: 100%;
-  height: calc(100vh - 220px);
-  font-size: 13px;
+  height: calc(100vh - 145px);
+  font-size: 14px;
   padding: 10px 15px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
 
-.create_report a {
+@media (max-width: 768px) {
+  .report textarea {
+    height: calc(100vh - 225px);
+  }
+}
+
+.report button[type="submit"] {
+  border: none;
+  outline: none;
+  color: #000;
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 6px 45px;
+  margin: auto;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.report button[type="submit"] span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.report .edit_link {
+  display: block;
+  width: fit-content;
   font-size: 12px;
   margin: auto;
   font-weight: 500;
@@ -38,4 +87,31 @@
   cursor: pointer;
   text-decoration: underline;
   color: blue;
+  margin-bottom: 5px;
+}
+
+.report .delete_btn {
+  display: block;
+  width: fit-content;
+  font-size: 12px;
+  margin: auto;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+  color: red;
+  outline: none;
+  border: none;
+  background: none;
+}
+
+.loading_container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }

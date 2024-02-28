@@ -1,0 +1,50 @@
+.user_card {
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user_card img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  user-select: none;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.user_card a {
+  font-size: 14px;
+}
+
+.user_card a:hover {
+  text-decoration: underline;
+  color: #00f;
+}
+
+.user_card button {
+  border: none;
+  outline: none;
+  background: none;
+  margin-left: auto;
+  margin-right: 30px;
+  width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user_card button span.follow {
+  font-size: 14px;
+  color: #0095f6;
+}
+
+.user_card button span.unfollow {
+  font-size: 14px;
+  color: #f00;
+}

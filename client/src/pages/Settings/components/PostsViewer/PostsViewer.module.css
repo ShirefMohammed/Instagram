@@ -1,0 +1,43 @@
+.posts_viewer {
+  width: 100%;
+}
+
+.posts_viewer .viewer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+.posts_viewer .loading {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.posts_viewer .load_more_posts_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: 10px auto;
+  color: #777;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.posts_viewer .no_more_posts_message {
+  color: #777;
+  text-align: center;
+  margin: 10px auto;
+  text-transform: uppercase;
+  font-size: 11px;
+}

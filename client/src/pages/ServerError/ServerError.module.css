@@ -1,6 +1,7 @@
 .server_error{
   width: 100%;
   min-height: 100vh;
+  padding: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,10 +14,12 @@
 
 .server_error p {
   margin-bottom: 10px;
+  font-size: 14px;
 }
 
 .server_error .buttons {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: 10px;

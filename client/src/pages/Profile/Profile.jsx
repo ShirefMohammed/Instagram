@@ -1,28 +1,25 @@
-/* eslint-disable react/prop-types */
-// Modules
 import { useEffect, useState, } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { MoonLoader, PuffLoader } from "react-spinners";
+import { MoonLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart, faPenToSquare, faBookmark, faClipboard } from "@fortawesome/free-regular-svg-icons";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
-// Hooks
+import { faHeart, faBookmark, faClipboard } from "@fortawesome/free-regular-svg-icons";
 import { useAxiosPrivate, useHandleErrors } from "../../hooks";
-// Css style
+import ProfileControllers from "./components/ProfileControllers/ProfileControllers";
+import PostsViewer from "./components/PostsViewer/PostsViewer";
+import DeleteAccount from "./components/DeleteAccount/DeleteAccount";
 import style from "./Profile.module.css";
-// Images
 import defaultAvatar from "../../assets/defaultAvatar.png";
-import defaultPostImage from "../../assets/defaultPostImage.png";
-// Api axios
 import axios from "../../api/axios";
 
-const PrivateProfile = () => {
-  const { id } = useParams(); // general user id
+const Profile = () => {
+  const userId = useParams().id; // general user id
   const user = useSelector(state => state.user); // current user visitor
 
   const [userData, setUserData] = useState(false);
   const [fetchUserLoad, setFetchUserLoad] = useState(false);
+
+  const [openDeleteAccount, setOpenDeleteAccount] = useState(false);
 
   const createdPostsLimit = 10;
   const [createdPostsPage, setCreatedPostsPage] = useState(1);
@@ -49,18 +46,17 @@ const PrivateProfile = () => {
     const fetchUserData = async () => {
       try {
         setFetchUserLoad(true);
-        const res = await axios.get(`/users/${id}`);
+        const res = await axios.get(`/users/${userId}`);
         setUserData(res.data.data);
       } catch (err) {
-        handleErrors.handleNoServerResponse(err);
-        handleErrors.handleServerError(err);
+        handleErrors(err);
       } finally {
         setFetchUserLoad(false);
       }
     }
     fetchUserData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [userId]);
 
   // Reset states
   useEffect(() => {
@@ -75,7 +71,7 @@ const PrivateProfile = () => {
 
     setPostsType("createdPosts");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [userId]);
 
   // Fetch created posts
   useEffect(() => {
@@ -83,75 +79,71 @@ const PrivateProfile = () => {
       try {
         setFetchCreatedPostsLoad(true);
         const res = await axios.get(
-          `/users/${id}/createdPosts?page=${createdPostsPage}&limit=${createdPostsLimit}`
+          `/users/${userId}/createdPosts?page=${createdPostsPage}&limit=${createdPostsLimit}`
         );
         setCreatedPosts((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors.handleNoServerResponse(err);
-        handleErrors.handleServerError(err);
+        handleErrors(err);
       } finally {
         setFetchCreatedPostsLoad(false);
       }
     }
     fetchCreatedPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createdPostsPage]);
+  }, [createdPostsPage, userId]);
 
   // Fetch saved posts
   useEffect(() => {
     const fetchSavedPosts = async () => {
       try {
         setFetchSavedPostsLoad(true);
-        if (user?._id != id) return null;
+        if (user?._id != userId) return null;
         const res = await axiosPrivate.get(
-          `/users/${id}/savedPosts?page=${savedPostsPage}&limit=${savedPostsLimit}`
+          `/users/${userId}/savedPosts?page=${savedPostsPage}&limit=${savedPostsLimit}`
         );
         setSavedPosts((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors.handleNoServerResponse(err);
-        handleErrors.handleServerError(err);
+        handleErrors(err);
       } finally {
         setFetchSavedPostsLoad(false);
       }
     }
     fetchSavedPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [savedPostsPage]);
+  }, [savedPostsPage, userId]);
 
   // Fetch liked posts
   useEffect(() => {
     const fetchLikedPosts = async () => {
       try {
         setFetchLikedPostsLoad(true);
-        if (user?._id != id) return null;
+        if (user?._id != userId) return null;
         const res = await axiosPrivate.get(
-          `/users/${id}/likedPosts?page=${likedPostsPage}&limit=${likedPostsLimit}`
+          `/users/${userId}/likedPosts?page=${likedPostsPage}&limit=${likedPostsLimit}`
         );
         setLikedPosts((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors.handleNoServerResponse(err);
-        handleErrors.handleServerError(err);
+        handleErrors(err);
       } finally {
         setFetchLikedPostsLoad(false);
       }
     }
     fetchLikedPosts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [likedPostsPage]);
+  }, [likedPostsPage, userId]);
 
   return (
     <>
       {
-        // While fetching user data
-        fetchUserLoad ? (<div className={style.loading_container}>
-          <MoonLoader color="#000" size={20} />
-        </div>)
+        fetchUserLoad ?
+          (<div className={style.loading_container}>
+            <MoonLoader color="#000" size={20} />
+          </div>)
 
-          // Profile
           : userData?._id ?
-            <div className={style.user_profile} >
+            (<div className={style.user_profile} >
               <div className={style.container}>
-                {/* User Info */}
+
                 <div className={style.user_info}>
                   <div className={style.image_container}>
                     <img src={userData?.avatar || defaultAvatar} alt="avatar" />
@@ -163,18 +155,10 @@ const PrivateProfile = () => {
                         {userData?.name}
                       </span>
 
-                      {
-                        user?._id === id &&
-                        <nav>
-                          {/* follow soon */}
-                          <Link to={`/users/${id}/update`}>
-                            <FontAwesomeIcon icon={faPenToSquare} />
-                          </Link>
-                          <Link to={`/settings/createdPosts`}>
-                            <FontAwesomeIcon icon={faGear} />
-                          </Link>
-                        </nav>
-                      }
+                      <ProfileControllers
+                        userId={userId}
+                        setOpenDeleteAccount={setOpenDeleteAccount}
+                      />
                     </div>
 
                     <p className={style.email}>
@@ -188,8 +172,7 @@ const PrivateProfile = () => {
                     </div>
                     <div className={style.links}>
                       {
-                        userData?.links &&
-                        userData?.links.map((link) => (
+                        userData?.links && userData.links.map((link) => (
                           <Link key={link} to={link} target="_blank">
                             {link}
                           </Link>
@@ -199,7 +182,6 @@ const PrivateProfile = () => {
                   </div>
                 </div>
 
-                {/* Break */}
                 <hr style={{
                   width: "70%",
                   margin: "30px auto",
@@ -207,91 +189,92 @@ const PrivateProfile = () => {
                   borderBottom: "none"
                 }} />
 
-                {/* Posts Container */}
                 <div className={style.posts_container}>
-                  {/* Controllers */}
                   <ul className={style.controllers}>
                     <li>
                       <button
                         type="button"
                         onClick={() => setPostsType("createdPosts")}
-                        className={
-                          postsType === "createdPosts" ? style.active : ""
-                        }
+                        className={postsType === "createdPosts" ? style.active : ""}
                       >
                         <FontAwesomeIcon icon={faClipboard} />
                         <span>Posts</span>
                       </button>
                     </li>
-                    {user?._id == id ? (<>
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => setPostsType("savedPosts")}
-                          className={
-                            postsType === "savedPosts" ? style.active : ""
-                          }
-                        >
-                          <FontAwesomeIcon icon={faBookmark} />
-                          <span>Saved</span>
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() => setPostsType("likedPosts")}
-                          className={
-                            postsType === "likedPosts" ? style.active : ""
-                          }
-                        >
-                          <FontAwesomeIcon icon={faHeart} />
-                          <span>Liked</span>
-                        </button>
-                      </li>
-                    </>) : ""}
+                    {
+                      (user?._id == userId) ?
+                        (<>
+                          <li>
+                            <button
+                              type="button"
+                              onClick={() => setPostsType("savedPosts")}
+                              className={postsType === "savedPosts" ? style.active : ""}
+                            >
+                              <FontAwesomeIcon icon={faBookmark} />
+                              <span>Saved</span>
+                            </button>
+                          </li>
+                          <li>
+                            <button
+                              type="button"
+                              onClick={() => setPostsType("likedPosts")}
+                              className={postsType === "likedPosts" ? style.active : ""}
+                            >
+                              <FontAwesomeIcon icon={faHeart} />
+                              <span>Liked</span>
+                            </button>
+                          </li>
+                        </>) : ("")
+                    }
                   </ul>
 
-                  {/* Posts cards */}
                   <>
                     {
                       postsType === "createdPosts" ?
-                        <PostsViewer
+                        (<PostsViewer
                           posts={createdPosts}
                           limit={createdPostsLimit}
                           page={createdPostsPage}
                           setPage={setCreatedPostsPage}
                           fetchPostsLoad={fetchCreatedPostsLoad}
                           setFetchPostsLoad={setFetchCreatedPostsLoad}
-                        />
+                        />)
 
-                        : user?._id == id && postsType === "savedPosts" ?
-                          <PostsViewer
+                        : user?._id == userId && postsType === "savedPosts" ?
+                          (<PostsViewer
                             posts={savedPosts}
                             limit={savedPostsLimit}
                             page={savedPostsPage}
                             setPage={setSavedPostsPage}
                             fetchPostsLoad={fetchSavedPostsLoad}
                             setFetchPostsLoad={setFetchSavedPostsLoad}
-                          />
+                          />)
 
-                          : user?._id == id && postsType === "likedPosts" ?
-                            <PostsViewer
+                          : user?._id == userId && postsType === "likedPosts" ?
+                            (<PostsViewer
                               posts={likedPosts}
                               limit={likedPostsLimit}
                               page={likedPostsPage}
                               setPage={setLikedPostsPage}
                               fetchPostsLoad={fetchLikedPostsLoad}
                               setFetchPostsLoad={setFetchLikedPostsLoad}
-                            />
+                            />)
 
-                            : ""
+                            : ("")
                     }
                   </>
                 </div>
-              </div>
-            </div >
 
-            // If post not exists
+                <>
+                  {
+                    openDeleteAccount ?
+                      (<DeleteAccount setOpenDeleteAccount={setOpenDeleteAccount} />)
+                      : ("")
+                  }
+                </>
+              </div>
+            </div>)
+
             : (<div className={style.error_container}>
               Some errors happen when fetching user
             </div>)
@@ -300,85 +283,4 @@ const PrivateProfile = () => {
   )
 }
 
-// View posts in grids of cards
-const PostsViewer = (
-  {
-    posts,
-    limit,
-    page,
-    setPage,
-    fetchPostsLoad,
-    setFetchPostsLoad
-  }
-) => {
-  return (
-    <div className={style.posts_viewer}>
-      {/* Posts viewer section */}
-      <>
-        {
-          // While fetching posts and posts length is 0
-          fetchPostsLoad && posts.length === 0 ?
-            (<div className={style.loading}>
-              <MoonLoader color="#000" size={20} />
-            </div>)
-
-            // If post have been fetched
-            : posts?.length && posts.length > 0 ?
-              (<div className={style.viewer}>
-                {
-                  posts?.length && posts.map((post) => (
-                    <Link
-                      key={post?._id}
-                      to={`/posts/${post?._id}`}
-                      className={style.post_card}
-                    >
-                      <img
-                        src={post?.images[0] || defaultPostImage}
-                        alt="post image"
-                      />
-                    </Link>
-                  ))
-                }
-              </div>)
-
-              : ""
-        }
-      </>
-
-      {/* Load more posts btn section */}
-      <>
-        {
-          // While fetching posts || If there are posts in db
-          fetchPostsLoad || page * limit === posts.length ?
-            (<button
-              type="button"
-              className={style.load_more_posts_btn}
-              disabled={fetchPostsLoad ? true : false}
-              style={fetchPostsLoad ? { cursor: "revert" } : {}}
-              onClick={() => {
-                setFetchPostsLoad(true)
-                setPage(prev => prev + 1)
-              }}
-            >
-              {
-                fetchPostsLoad ?
-                  <PuffLoader color="#000" size={15} />
-                  : "More"
-              }
-            </button>)
-
-            // If user reaches last post
-            : page * limit > posts.length ?
-              (<p className={style.no_more_posts_message}>
-                This section has {posts.length} post
-              </p>)
-
-              // No thing
-              : ""
-        }
-      </>
-    </div>
-  )
-}
-
-export default PrivateProfile
+export default Profile

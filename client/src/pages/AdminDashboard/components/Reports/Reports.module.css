@@ -1,0 +1,40 @@
+.reports {
+  width: 100%;
+}
+
+.reports .viewer {
+  width: 100%;
+}
+
+.reports .loading {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reports .load_more_reports_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: 10px auto;
+  color: #777;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.reports .no_more_reports_message {
+  color: #777;
+  text-align: center;
+  margin: 10px auto;
+  text-transform: uppercase;
+  font-size: 11px;
+}

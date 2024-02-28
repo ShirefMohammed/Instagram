@@ -1,13 +1,11 @@
-// Modules
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-// Store
 import { setUser } from "../store/slices/userSlice";
-// Api axios
 import axios from "../api/axios";
 
 const useLogout = () => {
   const user = useSelector(state => state.user);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

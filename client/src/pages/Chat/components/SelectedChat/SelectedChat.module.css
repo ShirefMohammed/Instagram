@@ -1,0 +1,123 @@
+.selected_chat {
+  width: 100%;
+}
+
+.selected_chat .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15x;
+  margin-bottom: 15px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.selected_chat .header button {
+  outline: none;
+  border: none;
+  background: none;
+}
+
+.selected_chat .header button svg {
+  font-size: 20px;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -ms-transition: .3s;
+  -o-transition: .3s;
+}
+
+.selected_chat .header button svg:hover {
+  transform: scale(1.1);
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -ms-transform: scale(1.1);
+  -o-transform: scale(1.1);
+}
+
+@media (min-width: 901px) {
+  .selected_chat .header button:nth-child(1) {
+    display: none;
+  }
+}
+
+.selected_chat .header :is(.user_info, .groupInfo_info) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.selected_chat .header :is(.user_info, .groupInfo_info) img {
+  width: 35px;
+  height: 35px;
+  user-select: none;
+  object-fit: cover;
+  border: 1px solid #eee;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.selected_chat .header .user_info span {
+  font-size: 14px;
+}
+
+.selected_chat .header .user_info:hover span {
+  text-decoration: underline;
+}
+
+.selected_chat .header :is(.user_info, .groupInfo_info) .typing {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.selected_chat .chat_messages_viewer {
+  width: 100%;
+  height: calc(100vh - 198px);
+  border: 1px solid #eee;
+  padding: 15px;
+  margin-bottom: 15px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.chat_messages_viewer .no_messages {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.loading_container,
+.no_chats_msg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}

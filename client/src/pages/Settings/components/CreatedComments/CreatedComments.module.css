@@ -1,0 +1,40 @@
+.created_comments {
+  width: 100%;
+}
+
+.created_comments .viewer {
+  width: 100%;
+}
+
+.created_comments .loading {
+  width: 100%;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.created_comments .load_more_comments_btn {
+  border: none;
+  outline: none;
+  background: none;
+  display: block;
+  margin: 10px auto;
+  color: #777;
+  text-decoration: underline;
+  text-align: center;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+.created_comments .no_more_comments_message {
+  color: #777;
+  text-align: center;
+  margin: 10px auto;
+  text-transform: uppercase;
+  font-size: 11px;
+}

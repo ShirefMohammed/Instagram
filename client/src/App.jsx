@@ -1,12 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-// Components
 import {
   PersistLogin,
-  // RequireAuth,
+  RequireAuth,
+  ToastContainerWithProps,
 } from "./components";
-// Pages
 import {
   MainContent,
   Authentication,
@@ -14,11 +11,11 @@ import {
   NoServerResponse,
   ServerError,
   NoResourceFound,
+  Chat,
 } from "./pages";
+import ROLES_LIST from "./utils/roles_list";
 
 function App() {
-  // const ROLES_LIST = useSelector(state => state.roles);
-
   return (
     <BrowserRouter>
       <Routes>
@@ -26,31 +23,23 @@ function App() {
           {/* Public Routes */}
           <Route path="/*" element={<MainContent />} />
           <Route path="/authentication" element={<Authentication />} />
+
           {/* Handle Error Routes */}
           <Route path="/serverError" element={<ServerError />} />
           <Route path="/noServerResponse" element={<NoServerResponse />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/noResourceFound" element={<NoResourceFound />} />
 
-          {/* Protected Routes */}
-          {/* Will Added Later */}
+          {/* Private Routes */}
+          <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:chatId" element={<Chat />} />
+          </Route>
         </Route>
       </Routes>
 
-      {/* Toast Container */}
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        style={{ minWidth: "375px" }}
-      />
+      {/* Toast Container with its props */}
+      <ToastContainerWithProps />
     </BrowserRouter>
   )
 }

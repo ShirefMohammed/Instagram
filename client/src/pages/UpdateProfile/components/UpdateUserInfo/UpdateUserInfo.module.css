@@ -1,0 +1,219 @@
+.update_user_info {
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.update_user_info h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.update_user_info>div {
+  width: 100%;
+  position: relative;
+}
+
+.update_user_info>div label {
+  font-size: 14px;
+  display: block;
+  width: fit-content;
+  margin-bottom: 2px;
+}
+
+.update_user_info>div>span.check_mark {
+  position: absolute;
+  top: 35px;
+  right: 15px;
+}
+
+.update_user_info input,
+.update_user_info textarea {
+  border: none;
+  outline: none;
+  background-color: #eee;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.update_user_info textarea {
+  height: 120px;
+  resize: none;
+  line-height: 1.7;
+}
+
+.update_user_info input:read-only,
+.update_user_info textarea:read-only {
+  opacity: .6;
+}
+
+.update_user_info>div>p.instructions {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 99;
+  width: 100%;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.update_user_info>div>p.instructions>svg {
+  margin-right: 0.25rem;
+}
+
+.update_user_info>div>p.instructions>span {
+  font-size: 0.75rem;
+}
+
+.update_user_info .valid {
+  color: limegreen;
+}
+
+.update_user_info .invalid {
+  color: red;
+}
+
+.update_user_info .links_container {
+  margin-bottom: 15px;
+}
+
+.update_user_info .links_container .links {
+  margin-bottom: 5px;
+}
+
+.update_user_info .links_container .links .link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.update_user_info .links_container .links .link a {
+  display: block;
+  font-size: 13px;
+  text-decoration: underline;
+  color: #00f;
+  max-width: calc(100% - 25px);
+  word-wrap: break-word;
+}
+
+.update_user_info .links_container .links .link button {
+  outline: none;
+  border: none;
+  background: none;
+  width: 15px;
+  height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #f00;
+  border-radius: 50%;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+}
+
+.update_user_info .links_container .links .link button svg {
+  font-size: 10px;
+}
+
+.update_user_info .links_container .links .no_links_added {
+  font-size: 12px;
+}
+
+.update_user_info .links_container .add_link {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.update_user_info .links_container .add_link input {
+  margin-bottom: 0;
+}
+
+.update_user_info .links_container .add_link button {
+  outline: none;
+  border: none;
+  background: none;
+  width: 45px;
+  height: 45px;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-color: #ddd;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.update_user_info button[type="submit"] {
+  border: none;
+  outline: none;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 9px 15px;
+  color: #000;
+  background: transparent;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.update_user_info button[type="submit"] span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loading_container,
+.error_container {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.error_message {
+  color: firebrick;
+  background-color: lightpink;
+  text-transform: capitalize;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}

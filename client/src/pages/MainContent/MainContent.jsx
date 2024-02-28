@@ -1,33 +1,27 @@
-// Modules
 import { Route, Routes } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-// Components
-import {
-  Sidebar,
-  RequireAuth,
-} from '../../components';
-// Pages
+import Sidebar from "./components/Sidebar/Sidebar";
+import { RequireAuth } from '../../components';
 import {
   Home,
   Search,
   Explore,
-  CreatePost,
   Post,
-  UpdatePost,
+  Profile,
   CreateReport,
   Report,
   UpdateReport,
-  NoTFoundPage,
-  Profile,
+  CreatePost,
+  UpdatePost,
   UpdateProfile,
   Settings,
+  Notifications,
+  AdminDashboard,
+  NoTFoundPage,
 } from '../';
-// Css style
+import ROLES_LIST from "../../utils/roles_list";
 import style from "./MainContent.module.css";
 
 const MainContent = () => {
-  const ROLES_LIST = useSelector((state) => state.roles);
-
   return (
     <div className={style.main_content}>
       <section>
@@ -43,7 +37,7 @@ const MainContent = () => {
           <Route path="/posts/:id" element={<Post />} />
           <Route path="/users/:id" element={<Profile />} />
 
-          {/* Protected Routes only user can access them */}
+          {/* Protected Routes only verified user can access them */}
           <Route element={<RequireAuth allowedRoles={[ROLES_LIST.User]} />}>
             {/* Reports Routes */}
             <Route path="/createReport" element={<CreateReport />} />
@@ -58,13 +52,17 @@ const MainContent = () => {
             <Route path="/users/:id/update" element={<UpdateProfile />} />
 
             {/* Settings Routes */}
+            <Route path="/settings" element={<Settings />} />
             <Route path="/settings/:tab" element={<Settings />} />
 
-            {/* Chat Routes */}
-            <Route path="/chat" element={"chat"} />
-
             {/* Notifications Routes */}
-            <Route path="/notifications" element={"notifications"} />
+            <Route path="/notifications" element={<Notifications />} />
+          </Route>
+
+          {/* Protected Routes only admins can access them */}
+          <Route element={<RequireAuth allowedRoles={[ROLES_LIST.Admin]} />}>
+            <Route path="/adminDashboard" element={<AdminDashboard />} />
+            <Route path="/adminDashboard/:tab" element={<AdminDashboard />} />
           </Route>
 
           {/* Catch all page not found */}

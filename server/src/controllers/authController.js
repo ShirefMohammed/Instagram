@@ -7,6 +7,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
+const createImagesUrl = require("../utils/createImagesUrl");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -114,14 +115,11 @@ const register = asyncHandler(
       avatar: req?.file?.filename,
     });
 
-    // Get User Roles to Assign Them With accessToken
-    const roles = Object.values(newUser.roles).filter(Boolean);
-
     const accessToken = jwt.sign(
       {
         userInfo: {
           userId: newUser._id,
-          roles: roles
+          roles: newUser.roles
         }
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -134,9 +132,6 @@ const register = asyncHandler(
       { expiresIn: "7d" }
     );
 
-    newUser.refreshToken = [refreshToken];
-    await newUser.save();
-
     // Creates Secure Cookie with refreshToken
     res.cookie("jwt", refreshToken, {
       httpOnly: true, // accessible only by web server
@@ -148,14 +143,15 @@ const register = asyncHandler(
     // Send User Data to Client
     sendResponse(
       res,
-      200,
+      201,
       httpStatusText.SUCCESS,
       `successful register`,
       {
         _id: newUser._id,
         name: newUser.name,
         email: newUser.email,
-        avatar: `${process.env.SERVER_URL}/api/uploads/${newUser.avatar}`,
+        avatar: createImagesUrl([newUser.avatar])[0],
+        roles: newUser.roles,
         accessToken: accessToken,
       }
     );
@@ -165,7 +161,6 @@ const register = asyncHandler(
 const login = asyncHandler(
   async (req, res) => {
     const { email, password } = req.body;
-    const cookies = req.cookies;
 
     // If Fields are Empty Generate Client Error
     if (!email || !password) {
@@ -186,14 +181,11 @@ const login = asyncHandler(
       return sendResponse(res, 401, httpStatusText.FAIL, "Wrong Password", null);
     }
 
-    // Get User Roles to Assign Them With accessToken
-    const roles = Object.values(user.roles).filter(Boolean);
-
     const accessToken = jwt.sign(
       {
         userInfo: {
           userId: user._id,
-          roles: roles
+          roles: user.roles
         }
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -206,40 +198,11 @@ const login = asyncHandler(
       { expiresIn: "7d" }
     );
 
-    let refreshTokenArray =
-      cookies?.jwt
-        ? user.refreshToken.filter(rt => rt !== cookies.jwt)
-        : user.refreshToken;
-
-    if (cookies?.jwt) {
-      /*
-        Scenario added here:
-        1) User logs in but never uses RT and does not logout
-        2) RT is stolen
-        If 1 & 2, reuse detection is needed to clear all RTs when user logs in
-      */
-
-      const IsUserFound = await UserModel.findOne({
-        refreshToken: { $elemMatch: { $in: [cookies.jwt] } }
-      });
-
-      // Detected refresh token reuse!
-      if (!IsUserFound) {
-        console.log('attempted refresh token reuse at login!')
-        // clear out all previous refresh tokens
-        refreshTokenArray = [];
-      }
-
-      res.clearCookie("jwt", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
-    }
-
-    // Saving refreshToken with current user
-    user.refreshToken = [...refreshTokenArray, refreshToken];
-    await user.save();
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    });
 
     // Creates Secure Cookie with refreshToken
     res.cookie("jwt", refreshToken, {
@@ -259,7 +222,8 @@ const login = asyncHandler(
         _id: user._id,
         name: user.name,
         email: user.email,
-        avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
+        avatar: createImagesUrl([user.avatar])[0],
+        roles: user.roles,
         accessToken: accessToken,
       }
     );
@@ -270,7 +234,6 @@ const refresh = asyncHandler(
   async (req, res) => {
     const cookies = req.cookies;
 
-    // If There is no refreshToken cookies?.jwt
     if (!cookies?.jwt) {
       return sendResponse(res, 401, httpStatusText.FAIL, "Unauthorized", null);
     }
@@ -281,57 +244,27 @@ const refresh = asyncHandler(
       sameSite: "None",
     });
 
-    const user = await UserModel.findOne({
-      refreshToken: { $elemMatch: { $in: [cookies.jwt] } }
-    });
-
-    // Detected refresh token reuse!
-    if (!user) {
-      jwt.verify(
-        cookies.jwt,
-        process.env.REFRESH_TOKEN_SECRET,
-        async (err, decoded) => {
-          if (err) {
-            return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
-          } else {
-            console.log('attempted refresh token reuse!');
-            const hackedUser = await UserModel.findOne({
-              _id: decoded.userId
-            });
-            hackedUser.refreshToken = [];
-            await hackedUser.save();
-          }
-        }
-      );
-
-      return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
-    }
-
-    const refreshTokenArray = user.refreshToken.filter(rt => rt !== cookies.jwt);
-
-    // evaluate jwt
     jwt.verify(
       cookies.jwt,
       process.env.REFRESH_TOKEN_SECRET,
       async (err, decoded) => {
         if (err) {
-          console.log('expired refresh token');
-          user.refreshToken = [...refreshTokenArray];
-          await user.save();
+          return sendResponse(
+            res,
+            403,
+            httpStatusText.RefreshTokenExpiredError,
+            "Forbidden",
+            null
+          );
         }
 
-        if (err || user._id != decoded.userId) {
-          return sendResponse(res, 403, httpStatusText.ERROR, "Forbidden", null);
-        }
-
-        // Refresh token was still valid
-        const roles = Object.values(user.roles).filter(Boolean);
+        const user = await UserModel.findById(decoded.userId);
 
         const accessToken = jwt.sign(
           {
             userInfo: {
               userId: user._id,
-              roles: roles
+              roles: user.roles
             }
           },
           process.env.ACCESS_TOKEN_SECRET,
@@ -343,10 +276,6 @@ const refresh = asyncHandler(
           process.env.REFRESH_TOKEN_SECRET,
           { expiresIn: "7d" }
         );
-
-        // Saving refreshToken with current user
-        user.refreshToken = [...refreshTokenArray, refreshToken];
-        await user.save();
 
         // Creates Secure Cookie with refresh token
         res.cookie("jwt", refreshToken, {
@@ -366,7 +295,8 @@ const refresh = asyncHandler(
             _id: user._id,
             name: user.name,
             email: user.email,
-            avatar: `${process.env.SERVER_URL}/api/uploads/${user.avatar}`,
+            avatar: createImagesUrl([user.avatar])[0],
+            roles: user.roles,
             accessToken: accessToken,
           }
         );
@@ -378,30 +308,6 @@ const refresh = asyncHandler(
 const logout = asyncHandler(
   async (req, res) => {
     // On client, also delete the accessToken
-    const cookies = req.cookies;
-
-    if (!cookies?.jwt) {
-      return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
-    }
-
-    // Is refreshToken in db?
-    const user = await UserModel.findOne({
-      refreshToken: { $elemMatch: { $in: [cookies.jwt] } }
-    });
-
-    if (!user) {
-      res.clearCookie("jwt", {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
-
-      return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
-    }
-
-    // Delete refreshToken in db
-    user.refreshToken = user.refreshToken.filter(rt => rt !== cookies.jwt);
-    await user.save();
 
     res.clearCookie("jwt", {
       httpOnly: true,
@@ -409,7 +315,13 @@ const logout = asyncHandler(
       sameSite: "None",
     });
 
-    return sendResponse(res, 204, httpStatusText.SUCCESS, "successful logout", null);
+    return sendResponse(
+      res,
+      204,
+      httpStatusText.SUCCESS,
+      "successful logout",
+      null
+    );
   }
 );
 

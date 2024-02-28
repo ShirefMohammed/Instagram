@@ -1,17 +1,15 @@
-// Modules
 import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
-// Hooks
 import { useRefreshToken } from "../../hooks";
-// Css style
 import style from "./PersistLogin.module.css";
-// Images
 import InstagramSvgIcon from "../../assets/InstagramSvgIcon.svg";
 
 const PersistLogin = () => {
-  const [loading, setLoading] = useState(true);
   const user = useSelector(state => state.user);
+
+  const [loading, setLoading] = useState(true);
+
   const refresh = useRefreshToken();
 
   useEffect(() => {

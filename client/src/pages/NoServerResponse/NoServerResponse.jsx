@@ -11,7 +11,9 @@ const NoServerResponse = () => {
     <section className={style.no_server_response}>
       <div>
         <h2>No Server Response</h2>
-        <p>There is no server response try after while</p>
+
+        <p>There is no server response, try after while</p>
+
         <div className={style.buttons}>
           <button onClick={goBack}>Go Back</button>
           <button onClick={goHome}>Go Home</button>

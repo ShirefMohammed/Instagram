@@ -1,6 +1,6 @@
 export { default as MainContent } from "./MainContent/MainContent.jsx";
 export { default as NoTFoundPage } from "./NoTFoundPage/NoTFoundPage.jsx";
-export { default as Authentication } from "./Authentication/Authentication";
+export { default as Authentication } from "./Authentication/Authentication.jsx";
 export { default as ServerError } from "./ServerError/ServerError.jsx";
 export { default as NoServerResponse } from "./NoServerResponse/NoServerResponse.jsx";
 export { default as Unauthorized } from "./Unauthorized/Unauthorized.jsx";
@@ -17,3 +17,6 @@ export { default as UpdateReport } from "./UpdateReport/UpdateReport.jsx";
 export { default as Profile } from "./Profile/Profile.jsx";
 export { default as UpdateProfile } from "./UpdateProfile/UpdateProfile.jsx";
 export { default as Settings } from "./Settings/Settings.jsx";
+export { default as Notifications } from "./Notifications/Notifications.jsx";
+export { default as Chat } from "./Chat/Chat.jsx";
+export { default as AdminDashboard } from "./AdminDashboard/AdminDashboard.jsx";

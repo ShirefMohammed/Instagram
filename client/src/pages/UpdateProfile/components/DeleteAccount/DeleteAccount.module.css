@@ -1,0 +1,122 @@
+.delete_account {
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.delete_account h3 {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.delete_account>div {
+  width: 100%;
+  position: relative;
+}
+
+.delete_account>div label {
+  font-size: 14px;
+  display: block;
+  width: fit-content;
+  margin-bottom: 2px;
+}
+
+.delete_account>div>span.check_mark {
+  position: absolute;
+  top: 35px;
+  right: 15px;
+}
+
+.delete_account input {
+  border: none;
+  outline: none;
+  background-color: #eee;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.delete_account>div>p.instructions {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  z-index: 99;
+  width: 100%;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  background: #000;
+  color: #fff;
+  padding: 0.25rem;
+  border-radius: 0.5rem;
+  -webkit-border-radius: 0.5rem;
+  -moz-border-radius: 0.5rem;
+  -ms-border-radius: 0.5rem;
+  -o-border-radius: 0.5rem;
+}
+
+.delete_account>div>p.instructions>svg {
+  margin-right: 0.25rem;
+}
+
+.delete_account>div>p.instructions>span {
+  font-size: 0.75rem;
+}
+
+.delete_account .valid {
+  color: limegreen;
+}
+
+.delete_account .invalid {
+  color: red;
+}
+
+.delete_account button[type="submit"] {
+  border: none;
+  outline: none;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 9px 15px;
+  color: #fff;
+  background: #f00;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}
+
+.delete_account button[type="submit"] span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error_message {
+  color: firebrick;
+  background-color: lightpink;
+  text-transform: capitalize;
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+}

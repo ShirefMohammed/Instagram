@@ -1,17 +1,7 @@
-/* Start Profile */
-.loading_container,
-.error_container {
-  width: 100%;
-  min-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .user_profile {
   width: 100%;
   min-height: 100vh;
-  padding: 30px 15px 0px 15px;
+  padding: 30px 15px 15px 15px;
 }
 
 .user_profile .container {
@@ -64,22 +54,12 @@
   font-size: 14px;
 }
 
-.user_profile .user_info .top_container .controllers nav a svg {
-  margin-left: 15px;
-  font-size: 20px;
-  transition: .3s;
-  -webkit-transition: .3s;
-  -moz-transition: .3s;
-  -ms-transition: .3s;
-  -o-transition: .3s;
-}
-
-.user_profile .user_info .top_container .controllers nav a svg:hover {
-  transform: scale(1.1);
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  -o-transform: scale(1.1);
+@media (max-width: 500px) {
+  .user_profile .user_info .top_container .controllers {
+    flex-direction: column-reverse;
+    align-items: start;
+    gap: 0;
+  }
 }
 
 .user_profile .user_info .top_container .email {
@@ -98,9 +78,11 @@
 .user_profile .user_info .bottom_container .links a {
   display: block;
   width: fit-content;
+  max-width: 100%;
   font-size: 12px;
   color: #00f;
   text-decoration: underline;
+  word-wrap: break-word;
 }
 
 @media (max-width: 900px) {
@@ -146,11 +128,11 @@
 .user_profile .posts_container .controllers li button :is(span, svg) {
   font-size: 14px;
   color: #777;
-  transition: .2s;
-  -webkit-transition: .2s;
-  -moz-transition: .2s;
-  -ms-transition: .2s;
-  -o-transition: .2s;
+  transition: .3s;
+  -webkit-transition: .3s;
+  -moz-transition: .3s;
+  -ms-transition: .3s;
+  -o-transition: .3s;
 }
 
 .user_profile .posts_container .controllers li button.active :is(span, svg) {
@@ -162,86 +144,13 @@
   color: #000;
 }
 
-/* End Profile */
-
-/* Start Posts Viewer */
-.posts_viewer {
+.loading_container,
+.error_container {
   width: 100%;
-}
-
-.posts_viewer .viewer {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 10px;
-}
-
-.posts_viewer .viewer .post_card {
-  position: relative;
-}
-
-.posts_viewer .viewer .post_card::before {
-  content: "";
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0);
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: .2s;
-  -webkit-transition: .2s;
-  -moz-transition: .2s;
-  -ms-transition: .2s;
-  -o-transition: .2s;
-}
-
-.posts_viewer .viewer .post_card:hover::before {
-  background-color: rgba(0, 0, 0, .3);
-}
-
-.posts_viewer .viewer .post_card img {
-  width: 100%;
-  height: 350px;
-  object-fit: cover;
-  user-select: none;
-  transition: .2s;
-  -webkit-transition: .2s;
-  -moz-transition: .2s;
-  -ms-transition: .2s;
-  -o-transition: .2s;
-}
-
-.posts_viewer .loading {
-  width: 100%;
-  min-height: 300px;
+  min-height: 100%;
+  padding: 15px;
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.posts_viewer .load_more_posts_btn {
-  border: none;
-  outline: none;
-  background: none;
-  display: block;
-  margin: 10px auto;
-  color: #777;
-  text-decoration: underline;
-  text-align: center;
-  padding: 5px;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  text-transform: uppercase;
-  font-size: 11px;
-}
-
-.posts_viewer .no_more_posts_message {
-  color: #777;
   text-align: center;
-  margin: 10px auto;
-  text-transform: uppercase;
-  font-size: 11px;
 }
-
-/* End Posts Viewer */

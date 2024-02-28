@@ -56,7 +56,6 @@ router.route('/')
   )
   .post(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     upload.array('images', 12),
     createPost
   );
@@ -65,7 +64,7 @@ router.route('/explore').get(getExploredPosts);
 
 router.route('/suggest').get(getSuggestedPosts);
 
-router.route('/:id')
+router.route('/:postId')
   .get(
     getPost
   )
@@ -78,42 +77,39 @@ router.route('/:id')
     deletePost
   );
 
-router.route('/:id/likes')
+router.route('/:postId/likes')
   .get(
     getPostLikes
   )
   .post(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     addPostLike
   )
   .delete(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     removePostLike
   );
 
-router.route('/:id/save')
+router.route('/:postId/save')
   .post(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     savePost
   )
   .delete(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     unsavePost
   );
 
-router.route('/:id/comments')
+router.route('/:postId/comments')
   .get(
     getPostComments
   )
   .post(
     verifyJWT,
-    verifyRoles([ROLES_LIST.User]),
     addPostComment
-  )
+  );
+
+router.route('/:postId/comments/:commentId')
   .patch(
     verifyJWT,
     updatePostComment

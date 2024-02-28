@@ -1,24 +1,22 @@
-// Modules
 import { useEffect, useRef, useState } from 'react';
 import { MoonLoader } from "react-spinners";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-// Hooks
 import { useNotify, useAxiosPrivate } from '../../hooks';
-// Images
 import uploadImageIcon from "../../assets/uploadImageIcon.svg";
-// Css style
 import style from './CreatePost.module.css';
 
 const CreatePost = () => {
+  const errRef = useRef(null);
+
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
+
+  const [createPostLoad, setCreatePostLoad] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
-  const errRef = useRef();
-  const notify = useNotify();
   const axiosPrivate = useAxiosPrivate();
+  const notify = useNotify();
 
   useEffect(() => {
     setErrMsg("");
@@ -28,31 +26,30 @@ const CreatePost = () => {
     setImages(Array.from(new Set([...images, ...e.target.files])));
   }
 
-  const removeImage = (e) => {
-    setImages(images.filter(image => image !== e));
+  const removeImage = (target) => {
+    setImages(images.filter(image => image !== target));
   }
 
-  // Create post
-  const handleSubmit = async (e) => {
+  const createPost = async (e) => {
     e.preventDefault();
 
     try {
-      if (images.length === 0) {
+      if (images.length < 1) {
         return notify("info", "Select one image at least");
       } else if (images.length > 12) {
-        return notify("info", "Max images is 12");
+        return notify("info", "Max available images is 12");
       }
 
-      setLoading(true);
+      setCreatePostLoad(true);
 
       const formData = new FormData();
       formData.append("content", content);
-      // Append each file individually
+
       for (let i = 0; i < images.length; i++) {
         formData.append("images", images[i]);
       }
 
-      const response = await axiosPrivate.post(
+      const res = await axiosPrivate.post(
         "posts",
         formData,
         {
@@ -61,8 +58,7 @@ const CreatePost = () => {
         }
       );
 
-      const message = response?.data?.message;
-      notify("success", message);
+      notify("success", res.data.message);
 
       setContent("");
       setImages([]);
@@ -71,12 +67,12 @@ const CreatePost = () => {
     catch (err) {
       if (!err?.response) setErrMsg('No Server Response');
       const message = err.response?.data?.message;
-      message ? setErrMsg(message) : setErrMsg('Post not created');
+      message ? setErrMsg(message) : setErrMsg('Post is not created');
       errRef.current.focus();
     }
 
     finally {
-      setLoading(false);
+      setCreatePostLoad(false);
     }
   }
 
@@ -84,62 +80,63 @@ const CreatePost = () => {
     <form
       className={style.create_post}
       encType="multipart/form-data"
-      onSubmit={handleSubmit}
+      onSubmit={createPost}
     >
-      {/* Page Title */}
       <h2>Create new post</h2>
 
-      {/* Error Message */}
-      {
-        errMsg &&
-        <p
-          ref={errRef}
-          className={style.error_message}
-          aria-live="assertive"
-        >
-          {errMsg}
-        </p>
-      }
+      <>
+        {
+          errMsg &&
+          <p
+            ref={errRef}
+            className={style.error_message}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+        }
+      </>
 
-      {/* Content */}
       <textarea
         name="content"
         id="content"
-        placeholder="Description for post *optional"
+        placeholder="Optional description for post"
         required={false}
         value={content}
         onChange={(e) => setContent(e.target.value)}
       >
       </textarea>
 
-      {/* Select Images */}
       <div className={style.images_container}>
-        {
-          images.length === 0 ?
-            (<img
-              className={style.upload_images_icon}
-              src={uploadImageIcon}
-              alt="upload images icon"
-            />)
-            : (<ul className={style.images}>
-              {
-                images.map((image, i) => {
-                  return <li key={i}>
-                    <button
-                      type="button"
-                      onClick={() => removeImage(image)}
-                    >
-                      <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                    <img
-                      src={URL.createObjectURL(image)}
-                      alt={image?.name}
-                    />
-                  </li>
-                })
-              }
-            </ul>)
-        }
+        <>
+          {
+            images.length > 0 ?
+              (<ul className={style.images_list}>
+                {
+                  images.map((image, i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        onClick={() => removeImage(image)}
+                      >
+                        <FontAwesomeIcon icon={faXmark} />
+                      </button>
+                      <img
+                        src={URL.createObjectURL(image)}
+                        alt={image?.name}
+                      />
+                    </li>
+                  ))
+                }
+              </ul>)
+
+              : (<img
+                className={style.upload_images_icon}
+                src={uploadImageIcon}
+                alt="upload images icon"
+              />)
+          }
+        </>
 
         <input
           type="file"
@@ -154,14 +151,13 @@ const CreatePost = () => {
         </label>
       </div>
 
-      {/* Submit btn */}
       <button
         type='submit'
-        disabled={loading ? true : false}
-        style={loading ? { opacity: .5, cursor: "revert" } : {}}
+        disabled={createPostLoad ? true : false}
+        style={createPostLoad ? { opacity: .5, cursor: "revert" } : {}}
       >
         <span>Create</span>
-        {loading && <MoonLoader color="#fff" size={15} />}
+        {createPostLoad && <MoonLoader color="#000" size={15} />}
       </button>
     </form>
   )

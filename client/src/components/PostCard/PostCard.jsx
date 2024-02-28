@@ -1,29 +1,16 @@
 /* eslint-disable react/prop-types */
-// Modules
 import { useState } from "react";
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBookmark,
-  faComment,
-  faHeart
-} from "@fortawesome/free-regular-svg-icons";
-// Hooks
-import {
-  useAxiosPrivate,
-  useHandleErrors,
-  useNotify
-} from "../../hooks";
-// Css style
+import { faBookmark, faComment, faHeart } from "@fortawesome/free-regular-svg-icons";
+import { useAxiosPrivate, useHandleErrors, useNotify } from "../../hooks";
 import style from "./PostCard.module.css";
-// Images
 import defaultAvatar from "../../assets/defaultAvatar.png";
 import defaultPostImage from "../../assets/defaultPostImage.png";
 
 const PostCard = ({ post }) => {
+  const [viewMoreContent, setViewMoreContent] = useState(false);
   const [likeLoading, setLikeLoading] = useState(false);
   const [saveLoading, setSaveLoading] = useState(false);
 
@@ -36,11 +23,8 @@ const PostCard = ({ post }) => {
     try {
       setLikeLoading(true);
       const res = await axiosPrivate.post(`posts/${post?._id}/likes`);
-      notify("success", res?.data?.message);
+      notify("success", res.data.message);
     } catch (err) {
-      handleErrors.handleNoServerResponse(err);
-      handleErrors.handleServerError(err);
-      handleErrors.handleNoResourceFound(err);
       handleErrors(err);
     } finally {
       setLikeLoading(false);
@@ -52,11 +36,9 @@ const PostCard = ({ post }) => {
     try {
       setSaveLoading(true);
       const res = await axiosPrivate.post(`posts/${post?._id}/save`);
-      notify("success", res?.data?.message);
+      notify("success", res.data.message);
     } catch (err) {
-      handleErrors.handleNoServerResponse(err);
-      handleErrors.handleServerError(err);
-      handleErrors.handleNoResourceFound(err);
+      handleErrors(err);
     } finally {
       setSaveLoading(false);
     }
@@ -86,6 +68,7 @@ const PostCard = ({ post }) => {
         <img
           src={post?.images[0] || defaultPostImage}
           alt="post image"
+          loading="lazy"
         />
       </Link>
 
@@ -99,9 +82,7 @@ const PostCard = ({ post }) => {
         {/* Actions */}
         <div className={style.actions}>
           {/* Comments */}
-          <Link
-            to={`/posts/${post?._id}`}
-          >
+          <Link to={`/posts/${post?._id}`}>
             <FontAwesomeIcon icon={faComment} />
           </Link>
           {/* Save */}
@@ -111,7 +92,8 @@ const PostCard = ({ post }) => {
             onClick={savePost}
           >
             {
-              saveLoading ? <PuffLoader color="#000" size={17} />
+              saveLoading ?
+                <PuffLoader color="#000" size={17} />
                 : <FontAwesomeIcon icon={faBookmark} />
             }
           </button>
@@ -122,26 +104,46 @@ const PostCard = ({ post }) => {
             onClick={addLike}
           >
             {
-              likeLoading ? <PuffLoader color="#000" size={17} />
+              likeLoading ?
+                <PuffLoader color="#000" size={17} />
                 : <FontAwesomeIcon icon={faHeart} />
             }
           </button>
         </div>
       </div>
 
-      {/* Description */}
-      <Link
-        to={`/posts/${post?._id}`}
-        className={style.description_container}
-      >
+      {/* Content */}
+      <div className={style.content}>
         {
           post?.content?.length && post.content.length > 100 ?
-            <p>{post.content.substr(0, 100)}... more</p>
-            : post?.content?.length && post.content.length > 0 ?
-              <p>{post.content}</p>
-              : ""
+            (<>
+              <p>
+                {
+                  viewMoreContent ?
+                    post.content
+                    : post.content.substring(0, 100)
+                }
+                {
+                  viewMoreContent ?
+                    (<button
+                      type="button"
+                      onClick={() => setViewMoreContent(false)}
+                    >
+                      see less ...
+                    </button>)
+                    : (<button
+                      type="button"
+                      onClick={() => setViewMoreContent(true)}
+                    >
+                      see more ...
+                    </button>)
+                }
+              </p>
+            </>)
+
+            : (<p>{post?.content}</p>)
         }
-      </Link>
+      </div>
     </div>
   )
 }

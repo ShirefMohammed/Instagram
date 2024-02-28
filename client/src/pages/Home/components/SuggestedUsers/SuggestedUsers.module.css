@@ -1,0 +1,20 @@
+.suggested_users {
+  position: sticky;
+  top: 0;
+  padding: 30px 15px;
+}
+
+.suggested_users h2 {
+  color: #666;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.suggested_users ul {
+  height: 350px;
+  overflow-y: auto;
+}
+
+.suggested_users ul li {
+  width: 100%;
+}

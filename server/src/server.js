@@ -1,16 +1,20 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const { Server } = require('socket.io');
 const http = require("node:http");
 const connectDB = require("./config/connectDB");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const path = require("node:path");
 const corsOptions = require("./config/corsOptions");
+const allowedOrigins = require("./config/allowedOrigins");
 const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
 const reportsRouter = require("./routes/reportsRouter");
 const postsRouter = require("./routes/postsRouter");
+const chatRouter = require("./routes/chatsRouter");
 const handleErrors = require("./middleware/errorHandler");
+const socketController = require("./controllers/socketController");
 
 // Use environment variables
 dotenv.config();
@@ -18,7 +22,7 @@ dotenv.config();
 // Create server
 const app = express();
 const server = http.createServer(app);
-const _PORT = process.env.PORT || 3500;
+const _PORT = process.env.PORT || 3000;
 
 // Connect to mongo database
 connectDB();
@@ -47,6 +51,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/reports", reportsRouter);
 app.use("/api/posts", postsRouter);
+app.use("/api/chats", chatRouter);
 
 // Handle not found routes
 app.all("*", (req, res) => {
@@ -63,6 +68,22 @@ app.all("*", (req, res) => {
 // Handle error middleware
 app.use(handleErrors);
 
+// Socket.IO
+const io = new Server(
+  server,
+  {
+    pingTimeout: 60000,
+    cors: { origin: allowedOrigins }
+  }
+);
+
+io.on('connection', (socket) => socketController(io, socket));
+
 server.listen(_PORT, () => {
-  console.log(`Server running on http://localhost:${_PORT}`);
+  console.log(`Server running on ${process.env.SERVER_URL} for port ${_PORT}`);
 });
+
+// Function to ping the server every 10 minutes
+setInterval(() => {
+  http.get(process.env.SERVER_URL);
+}, 600000);

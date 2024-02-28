@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ROLES_LIST = require("../utils/roles_list");
 
 const userSchema = new mongoose.Schema(
   {
@@ -21,18 +22,15 @@ const userSchema = new mongoose.Schema(
       default: "defaultAvatar.png"
     },
     roles: {
-      User: {
-        type: Number,
-        default: 2001
-      },
-      Editor: {
-        type: Number,
-      },
-      Admin: {
-        type: Number,
-      },
+      type: [Number],
+      enum: [
+        ROLES_LIST.User,
+        ROLES_LIST.Editor,
+        ROLES_LIST.Admin
+      ],
+      required: true,
+      default: ROLES_LIST.User
     },
-    refreshToken: [String],
     bio: { type: String },
     links: [String],
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
