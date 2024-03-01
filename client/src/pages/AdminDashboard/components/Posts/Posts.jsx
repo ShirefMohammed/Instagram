@@ -14,7 +14,6 @@ const Posts = () => {
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
 
-  // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -24,16 +23,7 @@ const Posts = () => {
         );
         setPosts(prev => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchPostsLoad(false);
       }
@@ -44,16 +34,13 @@ const Posts = () => {
 
   return (
     <div className={`${style.posts}`}>
-      {/* Posts viewer section */}
       <>
         {
-          // While fetching posts and posts length is 0
           fetchPostsLoad && posts.length === 0 ?
             (<div className={style.loading}>
               <MoonLoader color="#000" size={20} />
             </div>)
 
-            // If post have been fetched
             : posts.length > 0 ?
               (<div className={style.viewer}>
                 {
@@ -72,12 +59,10 @@ const Posts = () => {
         }
       </>
 
-      {/* Load more posts btn section */}
       <>
         {
           fetchPostsLoad && posts.length === 0 ? ("")
 
-            // While fetching posts || If there are posts in db
             : fetchPostsLoad || postsPage * limit === posts.length ?
               (<button
                 type="button"
@@ -96,13 +81,11 @@ const Posts = () => {
                 }
               </button>)
 
-              // If user reaches last post
               : postsPage * limit > posts.length ?
                 (<p className={style.no_more_posts_message}>
-                  This section has {posts.length} post
+                  This section has {posts.length} posts
                 </p>)
 
-                // No thing
                 : ("")
         }
       </>

@@ -2,13 +2,6 @@
   width: 100%;
 }
 
-.users_viewer .viewer {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 10px;
-}
-
 .users_viewer .loading {
   width: 100%;
   min-height: 300px;
@@ -17,12 +10,20 @@
   justify-content: center;
 }
 
+.users_viewer .viewer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
 .users_viewer .load_more_users_btn {
   border: none;
   outline: none;
   background: none;
   display: block;
-  margin: 10px auto;
+  margin: auto;
+  margin-top: 10px;
   color: #777;
   text-decoration: underline;
   text-align: center;
@@ -31,13 +32,13 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .users_viewer .no_more_users_message {
   color: #777;
   text-align: center;
-  margin: 10px auto;
-  text-transform: uppercase;
-  font-size: 11px;
+  margin: auto;
+  margin-top: 10px;
+  font-size: 12px;
 }

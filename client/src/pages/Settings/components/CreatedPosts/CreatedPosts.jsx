@@ -15,9 +15,9 @@ const CreatedPosts = () => {
   const [fetchPostsLoad, setFetchPostsLoad] = useState(false);
 
   const removePostType = "deletePost";
+  
   const handleErrors = useHandleErrors();
-
-  // Fetch created posts
+  
   useEffect(() => {
     const createdPosts = async () => {
       try {
@@ -27,16 +27,7 @@ const CreatedPosts = () => {
         );
         setCreatedPosts(prev => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchPostsLoad(false);
       }
@@ -47,7 +38,6 @@ const CreatedPosts = () => {
 
   return (
     <div className={`${style.created_posts}`}>
-      {/* Posts cards */}
       <PostsViewer
         posts={createdPosts}
         setPosts={setCreatedPosts}

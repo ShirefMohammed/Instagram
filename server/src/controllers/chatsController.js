@@ -5,7 +5,6 @@ const asyncHandler = require("../middleware/asyncHandler");
 const httpStatusText = require("../utils/httpStatusText");
 const createImagesUrl = require("../utils/createImagesUrl");
 const sendResponse = require("../utils/sendResponse");
-const ROLES_LIST = require("../utils/roles_list");
 
 const getChats = asyncHandler(
   async (req, res) => {
@@ -63,6 +62,16 @@ const createChat = asyncHandler(
     const IsUserExist = await UserModel.exists({ _id: userId });
     if (!IsUserExist) {
       return sendResponse(res, 404, httpStatusText.FAIL, "User is not found", null);
+    }
+
+    if (users && users.includes(userId)) {
+      if (!isGroupChat) {
+        return sendResponse(res, 400, httpStatusText.FAIL, "Can not chat with yourself", null);
+      }
+
+      if (isGroupChat) {
+        return sendResponse(res, 400, httpStatusText.FAIL, "Except current user from users", null);
+      }
     }
 
     users.unshift(userId);
@@ -232,7 +241,11 @@ const getChat = asyncHandler(
 const updateChat = asyncHandler(
   async (req, res) => {
     const userId = req.userInfo.userId;
-    const { users, isGroupChat, groupName } = req.body;
+    const { isGroupChat, groupName } = req.body;
+    let { users } = req.body;
+
+    // Get unique ids
+    users = Array.from(new Set(users));
 
     // Handle new users conditions
     if (users) {
@@ -271,6 +284,12 @@ const updateChat = asyncHandler(
     if (!users.includes(userId)) {
       return sendResponse(res, 403, httpStatusText.FAIL, "userId is required in users", null);
     }
+
+    chat.users.forEach(async (user) => {
+      if (!users.includes(user.toString())) {
+        await MessageModel.deleteMany(({ chat: chat._id, sender: user }));
+      }
+    });
 
     // Update the chat
     chat.users = users;
@@ -389,7 +408,7 @@ const leaveGroupChat = asyncHandler(
       await MessageModel.deleteMany({ chat: chatId });
       await chat.deleteOne();
     } else {
-      await MessageModel.deleteMany({ sender: userId });
+      await MessageModel.deleteMany({ chat: chatId, sender: userId });
       chat.users = chat.users.filter(id => id != userId);
       await chat.save();
     }

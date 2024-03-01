@@ -17,7 +17,6 @@ const CreatedComments = () => {
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
 
-  // Fetch comments
   useEffect(() => {
     const fetchComments = async () => {
       try {
@@ -27,16 +26,7 @@ const CreatedComments = () => {
         );
         setComments((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchCommentsLoad(false);
       }
@@ -47,17 +37,14 @@ const CreatedComments = () => {
 
   return (
     <div className={`${style.created_comments}`}>
-      {/* Created comments section */}
       <>
         {
-          // While fetching comments and comments length is 0
           fetchCommentsLoad && comments.length === 0 ?
             (<div className={style.loading}>
               <MoonLoader color="#000" size={20} />
             </div>)
 
-            // If comments have been fetched
-            : comments?.length && comments.length > 0 ?
+            : comments.length > 0 ?
               (<div className={style.viewer}>
                 {
                   comments.map((comment) => (
@@ -75,14 +62,11 @@ const CreatedComments = () => {
         }
       </>
 
-      {/* Load more comments btn section */}
       <>
         {
           fetchCommentsLoad && comments.length === 0 ? ("")
 
-            // While fetching comments || If there are comments in db
-            : fetchCommentsLoad
-              || commentsPage * commentsLimit === comments.length ?
+            : fetchCommentsLoad || commentsPage * commentsLimit === comments.length ?
               (<button
                 type="button"
                 className={style.load_more_comments_btn}
@@ -100,13 +84,11 @@ const CreatedComments = () => {
                 }
               </button>)
 
-              // If comments reaches last comment
               : commentsPage * commentsLimit > comments.length ?
                 (<p className={style.no_more_comments_message}>
                   This section has {comments.length} comments
                 </p>)
 
-                // No thing
                 : ("")
         }
       </>

@@ -395,7 +395,7 @@ const deleteUser = asyncHandler(
           await MessageModel.deleteMany({ chat: chat._id });
           await ChatModel.deleteOne({ _id: chat._id });
         } else {
-          await MessageModel.deleteMany({ sender: user._id });
+          await MessageModel.deleteMany({ chat: chat._id, sender: user._id });
         }
       }
     }

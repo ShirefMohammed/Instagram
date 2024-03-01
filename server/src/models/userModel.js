@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema(
         ROLES_LIST.Editor,
         ROLES_LIST.Admin
       ],
-      required: true,
       default: ROLES_LIST.User
     },
     bio: { type: String },

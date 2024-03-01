@@ -8,9 +8,7 @@ const Controllers = () => {
     <nav className={style.controllers}>
       <Link
         to={`/settings/createdPosts`}
-        className={
-          tab === undefined || tab === "createdPosts" ? style.active : ""
-        }
+        className={tab === undefined || tab === "createdPosts" ? style.active : ""}
       >
         created posts
       </Link>

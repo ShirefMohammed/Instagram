@@ -11,24 +11,20 @@ const chatSchema = new mongoose.Schema(
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "messages",
-      required: true,
       default: null
     },
     isGroupChat: {
       type: Boolean,
-      required: true,
       default: false
     },
     groupName: {
       type: String,
       trim: true,
-      required: true,
       default: ""
     },
     groupAdmin: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
-      required: true,
       default: null
     },
   },

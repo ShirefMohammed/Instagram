@@ -14,7 +14,6 @@ const Reports = () => {
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
 
-  // Fetch reports
   useEffect(() => {
     const fetchReports = async () => {
       try {
@@ -24,16 +23,7 @@ const Reports = () => {
         );
         setReports((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchReportsLoad(false);
       }
@@ -44,17 +34,14 @@ const Reports = () => {
 
   return (
     <div className={`${style.reports}`}>
-      {/* Reports section */}
       <>
         {
-          // While fetching reports and reports length is 0
           fetchReportsLoad && reports.length === 0 ?
             (<div className={style.loading}>
               <MoonLoader color="#000" size={20} />
             </div>)
 
-            // If reports have been fetched
-            : reports?.length && reports.length > 0 ?
+            : reports.length > 0 ?
               (<div className={style.viewer}>
                 {
                   reports.map((report) => (
@@ -72,16 +59,11 @@ const Reports = () => {
         }
       </>
 
-      {/* Load more reports btn section */}
       <>
         {
           fetchReportsLoad && reports.length === 0 ? ("")
 
-            // While fetching reports || If there are reports in db
-            : (
-              fetchReportsLoad
-              || reportsPage * reportsLimit === reports.length
-            ) ?
+            : fetchReportsLoad || reportsPage * reportsLimit === reports.length ?
               (<button
                 type="button"
                 className={style.load_more_reports_btn}
@@ -99,13 +81,11 @@ const Reports = () => {
                 }
               </button>)
 
-              // If reports reaches last report
               : reportsPage * reportsLimit > reports.length ?
                 (<p className={style.no_more_reports_message}>
                   This section has {reports.length} reports
                 </p>)
 
-                // No thing
                 : ("")
         }
       </>

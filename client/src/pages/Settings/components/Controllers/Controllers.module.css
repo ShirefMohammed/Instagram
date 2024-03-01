@@ -8,14 +8,15 @@
 }
 
 .controllers a {
+  font-size: 14px;
   padding: 5px 10px;
   border: 1px solid #eee;
   text-transform: capitalize;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
 
 .controllers a.active {

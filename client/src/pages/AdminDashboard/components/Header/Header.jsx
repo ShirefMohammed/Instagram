@@ -28,7 +28,6 @@ const Header = () => {
       <h2>{pageTitle}</h2>
 
       <nav className={style.links}>
-        {/* Toggle btn */}
         <button
           className={style.toggle_links_list_btn}
           type="button"
@@ -37,7 +36,6 @@ const Header = () => {
           <FontAwesomeIcon icon={faBars} />
         </button>
 
-        {/* Links list */}
         <>
           {
             openLinksList ?
@@ -45,9 +43,7 @@ const Header = () => {
                 <li>
                   <Link
                     to="/adminDashboard/posts"
-                    className={
-                      tab === undefined || tab === "posts" ? style.active : ""
-                    }
+                    className={tab === undefined || tab === "posts" ? style.active : ""}
                     onClick={() => setOpenLinksList(false)}
                   >
                     <span>Posts</span>

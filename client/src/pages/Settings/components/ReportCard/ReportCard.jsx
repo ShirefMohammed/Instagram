@@ -8,39 +8,28 @@ import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import style from "./ReportCard.module.css";
 
 const ReportCard = ({ report, reports, setReports }) => {
-  const [removeLoading, setRemoveLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [viewMoreContent, setViewMoreContent] = useState(false);
 
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
   const notify = useNotify();
 
-  // Delete report
   const deleteReport = async (reportId) => {
     try {
-      setRemoveLoading(true);
-      const res = await axiosPrivate.delete(`reports/${reportId}`);
+      setDeleteLoading(true);
+      await axiosPrivate.delete(`reports/${reportId}`);
       setReports(reports.filter(report => report?._id !== reportId));
-      notify("success", res?.data?.message);
+      notify("success", "report is deleted");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
-      setRemoveLoading(false);
+      setDeleteLoading(false);
     }
   }
 
   return (
     <div className={style.report_card}>
-      {/* Report content */}
       <div className={style.content}>
         {
           report.content.length > 250 ?
@@ -72,13 +61,11 @@ const ReportCard = ({ report, reports, setReports }) => {
             : (<p>{report.content}</p>)
         }
       </div>
-      {/* Report created at */}
+
       <span className={style.created_at}>
-        {new Date(report?.createdAt)
-          .toISOString().split('T')[0]}
+        {new Date(report?.createdAt).toISOString().split('T')[0]}
       </span>
 
-      {/* View report link */}
       <Link
         className={style.view_report_link}
         to={`/reports/${report?._id}`}
@@ -86,7 +73,6 @@ const ReportCard = ({ report, reports, setReports }) => {
         View the report
       </Link>
 
-      {/* Update report link */}
       <Link
         className={style.update_report_link}
         to={`/reports/${report?._id}/update`}
@@ -94,16 +80,15 @@ const ReportCard = ({ report, reports, setReports }) => {
         Update the report
       </Link>
 
-      {/* Delete report btn */}
       <button
         type="button"
         className={style.delete_btn}
         onClick={() => deleteReport(report?._id)}
-        disabled={removeLoading ? true : false}
-        style={removeLoading ? { opacity: .5, cursor: "revert" } : {}}
+        disabled={deleteLoading ? true : false}
+        style={deleteLoading ? { opacity: .5, cursor: "revert" } : {}}
       >
         {
-          removeLoading ?
+          deleteLoading ?
             <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }

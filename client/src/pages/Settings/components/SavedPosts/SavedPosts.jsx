@@ -18,7 +18,6 @@ const SavedPosts = () => {
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
 
-  // Fetch saved posts
   useEffect(() => {
     const fetchSavedPosts = async () => {
       try {
@@ -28,16 +27,7 @@ const SavedPosts = () => {
         );
         setSavedPosts((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchPostsLoad(false);
       }
@@ -48,7 +38,6 @@ const SavedPosts = () => {
 
   return (
     <div className={`${style.saved_posts}`}>
-      {/* Posts cards */}
       <PostsViewer
         posts={savedPosts}
         setPosts={setSavedPosts}

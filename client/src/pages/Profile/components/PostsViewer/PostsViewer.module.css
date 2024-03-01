@@ -44,7 +44,8 @@
   outline: none;
   background: none;
   display: block;
-  margin: 10px auto;
+  margin: auto;
+  margin-top: 10px;
   color: #777;
   text-decoration: underline;
   text-align: center;
@@ -59,7 +60,8 @@
 .posts_viewer .no_more_posts_message {
   color: #777;
   text-align: center;
-  margin: 10px auto;
+  margin: auto;
+  margin-top: 10px;
   font-size: 12px;
 }
 

@@ -2,20 +2,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PuffLoader } from "react-spinners";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFaceSmile, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFaceSmile, faPaperPlane } from "@fortawesome/free-regular-svg-icons";
 import style from "./SendMessageController.module.css";
 
-const SendMessageController = (
-  {
-    messages,
-    setMessages,
-    socket
-  }
-) => {
+const SendMessageController = ({ messages, setMessages, socket }) => {
   const { chatId } = useParams();
 
   const [newMessage, setNewMessage] = useState("");
@@ -42,25 +36,21 @@ const SendMessageController = (
 
     try {
       setSendMessageLoad(true);
+
       if (!newMessage) return notify("info", "Enter message content");
+
       const res = await axiosPrivate.post(
         `chats/${chatId}/messages`,
         { content: newMessage }
       );
+
       setMessages([...messages, res.data.data]);
+
       socket.emit("sendMessage", res.data.data);
+
       setNewMessage("");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setSendMessageLoad(false);
     }
@@ -68,7 +58,6 @@ const SendMessageController = (
 
   return (
     <form className={style.send_message}>
-      {/* Textarea input */}
       <textarea
         name="message"
         id="message"
@@ -77,9 +66,9 @@ const SendMessageController = (
         onChange={(e) => setNewMessage(e.target.value)}
         onKeyDown={() => socket.emit("typing", chatId)}
         onKeyUp={() => socket.emit("stopTyping", chatId)}
-      ></textarea>
+      >
+      </textarea>
 
-      {/* Emoji picker */}
       <div className={style.emoji}>
         <button
           type="button"
@@ -87,14 +76,14 @@ const SendMessageController = (
         >
           <FontAwesomeIcon icon={faFaceSmile} />
         </button>
+
         {
-          openEmojiPicker && (<div className={style.emoji_container}>
+          openEmojiPicker &&
+          (<div className={style.emoji_container}>
             <Picker
               data={data}
               theme="light"
-              onEmojiSelect={(e) => {
-                setNewMessage(prev => prev + e.native)
-              }}
+              onEmojiSelect={(e) => setNewMessage(prev => prev + e.native)}
               onClickOutside={() => {
                 if (clickOutPickerEvent === true) {
                   setOpenEmojiPicker(false)
@@ -105,7 +94,6 @@ const SendMessageController = (
         }
       </div>
 
-      {/* Submit btn */}
       <button
         type="submit"
         className={style.submit_btn}
@@ -114,7 +102,8 @@ const SendMessageController = (
         onClick={sendMessage}
       >
         {
-          sendMessageLoad ? <PuffLoader color="#000" size={22} />
+          sendMessageLoad ?
+            <PuffLoader color="#000" size={22} />
             : <FontAwesomeIcon icon={faPaperPlane} />
         }
       </button>

@@ -15,7 +15,6 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
   const axiosPrivate = useAxiosPrivate();
   const notify = useNotify();
 
-  // Remove action
   const removeAction = async (postId) => {
     if (removePostType === "deletePost") {
       await deletePost(postId);
@@ -26,26 +25,18 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
     }
   }
 
-  // Delete post
   const deletePost = async (postId) => {
     try {
       setRemoveLoading(true);
-      const res = await axiosPrivate.delete(`posts/${postId}`);
-      const message = res?.data?.message;
-      notify("success", message);
+      await axiosPrivate.delete(`posts/${postId}`);
+      notify("success", "post is deleted");
       setPosts(posts.filter(item => item._id !== postId));
     }
 
     catch (err) {
-      if (!err?.response) {
-        notify("error", 'No Server Response');
-      }
+      if (!err?.response) notify("error", 'No Server Response');
       const message = err.response?.data?.message;
-      if (message) {
-        notify("error", message);
-      } else {
-        notify("error", "Post not deleted");
-      }
+      message ? notify("error", message) : notify("error", "Post is not deleted");
     }
 
     finally {
@@ -53,26 +44,18 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
     }
   }
 
-  // Unsave post
   const unsave = async (postId) => {
     try {
       setRemoveLoading(true);
-      const res = await axiosPrivate.delete(`posts/${postId}/save`);
-      const message = res?.data?.message;
-      notify("success", message);
+      await axiosPrivate.delete(`posts/${postId}/save`);
+      notify("success", "post is unsaved");
       setPosts(posts.filter(item => item._id !== postId));
     }
 
     catch (err) {
-      if (!err?.response) {
-        notify("error", 'No Server Response');
-      }
+      if (!err?.response) notify("error", 'No Server Response');
       const message = err.response?.data?.message;
-      if (message) {
-        notify("error", message);
-      } else {
-        notify("error", "Post not removed from saved");
-      }
+      message ? notify("error", message) : notify("error", "Post is not unsaved");
     }
 
     finally {
@@ -80,26 +63,18 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
     }
   }
 
-  // Unlike post
   const unlike = async (postId) => {
     try {
       setRemoveLoading(true);
-      const res = await axiosPrivate.delete(`posts/${postId}/likes`);
-      const message = res?.data?.message;
-      notify("success", message);
+      await axiosPrivate.delete(`posts/${postId}/likes`);
+      notify("success", "post is removed from liked");
       setPosts(posts.filter(item => item._id !== postId));
     }
 
     catch (err) {
-      if (!err?.response) {
-        notify("error", 'No Server Response');
-      }
+      if (!err?.response) notify("error", 'No Server Response');
       const message = err.response?.data?.message;
-      if (message) {
-        notify("error", message);
-      } else {
-        notify("error", "Post not removed from liked");
-      }
+      message ? notify("error", message) : notify("error", "Post is not removed from liked");
     }
 
     finally {
@@ -109,7 +84,6 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
 
   return (
     <div className={style.post_card}>
-      {/* Link to the post */}
       <Link
         to={`/posts/${post?._id}`}
         className={style.post_link}
@@ -121,7 +95,6 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
         />
       </Link>
 
-      {/* Remove post btn */}
       <button
         type="button"
         className={style.delete_btn}
@@ -131,12 +104,11 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
       >
         {
           removeLoading ?
-            <PuffLoader color="#fff" size={20} />
+            <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }
       </button>
 
-      {/* Update post link */}
       <>
         {
           removePostType === "deletePost" ?
@@ -145,7 +117,7 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
               className={style.update_post_link}
             >
               <FontAwesomeIcon icon={faPenToSquare} />
-            </Link>) : ""
+            </Link>) : ("")
         }
       </>
     </div>

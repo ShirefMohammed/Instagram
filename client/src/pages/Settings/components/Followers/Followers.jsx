@@ -15,9 +15,9 @@ const Followers = () => {
   const [fetchUsersLoad, setFetchUsersLoad] = useState(false);
 
   const removeUserType = "removeFollower";
+
   const handleErrors = useHandleErrors();
 
-  // Fetch followers
   useEffect(() => {
     const fetchFollowers = async () => {
       try {
@@ -27,16 +27,7 @@ const Followers = () => {
         );
         setUsers((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchUsersLoad(false);
       }
@@ -47,7 +38,6 @@ const Followers = () => {
 
   return (
     <div className={`${style.followers}`}>
-      {/* Users cards */}
       <UsersViewer
         users={users}
         setUsers={setUsers}

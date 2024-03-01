@@ -14,7 +14,6 @@ const Users = () => {
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
 
-  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -24,16 +23,7 @@ const Users = () => {
         );
         setUsers((prev) => [...prev, ...res.data.data]);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchUsersLoad(false);
       }
@@ -44,20 +34,17 @@ const Users = () => {
 
   return (
     <div className={`${style.users}`}>
-      {/* Users viewer section */}
       <>
         {
-          // While fetching users and users length is 0
           fetchUsersLoad && users.length === 0 ?
             (<div className={style.loading}>
               <MoonLoader color="#000" size={20} />
             </div>)
 
-            // If users have been fetched
             : users.length > 0 ?
               (<div className={style.viewer}>
                 {
-                  users?.length && users.map((userData) => (
+                  users.map((userData) => (
                     <UserCard
                       key={userData?._id}
                       userData={userData}
@@ -72,12 +59,10 @@ const Users = () => {
         }
       </>
 
-      {/* Load more users btn section */}
       <>
         {
           fetchUsersLoad && users.length === 0 ? ("")
 
-            // While fetching users || If there are users in db
             : fetchUsersLoad || usersPage * limit === users.length ?
               (<button
                 type="button"
@@ -96,13 +81,11 @@ const Users = () => {
                 }
               </button>)
 
-              // If user reaches last user
               : usersPage * limit > users.length ?
                 (<p className={style.no_more_users_message}>
                   This section has {users.length} users
                 </p>)
 
-                // No thing
                 : ("")
         }
       </>

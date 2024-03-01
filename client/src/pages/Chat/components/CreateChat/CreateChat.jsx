@@ -1,20 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { MoonLoader } from "react-spinners";
-import { useAxiosPrivate, useHandleErrors } from "../../../../hooks";
+import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faX } from "@fortawesome/free-solid-svg-icons";
 import style from "./CreateChat.module.css";
 
-const CreateChat = (
-  {
-    chats,
-    setChats,
-    setOpenCreateChat,
-    setOpenCreateGroup
-  }
-) => {
+const CreateChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGroup }) => {
+  const user = useSelector(state => state.user);
+
   const [searchKey, setSearchKey] = useState("");
   const [searchLoad, setSearchLoad] = useState(false);
 
@@ -24,27 +20,23 @@ const CreateChat = (
 
   const axiosPrivate = useAxiosPrivate();
   const handleErrors = useHandleErrors();
+  const notify = useNotify();
+
   const navigate = useNavigate();
 
   const search = async () => {
     try {
       setSearchLoad(true);
+
       if (!searchKey) return setUsers([]);
+
       const res = await axiosPrivate.get(
         `users/search?searchKey=${searchKey}&&limit=30`
       );
+
       setUsers(res.data.data);
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setSearchLoad(false);
     }
@@ -52,6 +44,8 @@ const CreateChat = (
 
   const createChat = async (userId) => {
     try {
+      if (user?._id === userId) return notify("info", "You can not chat with yourself");
+
       setCreateChatLoad(true);
 
       const res = await axiosPrivate.post(
@@ -72,16 +66,7 @@ const CreateChat = (
 
       setOpenCreateChat(false);
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setCreateChatLoad(false);
     }
@@ -94,11 +79,9 @@ const CreateChat = (
         style={createChatLoad ? { overflow: "hidden" } : {}}
         onSubmit={(e) => e.preventDefault()}
       >
-        {/* Page Title */}
         <h2>Create Single Chat</h2>
 
-        {/* Search */}
-        <div className={style.search_input}>
+        <div className={style.search}>
           <input
             type="search"
             name="searchKey"
@@ -116,16 +99,13 @@ const CreateChat = (
           </button>
         </div>
 
-        {/* Search Results */}
         <>
           {
-            // While fetching search results
             searchLoad ?
               (<div className={style.spinner_container}>
                 <MoonLoader color="#000" size={20} />
               </div>)
 
-              // If There is search results
               : users?.length > 0 ?
                 (<div className={style.search_result_container}>
                   {
@@ -142,14 +122,12 @@ const CreateChat = (
                   }
                 </div>)
 
-                // If There is no search results
                 : (<div className={style.start_search_msg}>
                   Start searching and chat
                 </div>)
           }
         </>
 
-        {/* Create group chat btn */}
         <button
           type="button"
           className={style.create_group_chat_btn}
@@ -161,7 +139,6 @@ const CreateChat = (
           create group chat
         </button>
 
-        {/* Close Btn */}
         <button
           type="button"
           className={style.close_btn}
@@ -170,7 +147,6 @@ const CreateChat = (
           <FontAwesomeIcon icon={faX} />
         </button>
 
-        {/* While creating */}
         <>
           {
             createChatLoad ?

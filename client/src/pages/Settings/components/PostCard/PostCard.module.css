@@ -31,11 +31,6 @@
   height: 350px;
   object-fit: cover;
   user-select: none;
-  transition: .2s;
-  -webkit-transition: .2s;
-  -moz-transition: .2s;
-  -ms-transition: .2s;
-  -o-transition: .2s;
 }
 
 .post_card :is(.delete_btn, .update_post_link) {

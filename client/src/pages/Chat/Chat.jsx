@@ -11,28 +11,24 @@ const socket = io(SERVER_URL);
 
 const Chat = () => {
   const user = useSelector(state => state.user);
+
   const { chatId } = useParams(); // selected chat id
 
   // current user chats
   // which will be fetched in chats component
-  // also used in selectedChat component 
+  // also used in selectedChat component
   // when update or delete the chat from chat info
   const [chats, setChats] = useState([]);
 
   // Join socket user room
   useEffect(() => {
     socket.emit("setup", user._id);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className={style.chat_page}>
-      <div
-        className={
-          `${style.left_side} 
-        ${chatId !== undefined ? style.hide_md : ""}`
-        }
-      >
+      <div className={`${style.left_side} ${chatId !== undefined ? style.hide_md : ""}`}>
         <Chats
           chats={chats}
           setChats={setChats}
@@ -40,12 +36,7 @@ const Chat = () => {
         />
       </div>
 
-      <div
-        className={
-          `${style.right_side} 
-        ${chatId === undefined ? style.hide_md : ""}`
-        }
-      >
+      <div className={`${style.right_side} ${chatId === undefined ? style.hide_md : ""}`}>
         <SelectedChat
           chats={chats}
           setChats={setChats}

@@ -7,13 +7,13 @@ import style from "./AdminDashboard.module.css";
 
 const AdminDashboard = () => {
   const { tab } = useParams();
+
   const location = useLocation();
 
   return (
     <div className={style.admin_dashboard}>
       <Header />
 
-      {/* Break */}
       <hr style={{
         width: "60%",
         margin: "25px auto",

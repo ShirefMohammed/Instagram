@@ -11,19 +11,17 @@ import style from "./Settings.module.css";
 
 const Settings = () => {
   const { tab } = useParams();
+
   const location = useLocation();
 
   return (
     <div className={style.settings}>
-      {/* Page Title */}
       <h2>My Settings</h2>
 
-      {/* Controllers */}
       <div className={style.header}>
         <Controllers />
       </div>
 
-      {/* Break */}
       <hr style={{
         width: "60%",
         margin: "25px auto",
@@ -31,38 +29,34 @@ const Settings = () => {
         borderBottom: "none"
       }} />
 
-      {/* Current Section */}
       <div className={style.current_section}>
         {
-          tab === undefined ?
+          tab === undefined || tab === "createdPosts" ?
             <CreatedPosts />
 
-            : tab === "createdPosts" ?
-              <CreatedPosts />
+            : tab === "savedPosts" ?
+              <SavedPosts />
 
-              : tab === "savedPosts" ?
-                <SavedPosts />
+              : tab === "likedPosts" ?
+                <LikedPosts />
 
-                : tab === "likedPosts" ?
-                  <LikedPosts />
+                : tab === "followings" ?
+                  <Followings />
 
-                  : tab === "followings" ?
-                    <Followings />
+                  : tab === "followers" ?
+                    <Followers />
 
-                    : tab === "followers" ?
-                      <Followers />
+                    : tab === "createdComments" ?
+                      <CreatedComments />
 
-                      : tab === "createdComments" ?
-                        <CreatedComments />
+                      : tab === "reports" ?
+                        <Reports />
 
-                        : tab === "reports" ?
-                          <Reports />
-
-                          : <Navigate
-                            to="/noResourceFound"
-                            state={{ from: location }}
-                            replace
-                          />
+                        : <Navigate
+                          to="/noResourceFound"
+                          state={{ from: location }}
+                          replace
+                        />
         }
       </div>
     </div>

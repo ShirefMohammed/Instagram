@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import style from "./ChatCard.module.css";
 import groupImage from "../../../../assets/groupImage.png";
+import style from "./ChatCard.module.css";
 
 const ChatCard = ({ chat, socket }) => {
   const { chatId } = useParams();
+
   const user = useSelector(state => state.user);
 
   // for single chat
@@ -37,25 +38,20 @@ const ChatCard = ({ chat, socket }) => {
     return () => {
       socket.off("checkUserConnected");
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <Link
       to={`/chat/${chat._id}`}
-      className={
-        `${style.chat_card} 
-        ${chatId === chat._id ? style.active : ""}`
-      }
+      className={`${style.chat_card} ${chatId === chat._id ? style.active : ""}`}
     >
-      {/* Image */}
       <div className={style.image_container}>
         {
           chat.isGroupChat ?
             (<img src={groupImage} alt="group image" />)
             : (<img src={anotherUser?.avatar} alt="avatar" />)
         }
-
         {
           connectionStatus ?
             (<div className={style.connection_status}></div>)
@@ -63,7 +59,6 @@ const ChatCard = ({ chat, socket }) => {
         }
       </div>
 
-      {/* Name && latestMessage */}
       <div>
         <span className={style.name}>
           {chat.isGroupChat ? (chat.groupName) : (anotherUser?.name)}

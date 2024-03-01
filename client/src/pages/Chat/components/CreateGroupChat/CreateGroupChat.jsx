@@ -1,20 +1,16 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { MoonLoader } from "react-spinners";
 import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faX } from "@fortawesome/free-solid-svg-icons";
 import style from "./CreateGroupChat.module.css";
 
-const CreateGroupChat = (
-  {
-    chats,
-    setChats,
-    setOpenCreateChat,
-    setOpenCreateGroup
-  }
-) => {
+const CreateGroupChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGroup }) => {
+  const user = useSelector(state => state.user);
+
   const [searchKey, setSearchKey] = useState("");
   const [searchLoad, setSearchLoad] = useState(false);
   const [searchUsers, setSearchUsers] = useState([]);
@@ -27,27 +23,22 @@ const CreateGroupChat = (
   const axiosPrivate = useAxiosPrivate();
   const handleErrors = useHandleErrors();
   const notify = useNotify();
+
   const navigate = useNavigate();
 
   const search = async () => {
     try {
       setSearchLoad(true);
+
       if (!searchKey) return setSearchUsers([]);
+
       const res = await axiosPrivate.get(
         `users/search?searchKey=${searchKey}&&limit=30`
       );
+
       setSearchUsers(res.data.data);
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setSearchLoad(false);
     }
@@ -59,11 +50,11 @@ const CreateGroupChat = (
         return notify("info", "Group name is requires");
       }
 
-      let groupUsers = users.map(user => user._id);
-
-      if (groupUsers.length < 1) {
+      if (users.length < 1) {
         return notify("info", "One user is required at least");
       }
+
+      let groupUsers = users.map(user => user._id);
 
       setCreateGroupLoad(true);
 
@@ -86,16 +77,9 @@ const CreateGroupChat = (
     }
 
     catch (err) {
-      if (!err?.response) {
-        notify("error", 'No Server Response');
-      } else {
-        const message = err.response?.data?.message;
-        if (message) {
-          notify("error", message);
-        } else {
-          notify("error", "Create group is failed");
-        }
-      }
+      if (!err?.response) notify("error", 'No Server Response');
+      const message = err.response?.data?.message;
+      message ? notify("error", message) : notify("error", "Group is not created");
     }
 
     finally {
@@ -109,10 +93,8 @@ const CreateGroupChat = (
         className={style.container}
         onSubmit={(e) => e.preventDefault()}
       >
-        {/* Page Title */}
         <h2>Create Group Chat</h2>
 
-        {/* Group Name Input */}
         <input
           type="text"
           name="groupName"
@@ -123,7 +105,6 @@ const CreateGroupChat = (
           onChange={(e) => setGroupName(e.target.value)}
         />
 
-        {/* Selected users */}
         <>
           {
             users.length > 0 ?
@@ -137,9 +118,7 @@ const CreateGroupChat = (
                       <span>{user.name}</span>
                       <button
                         type="button"
-                        onClick={
-                          () => setUsers(users.filter(u => u._id !== user._id))
-                        }
+                        onClick={() => setUsers(users.filter(u => u._id !== user._id))}
                       >
                         <FontAwesomeIcon icon={faX} />
                       </button>
@@ -151,8 +130,7 @@ const CreateGroupChat = (
           }
         </>
 
-        {/* Search */}
-        <div className={style.search_input}>
+        <div className={style.search}>
           <input
             type="search"
             name="searchKey"
@@ -170,44 +148,42 @@ const CreateGroupChat = (
           </button>
         </div>
 
-        {/* Search Results */}
         <>
           {
-            // While fetching search results
             searchLoad ?
               (<div className={style.spinner_container}>
                 <MoonLoader color="#000" size={20} />
               </div>)
 
-              // If There is search results
               : searchUsers?.length > 0 ?
                 (<div className={style.search_result_container}>
                   {
-                    searchUsers.map((user) => (
+                    searchUsers.map((userData) => (
                       <div
-                        key={user._id}
+                        key={userData._id}
                         className={style.user_card}
                         onClick={() => {
-                          if (!users.some(u => u._id === user._id)) {
-                            setUsers([...users, user]);
+                          if (
+                            !users.some(item => item._id === userData._id)
+                            && userData._id !== user._id
+                          ) {
+                            setUsers([...users, userData]);
                           }
                         }}
                       >
-                        <img src={user.avatar} alt="avatar" />
-                        <span>{user.name}</span>
+                        <img src={userData.avatar} alt="avatar" />
+                        <span>{userData.name}</span>
                       </div>
                     ))
                   }
                 </div>)
 
-                // If There is no search results
                 : (<div className={style.start_search_msg}>
                   Start searching and chat
                 </div>)
           }
         </>
 
-        {/* Create Group Chat btn */}
         <button
           type="button"
           className={style.create_btn}
@@ -219,7 +195,6 @@ const CreateGroupChat = (
           {createGroupLoad ? <MoonLoader color="#000" size={15} /> : ""}
         </button>
 
-        {/* Create single chat btn */}
         <button
           type="button"
           className={style.create_single_chat_btn}
@@ -231,7 +206,6 @@ const CreateGroupChat = (
           create single chat
         </button>
 
-        {/* Close Btn */}
         <button
           type="button"
           className={style.close_btn}

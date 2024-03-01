@@ -3,24 +3,26 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { BeatLoader, MoonLoader } from "react-spinners";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { useAxiosPrivate, useHandleErrors } from "../../../../hooks";
 import MessageCard from "../MessageCard/MessageCard";
 import SendMessageController from "../SendMessageController/SendMessageController";
 import ChatInformation from "../ChatInformation/ChatInformation";
 import UpdateGroup from "../UpdateGroup/UpdateGroup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import style from "./SelectedChat.module.css";
 import groupImage from "../../../../assets/groupImage.png";
+import style from "./SelectedChat.module.css";
 
 const SelectedChat = ({ chats, setChats, socket }) => {
   const { chatId } = useParams(); // selected chat id
+
   const user = useSelector(state => state.user);
 
   const [selectedChat, setSelectedChat] = useState({});
   const [fetchSelectedChatLoad, setFetchSelectedChatLoad] = useState({});
 
   const [anotherChatUser, setAnotherChatUser] = useState({});
+
   const [openChatInfo, setOpenChatInfo] = useState(false);
   const [openUpdateGroup, setOpenUpdateGroup] = useState(false);
 
@@ -33,7 +35,6 @@ const SelectedChat = ({ chats, setChats, socket }) => {
   const handleErrors = useHandleErrors();
   const navigate = useNavigate();
 
-  // Fetch selected chat
   useEffect(() => {
     const fetchSelectedChat = async () => {
       try {
@@ -42,16 +43,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
         const res = await axiosPrivate.get(`/chats/${chatId}`);
         setSelectedChat(res.data.data);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchSelectedChatLoad(false);
       }
@@ -60,7 +52,6 @@ const SelectedChat = ({ chats, setChats, socket }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
 
-  // Fetch selected chat messages
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -69,16 +60,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
         const res = await axiosPrivate.get(`/chats/${chatId}/messages`);
         setMessages(res.data.data);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchMessagesLoad(false);
       }
@@ -90,7 +72,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
   // Set another user if single chat
   useEffect(() => {
     if (selectedChat?._id && !selectedChat.isGroupChat) {
-      setAnotherChatUser(selectedChat.users.find(u => u._id != user._id));
+      setAnotherChatUser(selectedChat.users.find(item => item._id != user._id));
     }
   }, [selectedChat, user._id]);
 
@@ -106,7 +88,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
   useEffect(() => {
     socket.on("receiveMessage", (receivedMessage) => {
       if (chatId === receivedMessage.chat) {
-        setMessages(prevMessages => [...prevMessages, receivedMessage]);
+        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
       }
     });
 
@@ -159,9 +141,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
 
           : selectedChat?._id ?
             (<div className={style.selected_chat}>
-              {/* Header */}
               <div className={style.header}>
-                {/* Go back */}
                 <button
                   type="button"
                   onClick={() => navigate("/chat")}
@@ -170,7 +150,6 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                   <FontAwesomeIcon icon={faChevronLeft} />
                 </button>
 
-                {/* User or Group info */}
                 <>
                   {
                     selectedChat.isGroupChat ?
@@ -179,7 +158,9 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                           src={groupImage}
                           alt="group image"
                         />
-                        <span>{selectedChat.groupName}</span>
+                        <span>
+                          {selectedChat.groupName}
+                        </span>
                         <div className={style.typing}>
                           {typing ? <BeatLoader color="#888" size={8} /> : ""}
                         </div>
@@ -192,7 +173,9 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                           src={anotherChatUser?.avatar}
                           alt="avatar"
                         />
-                        <span>{anotherChatUser?.name}</span>
+                        <span>
+                          {anotherChatUser?.name}
+                        </span>
                         <div className={style.typing}>
                           {typing ? <BeatLoader color="#888" size={8} /> : ""}
                         </div>
@@ -200,7 +183,6 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                   }
                 </>
 
-                {/* Chat info */}
                 <button
                   type="button"
                   onClick={() => setOpenChatInfo(true)}
@@ -210,7 +192,6 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                 </button>
               </div>
 
-              {/* Chat messages viewer */}
               <div className={style.chat_messages_viewer}>
                 {
                   messages.length === 0 ?

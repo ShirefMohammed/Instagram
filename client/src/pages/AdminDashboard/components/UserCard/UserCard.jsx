@@ -5,33 +5,25 @@ import { PuffLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
-import style from "./UserCard.module.css";
-import defaultAvatar from "../../../../assets/defaultAvatar.png";
 import ROLES_LIST from "../../../../utils/roles_list";
+import defaultAvatar from "../../../../assets/defaultAvatar.png";
+import style from "./UserCard.module.css";
 
 const UserCard = ({ userData, users, setUsers }) => {
   const [deleteLoading, setDeleteLoading] = useState(false);
+
   const axiosPrivate = useAxiosPrivate();
   const handleErrors = useHandleErrors();
   const notify = useNotify();
 
-  const deleteUser = async () => {
+  const deleteUser = async (userId) => {
     try {
       setDeleteLoading(true);
-      const res = await axiosPrivate.delete(`users/${userData?._id}`);
-      setUsers(users.filter(item => item._id !== userData?._id));
-      notify("success", res.data.message);
+      await axiosPrivate.delete(`users/${userId}`);
+      setUsers(users.filter(item => item._id !== userId));
+      notify("success", "user account is deleted");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setDeleteLoading(false);
     }
@@ -76,7 +68,7 @@ const UserCard = ({ userData, users, setUsers }) => {
       >
         {
           deleteLoading ?
-            <PuffLoader color="#fff" size={20} />
+            <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }
       </button>

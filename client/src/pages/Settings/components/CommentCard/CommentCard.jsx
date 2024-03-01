@@ -9,68 +9,89 @@ import UpdateComment from "../UpdateComment/UpdateComment";
 import style from "./CommentCard.module.css";
 
 const CommentCard = ({ comment, comments, setComments }) => {
-  const [removeLoading, setRemoveLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [openUpdateComment, setOpenUpdateComment] = useState(false);
+
+  const [viewMoreContent, setViewMoreContent] = useState(false);
 
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
   const notify = useNotify();
 
-  // Delete comment
   const deleteComment = async (commentId, postId) => {
     try {
-      setRemoveLoading(true);
-      const res = await axiosPrivate.delete(
+      setDeleteLoading(true);
+      await axiosPrivate.delete(
         `posts/${postId}/comments/${commentId}`
       );
       setComments(comments.filter(comment => comment?._id !== commentId));
-      notify("success", res?.data?.message);
+      notify("success", "comment is deleted");
     } catch (err) {
       handleErrors(err);
     } finally {
-      setRemoveLoading(false);
+      setDeleteLoading(false);
     }
   }
 
   return (
     <div className={style.comment_card}>
-      {/* Comment content */}
-      <p className={style.content}>
-        {comment.content}
-      </p>
+      <div className={style.content}>
+        {
+          comment?.content?.length && comment.content.length > 100 ?
+            (<>
+              <p>
+                {
+                  viewMoreContent ?
+                    comment.content
+                    : comment.content.substring(0, 100)
+                }
+                {
+                  viewMoreContent ?
+                    (<button
+                      type="button"
+                      onClick={() => setViewMoreContent(false)}
+                    >
+                      see less ...
+                    </button>)
+                    : (<button
+                      type="button"
+                      onClick={() => setViewMoreContent(true)}
+                    >
+                      see more ...
+                    </button>)
+                }
+              </p>
+            </>)
 
-      {/* Comment created at */}
+            : (<p>{comment?.content}</p>)
+        }
+      </div>
+
       <span className={style.created_at}>
-        {new Date(comment?.createdAt)
-          .toISOString().split('T')[0]}
+        {new Date(comment?.createdAt).toISOString().split('T')[0]}
       </span>
 
-      {/* Link to the post that has the comment */}
       <Link
         className={style.comment_post_link}
-        to={`/posts/${comment?.post}`}
+        to={`/posts/${comment?.post?._id}`}
       >
         Go to the post
       </Link>
 
-      {/* Remove comment btn */}
       <button
         type="button"
         className={style.delete_btn}
-        onClick={() => {
-          deleteComment(comment?._id, comment?.post)
-        }}
-        disabled={removeLoading ? true : false}
-        style={removeLoading ? { opacity: .5, cursor: "revert" } : {}}
+        onClick={() => deleteComment(comment?._id, comment?.post?._id)}
+        disabled={deleteLoading ? true : false}
+        style={deleteLoading ? { opacity: .5, cursor: "revert" } : {}}
       >
         {
-          removeLoading ?
+          deleteLoading ?
             <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }
       </button>
 
-      {/* Update comment btn */}
       <button
         type="button"
         className={style.update_btn}
@@ -79,7 +100,6 @@ const CommentCard = ({ comment, comments, setComments }) => {
         Update this comment
       </button>
 
-      {/* Update comment component */}
       <>
         {
           openUpdateComment ?

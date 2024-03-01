@@ -1,69 +1,19 @@
-{
-  Notification {
-    from: senderId,
-    to: userId;,
-    type: "newFollower" || "newComment" || "newMessage",
-    message: string,
-    post: id,
-    chat: id,
-    message: id, // last unread message
-    seen: false,
-  }
-}
-
 Server
 Fix corsOptions.js
-Handle notification system
 Handle images size
+Handle notification system
 
 Client
-add titles
 problem with logout and browser cache and logout in Authentication
-
-
-# Current
-─AdminDashboard
-│   └───components
-│       ├───Header
-│       ├───PostCard
-│       ├───Posts
-│       ├───ReportCard
-│       ├───Reports
-│       ├───UserCard
-│       └───Users
-├───Chat
-│   └───components
-│       ├───ChatCard
-│       ├───ChatInformation    
-│       ├───Chats
-│       ├───CreateChat
-│       ├───CreateGroupChat    
-│       ├───MessageCard        
-│       ├───SelectedChat       
-│       ├───SendMessageController
-│       └───UpdateGroup        
-
-├───Settings
-│   └───components
-│       ├───CommentCard        
-│       ├───Controllers        
-│       ├───CreatedComments    
-│       ├───CreatedPosts       
-│       ├───Followers
-│       ├───Followings
-│       ├───LikedPosts
-│       ├───PostCard
-│       ├───PostsViewer        
-│       ├───ReportCard
-│       ├───Reports
-│       ├───SavedPosts
-│       ├───UpdateComment      
-│       ├───UserCard
-│       └───UsersViewer        
-
+Problem with settings when delete item the msg no more items shown
+handle post card image animation
 
 
 # Finished
+├───Authentication
+│   └───components
+│       ├───Login
+│       └───Register
 ├───ServerError
 ├───NoServerResponse
 ├───Unauthorized
@@ -102,10 +52,40 @@ problem with logout and browser cache and logout in Authentication
 │       ├───UpdateAvatar
 │       ├───UpdatePassword
 │       └───UpdateUserInfo
-
-
-# Having problem
-├───Authentication
+├───Settings
 │   └───components
-│       ├───Login
-│       └───Register
+│       ├───CommentCard
+│       ├───Controllers
+│       ├───CreatedComments
+│       ├───CreatedPosts
+│       ├───Followers
+│       ├───Followings
+│       ├───LikedPosts
+│       ├───PostCard
+│       ├───PostsViewer
+│       ├───ReportCard
+│       ├───Reports
+│       ├───SavedPosts
+│       ├───UpdateComment
+│       ├───UserCard
+│       └───UsersViewer
+├───AdminDashboard
+│   └───components
+│       ├───Header
+│       ├───PostCard
+│       ├───Posts
+│       ├───ReportCard
+│       ├───Reports
+│       ├───UserCard
+│       └───Users
+├───Chat
+│   └───components
+│       ├───ChatCard
+│       ├───ChatInformation
+│       ├───Chats
+│       ├───CreateChat
+│       ├───CreateGroupChat
+│       ├───MessageCard
+│       ├───SelectedChat
+│       ├───SendMessageController
+│       └───UpdateGroup

@@ -1,21 +1,15 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { MoonLoader } from "react-spinners";
-import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faX } from "@fortawesome/free-solid-svg-icons";
+import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import style from "./UpdateGroup.module.css";
 
-const UpdateGroup = (
-  {
-    selectedChat,
-    setSelectedChat,
-    chats,
-    setChats,
-    setOpenChatInfo,
-    setOpenUpdateGroup
-  }
-) => {
+const UpdateGroup = ({ selectedChat, setSelectedChat, chats, setChats, setOpenChatInfo, setOpenUpdateGroup }) => {
+  const user = useSelector(state => state.user);
+
   const [searchKey, setSearchKey] = useState("");
   const [searchLoad, setSearchLoad] = useState(false);
   const [searchUsers, setSearchUsers] = useState([]);
@@ -32,23 +26,21 @@ const UpdateGroup = (
   const search = async () => {
     try {
       setSearchLoad(true);
+
       if (!searchKey) return setSearchUsers([]);
+
       const res = await axiosPrivate.get(
         `users/search?searchKey=${searchKey}&&limit=30`
       );
+
       setSearchUsers(res.data.data);
-    } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
-    } finally {
+    }
+
+    catch (err) {
+      handleErrors(err);
+    }
+
+    finally {
       setSearchLoad(false);
     }
   }
@@ -56,13 +48,17 @@ const UpdateGroup = (
   const UpdateGroupChat = async () => {
     try {
       if (!groupName) {
-        return notify("info", "Group name is requires");
+        return notify("info", "Group name is required");
+      }
+
+      if (users.length < 2) {
+        return notify("info", "Two users are required at least");
       }
 
       let groupUsers = users.map(user => user._id);
 
-      if (groupUsers.length < 1) {
-        return notify("info", "One user is required at least");
+      if (!groupUsers.includes(user?._id)) {
+        return notify("info", "Don't except yourself");
       }
 
       setUpdateGroupLoad(true);
@@ -80,8 +76,10 @@ const UpdateGroup = (
 
       setChats(
         chats.map((chat) => {
-          if (chat._id == updatedChat._id) return updatedChat;
-          else return chat;
+          if (chat._id == updatedChat._id)
+            return updatedChat;
+          else
+            return chat;
         })
       );
 
@@ -91,16 +89,7 @@ const UpdateGroup = (
     }
 
     catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     }
 
     finally {
@@ -114,10 +103,8 @@ const UpdateGroup = (
         className={style.container}
         onSubmit={(e) => e.preventDefault()}
       >
-        {/* Page Title */}
         <h2>Update Group Chat</h2>
 
-        {/* Group Name Input */}
         <input
           type="text"
           name="groupName"
@@ -128,23 +115,20 @@ const UpdateGroup = (
           onChange={(e) => setGroupName(e.target.value)}
         />
 
-        {/* Selected users */}
         <>
           {
             users.length > 0 ?
               (<div className={style.selected_users}>
                 {
-                  users.map((user) => (
+                  users.map((userData) => (
                     <div
-                      key={user._id}
+                      key={userData._id}
                       className={style.user_card}
                     >
-                      <span>{user.name}</span>
+                      <span>{userData.name}</span>
                       <button
                         type="button"
-                        onClick={
-                          () => setUsers(users.filter(u => u._id !== user._id))
-                        }
+                        onClick={() => setUsers(users.filter(item => item._id !== userData._id))}
                       >
                         <FontAwesomeIcon icon={faX} />
                       </button>
@@ -156,8 +140,7 @@ const UpdateGroup = (
           }
         </>
 
-        {/* Search */}
-        <div className={style.search_input}>
+        <div className={style.search}>
           <input
             type="search"
             name="searchKey"
@@ -175,44 +158,39 @@ const UpdateGroup = (
           </button>
         </div>
 
-        {/* Search Results */}
         <>
           {
-            // While fetching search results
             searchLoad ?
               (<div className={style.spinner_container}>
                 <MoonLoader color="#000" size={20} />
               </div>)
 
-              // If There is search results
               : searchUsers?.length > 0 ?
                 (<div className={style.search_result_container}>
                   {
-                    searchUsers.map((user) => (
+                    searchUsers.map((userData) => (
                       <div
-                        key={user._id}
+                        key={userData._id}
                         className={style.user_card}
                         onClick={() => {
-                          if (!users.some(u => u._id === user._id)) {
-                            setUsers([...users, user]);
+                          if (!users.some(item => item._id === userData._id)) {
+                            setUsers([...users, userData]);
                           }
                         }}
                       >
-                        <img src={user.avatar} alt="avatar" />
-                        <span>{user.name}</span>
+                        <img src={userData.avatar} alt="avatar" />
+                        <span>{userData.name}</span>
                       </div>
                     ))
                   }
                 </div>)
 
-                // If There is no search results
                 : (<div className={style.start_search_msg}>
                   Start searching and chat
                 </div>)
           }
         </>
 
-        {/* Save UpdatesBtn  */}
         <button
           type="button"
           className={style.update_btn}
@@ -224,7 +202,6 @@ const UpdateGroup = (
           {updateGroupLoad ? <MoonLoader color="#000" size={15} /> : ""}
         </button>
 
-        {/* Close Btn */}
         <button
           type="button"
           className={style.close_btn}

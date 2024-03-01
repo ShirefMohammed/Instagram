@@ -8,17 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import style from "./MessageCard.module.css";
 
-const MessageCard = (
-  {
-    selectedChat,
-    message,
-    index,
-    messages,
-    setMessages,
-    socket
-  }
-) => {
+const MessageCard = ({ selectedChat, message, index, messages, setMessages, socket }) => {
   const user = useSelector(state => state.user);
+
   const messageRef = useRef(null);
 
   const [openMsgInfo, setOpenMsgInfo] = useState(false);
@@ -72,29 +64,25 @@ const MessageCard = (
     messageRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Delete the message
   const deleteMessage = async () => {
     try {
       setDeleteMsgLoad(true);
+
       await axiosPrivate.delete(
         `chats/${message.chat}/messages/${message._id}`
       );
+
       setMessages(messages.filter((_, i) => i !== index));
+
       notify("success", "Message is deleted");
+
       socket.emit("deleteMessage", message);
     }
 
     catch (err) {
-      if (!err?.response) {
-        notify("error", 'No Server Response');
-      } else {
-        const message = err.response?.data?.message;
-        if (message) {
-          notify("error", message);
-        } else {
-          notify("error", "Message is not deleted");
-        }
-      }
+      if (!err?.response) notify("error", 'No Server Response');
+      const message = err.response?.data?.message;
+      message ? notify("error", message) : notify("error", "Message is not deleted");
     }
 
     finally {
@@ -123,12 +111,7 @@ const MessageCard = (
       </>
 
       {/* Message */}
-      <div
-        className={
-          `${style.message} 
-        ${message.sender._id == user._id ? style.right : style.left}`
-        }
-      >
+      <div className={`${style.message} ${message.sender._id == user._id ? style.right : style.left}`}>
         {/* Avatar link */}
         <>
           {
@@ -147,12 +130,7 @@ const MessageCard = (
         </>
 
         {/* Content */}
-        <div
-          className={
-            `${style.content} 
-          ${message.sender._id === user._id ? style.right : style.left}`
-          }
-        >
+        <div className={`${style.content} ${message.sender._id === user._id ? style.right : style.left}`}>
           <pre>
             {message.content}
           </pre>
@@ -161,8 +139,10 @@ const MessageCard = (
         {/* Message Info */}
         <>
           {
-            (message?.sender?._id === user._id
-              || selectedChat.groupAdmin === user._id)
+            (
+              message?.sender?._id === user._id
+              || selectedChat.groupAdmin === user._id
+            )
               ?
               (<div className={style.message_info}>
                 {/* Toggle btn */}
@@ -194,8 +174,10 @@ const MessageCard = (
                         {/* Delete Btn */}
                         <>
                           {
-                            (message?.sender?._id === user._id
-                              || selectedChat.groupAdmin === user._id) ?
+                            (
+                              message?.sender?._id === user._id
+                              || selectedChat.groupAdmin === user._id
+                            ) ?
                               (<li>
                                 <button
                                   type="button"
@@ -203,19 +185,15 @@ const MessageCard = (
                                   style={deleteMsgLoad ? { cursor: "revert" } : {}}
                                   onClick={deleteMessage}
                                 >
-                                  <span>
-                                    Delete Message
-                                  </span>
-                                  {
-                                    deleteMsgLoad &&
-                                    <PuffLoader color="#000" size={15} />
-                                  }
+                                  <span>Delete Message</span>
+                                  {deleteMsgLoad && <PuffLoader color="#000" size={15} />}
                                 </button>
                               </li>)
                               : ("")
                           }
                         </>
-                      </ul>) : ("")
+                      </ul>)
+                      : ("")
                   }
                 </>
               </div>)

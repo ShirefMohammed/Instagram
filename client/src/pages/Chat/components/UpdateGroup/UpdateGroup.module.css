@@ -36,7 +36,7 @@
   font-size: 16px;
   font-weight: 500;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .update_group_chat .container input {
@@ -44,7 +44,7 @@
   outline: none;
   background-color: #eee;
   width: 100%;
-  font-size: 13px;
+  font-size: 14px;
   padding: 10px 15px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
@@ -102,18 +102,18 @@
   -o-transition: .3s;
 }
 
-.update_group_chat .container .search_input {
+.update_group_chat .container .search {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
 }
 
-.update_group_chat .container .search_input>button {
+.update_group_chat .container .search>button {
   border: none;
   outline: none;
   background-color: #eee;
-  padding: 6px 14px;
+  padding: 8px 14px;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
@@ -121,7 +121,7 @@
   -o-border-radius: 6px;
 }
 
-.update_group_chat .container .search_input>button svg {
+.update_group_chat .container .search>button svg {
   font-size: 18px;
   transition: .3s;
   -webkit-transition: .3s;
@@ -130,7 +130,7 @@
   -o-transition: .3s;
 }
 
-.update_group_chat .container .search_input>button:hover svg {
+.update_group_chat .container .search>button:hover svg {
   transform: scale(1.1);
   -webkit-transform: scale(1.1);
   -moz-transform: scale(1.1);
@@ -223,18 +223,6 @@
   background: #eee;
 }
 
-.update_group_chat .container .create_single_chat_btn {
-  display: block;
-  outline: none;
-  border: none;
-  background: none;
-  text-decoration: underline;
-  margin: auto;
-  margin-top: 15px;
-  font-size: 12px;
-  color: #00f;
-}
-
 .update_group_chat .container .close_btn {
   outline: none;
   border: none;
@@ -253,7 +241,7 @@
   -o-transition: .3s;
 }
 
-.update_group_chat .container .close_btn svg:hover {
+.update_group_chat .container .close_btn:hover svg {
   color: #f00;
   transform: scale(1.1);
   -webkit-transform: scale(1.1);

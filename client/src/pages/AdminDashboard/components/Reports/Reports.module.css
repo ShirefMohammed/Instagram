@@ -2,10 +2,6 @@
   width: 100%;
 }
 
-.reports .viewer {
-  width: 100%;
-}
-
 .reports .loading {
   width: 100%;
   min-height: 300px;
@@ -14,12 +10,17 @@
   justify-content: center;
 }
 
+.reports .viewer {
+  width: 100%;
+}
+
 .reports .load_more_reports_btn {
   border: none;
   outline: none;
   background: none;
   display: block;
-  margin: 10px auto;
+  margin: auto;
+  margin-top: 10px;
   color: #777;
   text-decoration: underline;
   text-align: center;
@@ -28,13 +29,13 @@
   align-items: center;
   justify-content: center;
   text-transform: uppercase;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .reports .no_more_reports_message {
   color: #777;
   text-align: center;
-  margin: 10px auto;
-  text-transform: uppercase;
-  font-size: 11px;
+  margin: auto;
+  margin-top: 10px;
+  font-size: 12px;
 }

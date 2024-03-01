@@ -8,38 +8,29 @@ import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
 import style from "./ReportCard.module.css";
 
 const ReportCard = ({ report, reports, setReports }) => {
-  const [removeLoading, setRemoveLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState();
+
   const [viewMoreContent, setViewMoreContent] = useState(false);
 
   const handleErrors = useHandleErrors();
   const axiosPrivate = useAxiosPrivate();
   const notify = useNotify();
 
-  const deleteReport = async () => {
+  const deleteReport = async (reportId) => {
     try {
-      setRemoveLoading(true);
-      const res = await axiosPrivate.delete(`reports/${report?._id}`);
-      setReports(reports.filter(item => item?._id !== report?._id));
-      notify("success", res.data.message);
+      setDeleteLoading(true);
+      await axiosPrivate.delete(`reports/${reportId}`);
+      setReports(reports.filter(item => item?._id !== reportId));
+      notify("success", "report is deleted");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
-      setRemoveLoading(false);
+      setDeleteLoading(false);
     }
   }
 
   return (
     <div className={style.report_card}>
-      {/* Sender link */}
       <Link
         className={style.sender_profile_link}
         to={`/users/${report.sender._id}`}
@@ -52,7 +43,6 @@ const ReportCard = ({ report, reports, setReports }) => {
         {report.sender.name}
       </Link>
 
-      {/* Report content */}
       <div className={style.content}>
         {
           report.content.length > 250 ?
@@ -85,12 +75,10 @@ const ReportCard = ({ report, reports, setReports }) => {
         }
       </div>
 
-      {/* Report created at */}
       <span className={style.created_at}>
         {new Date(report?.createdAt).toISOString().split('T')[0]}
       </span>
 
-      {/* View report link */}
       <Link
         className={style.view_report_link}
         to={`/reports/${report?._id}`}
@@ -98,16 +86,15 @@ const ReportCard = ({ report, reports, setReports }) => {
         View the report
       </Link>
 
-      {/* Delete report btn */}
       <button
         type="button"
         className={style.delete_btn}
-        onClick={deleteReport}
-        disabled={removeLoading ? true : false}
-        style={removeLoading ? { opacity: .5, cursor: "revert" } : {}}
+        onClick={() => deleteReport(report?._id)}
+        disabled={deleteLoading ? true : false}
+        style={deleteLoading ? { opacity: .5, cursor: "revert" } : {}}
       >
         {
-          removeLoading ?
+          deleteLoading ?
             <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }

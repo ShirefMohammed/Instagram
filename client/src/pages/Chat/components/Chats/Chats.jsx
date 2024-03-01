@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { MoonLoader } from "react-spinners";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { useAxiosPrivate, useHandleErrors } from "../../../../hooks";
 import ChatCard from "../ChatCard/ChatCard";
 import CreateChat from "../CreateChat/CreateChat";
 import CreateGroupChat from "../CreateGroupChat/CreateGroupChat";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
-import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import style from "./Chats.module.css";
 
 const Chats = ({ chats, setChats, socket }) => {
@@ -24,7 +24,6 @@ const Chats = ({ chats, setChats, socket }) => {
   const handleErrors = useHandleErrors();
   const navigate = useNavigate();
 
-  // Fetch chats
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -32,16 +31,7 @@ const Chats = ({ chats, setChats, socket }) => {
         const res = await axiosPrivate.get(`/chats`);
         setChats(res.data.data);
       } catch (err) {
-        handleErrors(
-          err,
-          [
-            "handleNoServerResponse",
-            "handleServerError",
-            "handleUnauthorized",
-            "handleExpiredRefreshToken",
-            "handleNoResourceFound"
-          ]
-        );
+        handleErrors(err);
       } finally {
         setFetchChatsLoad(false);
       }
@@ -52,9 +42,7 @@ const Chats = ({ chats, setChats, socket }) => {
 
   return (
     <div className={style.chats}>
-      {/* Header */}
       <div className={style.header}>
-        {/* Go Home */}
         <button
           type="button"
           onClick={() => navigate("/")}
@@ -63,7 +51,6 @@ const Chats = ({ chats, setChats, socket }) => {
           <FontAwesomeIcon icon={faChevronLeft} />
         </button>
 
-        {/* user info */}
         <Link
           to={`/users/${user?._id}`}
           className={style.user_info}
@@ -75,7 +62,6 @@ const Chats = ({ chats, setChats, socket }) => {
           <span>{user?.name}</span>
         </Link>
 
-        {/* Create chat */}
         <button
           type="button"
           onClick={() => setOpenCreateChat(true)}
@@ -85,23 +71,22 @@ const Chats = ({ chats, setChats, socket }) => {
         </button>
       </div>
 
-      {/* Chats list */}
       <div className={style.chats_list}>
         <h2>Chats</h2>
+
         {
           fetchChatsLoad ?
             (<div className={style.spinner_container}>
               <MoonLoader color="#000" size={20} />
             </div>)
 
-            : chats.length > 0 ?
-              chats.map((chat) => (
-                <ChatCard
-                  key={chat._id}
-                  chat={chat}
-                  socket={socket}
-                />
-              ))
+            : chats.length > 0 ? chats.map((chat) => (
+              <ChatCard
+                key={chat._id}
+                chat={chat}
+                socket={socket}
+              />
+            ))
 
               : chats.length === 0 ?
                 (<div className={style.no_chats_msg}>
@@ -112,7 +97,6 @@ const Chats = ({ chats, setChats, socket }) => {
         }
       </div>
 
-      {/* Create chat */}
       <>
         {
           openCreateChat ?
@@ -125,7 +109,6 @@ const Chats = ({ chats, setChats, socket }) => {
         }
       </>
 
-      {/* Create group chat */}
       <>
         {
           openCreateGroup ?

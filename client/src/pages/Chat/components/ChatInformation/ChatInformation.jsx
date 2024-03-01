@@ -8,15 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import style from "./ChatInformation.module.css";
 
-const ChatInformation = (
-  {
-    selectedChat,
-    chats,
-    setChats,
-    setOpenChatInfo,
-    setOpenUpdateGroup
-  }
-) => {
+const ChatInformation = ({ selectedChat, chats, setChats, setOpenChatInfo, setOpenUpdateGroup }) => {
   const user = useSelector(state => state.user);
 
   const [deleteChatLoad, setDeleteChatLoad] = useState(false);
@@ -25,27 +17,24 @@ const ChatInformation = (
   const axiosPrivate = useAxiosPrivate();
   const handleErrors = useHandleErrors();
   const notify = useNotify();
+
   const navigate = useNavigate();
 
   const DeleteTheChat = async () => {
     try {
       setDeleteChatLoad(true);
-      await axiosPrivate.delete(`/chats/${selectedChat._id}`,);
+
+      await axiosPrivate.delete(`/chats/${selectedChat._id}`);
+
       setChats(chats.filter(chat => chat._id !== selectedChat._id));
-      notify("Chat is deleted");
+
+      notify("success", "Chat is deleted");
+
       setOpenChatInfo(false);
+
       navigate("/chat");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setDeleteChatLoad(false);
     }
@@ -54,22 +43,18 @@ const ChatInformation = (
   const LeaveTheGroup = async () => {
     try {
       setLeaveGroupLoad(true);
+
       await axiosPrivate.delete(`/chats/${selectedChat._id}/users`);
+
       setChats(chats.filter(chat => chat._id !== selectedChat._id));
-      notify("You left the group");
+
+      notify("success", "You left the group");
+
       setOpenChatInfo(false);
+
       navigate("/chat");
     } catch (err) {
-      handleErrors(
-        err,
-        [
-          "handleNoServerResponse",
-          "handleServerError",
-          "handleUnauthorized",
-          "handleExpiredRefreshToken",
-          "handleNoResourceFound"
-        ]
-      );
+      handleErrors(err);
     } finally {
       setLeaveGroupLoad(false);
     }
@@ -85,20 +70,20 @@ const ChatInformation = (
         <div className={style.chat_details}>
           <h3>Details</h3>
 
-          <div>
+          <p>
             Chat type: {selectedChat.isGroupChat ? "group chat" : "single chat"}
-          </div>
+          </p>
 
-          <div>
+          <p>
             Chat users: {selectedChat.users.length}
-          </div>
+          </p>
 
           <>
             {
               selectedChat.isGroupChat ?
-                (<div>
+                (<p>
                   Group name: {selectedChat.groupName}
-                </div>)
+                </p>)
                 : ("")
             }
           </>
@@ -106,9 +91,9 @@ const ChatInformation = (
           <>
             {
               selectedChat.isGroupChat ?
-                (<div>
+                (<p>
                   Group admin: {selectedChat.groupAdmin.name}
-                </div>)
+                </p>)
                 : ("")
             }
           </>

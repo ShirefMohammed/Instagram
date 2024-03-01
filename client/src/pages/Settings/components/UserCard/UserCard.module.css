@@ -40,6 +40,7 @@
 
 .user_card a:hover {
   text-decoration: underline;
+  color: #00f;
 }
 
 .user_card p {
@@ -47,12 +48,7 @@
   font-size: 13px;
 }
 
-.user_card p span {
-  font-size: 13px;
-  margin-left: 5px;
-}
-
-.user_card .delete_btn {
+.user_card .remove_btn {
   outline: none;
   border: none;
   background: #fff;
@@ -72,7 +68,7 @@
   -o-border-radius: 50%;
 }
 
-.user_card .delete_btn svg {
+.user_card .remove_btn svg {
   font-size: 16px;
   color: #777;
   transition: .3s;
@@ -82,7 +78,7 @@
   -o-transition: .3s;
 }
 
-.user_card .delete_btn:hover svg {
+.user_card .remove_btn:hover svg {
   color: #f00;
   transform: scale(1.1);
   -webkit-transform: scale(1.1);

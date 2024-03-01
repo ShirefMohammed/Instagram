@@ -1,29 +1,58 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { PuffLoader } from "react-spinners";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { useAxiosPrivate, useHandleErrors, useNotify } from "../../../../hooks";
-import style from "./UserCard.module.css";
 import defaultAvatar from "../../../../assets/defaultAvatar.png";
+import style from "./UserCard.module.css";
 
-const UserCard = ({ userData, users, setUsers }) => {
-  const [deleteLoading, setDeleteLoading] = useState(false);
+const UserCard = ({ userData, users, setUsers, removeUserType }) => {
+  const user = useSelector(state => state.user);
+
+  const [removeLoading, setRemoveLoading] = useState(false);
+
   const axiosPrivate = useAxiosPrivate();
   const handleErrors = useHandleErrors();
   const notify = useNotify();
 
-  const deleteUser = async () => {
+  const remove = async (userId) => {
+    if (removeUserType === "unfollow") {
+      await unfollow(userId);
+    } else if (removeUserType === "removeFollower") {
+      await removeFollower(userId);
+    }
+  }
+
+  const unfollow = async (userId) => {
     try {
-      setDeleteLoading(true);
-      const res = await axiosPrivate.delete(`users/${userData?._id}`);
-      setUsers(users.filter(item => item._id !== userData?._id));
-      notify("success", res.data.message);
+      setRemoveLoading(true);
+      await axiosPrivate.delete(
+        `users/${user?._id}/followings/${userId}/`
+      );
+      setUsers(users.filter(item => item._id !== userId));
+      notify("success", "user is unfollowed");
     } catch (err) {
       handleErrors(err);
     } finally {
-      setDeleteLoading(false);
+      setRemoveLoading(false);
+    }
+  }
+
+  const removeFollower = async (userId) => {
+    try {
+      setRemoveLoading(true);
+      await axiosPrivate.delete(
+        `users/${user?._id}/followers/${userId}/`
+      );
+      setUsers(users.filter(item => item._id !== userId));
+      notify("success", "user is removed from followers");
+    } catch (err) {
+      handleErrors(err);
+    } finally {
+      setRemoveLoading(false);
     }
   }
 
@@ -43,14 +72,14 @@ const UserCard = ({ userData, users, setUsers }) => {
 
       <button
         type="button"
-        className={style.delete_btn}
-        onClick={() => deleteUser(userData?._id)}
-        disabled={deleteLoading ? true : false}
-        style={deleteLoading ? { opacity: .5, cursor: "revert" } : {}}
+        className={style.remove_btn}
+        onClick={() => remove(userData?._id)}
+        disabled={removeLoading ? true : false}
+        style={removeLoading ? { opacity: .5, cursor: "revert" } : {}}
       >
         {
-          deleteLoading ?
-            <PuffLoader color="#fff" size={20} />
+          removeLoading ?
+            <PuffLoader color="#000" size={20} />
             : <FontAwesomeIcon icon={faTrashCan} />
         }
       </button>

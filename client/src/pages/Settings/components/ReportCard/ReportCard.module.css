@@ -3,15 +3,15 @@
   padding: 15px 30px 15px 15px;
   border: 1px solid #eee;
   margin-bottom: 15px;
-  border-radius: 10px;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -o-border-radius: 10px;
+  border-radius: 6px;
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
 }
 
 .report_card .content p {
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.6;
   margin-bottom: 5px;
 }
@@ -20,7 +20,7 @@
   outline: none;
   border: none;
   background: none;
-  font-size: 11px;
+  font-size: 12px;
   margin-left: 10px;
 }
 
