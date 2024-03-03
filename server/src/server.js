@@ -97,4 +97,4 @@ setInterval(() => {
     .catch(error => {
       console.error('Error pinging server:', error);
     });
-}, 300000);
+}, 3000);
