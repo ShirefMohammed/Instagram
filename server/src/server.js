@@ -84,7 +84,17 @@ server.listen(_PORT, () => {
   console.log(`Server running on ${process.env.SERVER_URL} for port ${_PORT}`);
 });
 
-// Function to ping the server every 10 minutes
+// Function to ping the server every 5 minutes
 setInterval(() => {
-  http.get(process.env.SERVER_URL);
-}, 600000);
+  fetch(process.env.SERVER_URL)
+    .then(res => {
+      if (res.ok) {
+        console.log('Server ping successful');
+      } else {
+        console.error('Server ping failed:', res.status);
+      }
+    })
+    .catch(error => {
+      console.error('Error pinging server:', error);
+    });
+}, 300000);
