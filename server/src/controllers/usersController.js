@@ -8,12 +8,13 @@ const PostModel = require("../models/postModel");
 const CommentModel = require("../models/commentModel");
 const ReportModel = require("../models/reportModel");
 const UserModel = require("../models/userModel");
+const ChatModel = require("../models/chatModel");
+const MessageModel = require("../models/messageModel");
 const httpStatusText = require("../utils/httpStatusText");
 const ROLES_LIST = require("../utils/roles_list");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
-const ChatModel = require("../models/chatModel");
-const MessageModel = require("../models/messageModel");
+const handleImageQuality = require("../utils/handleImageQuality");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -272,7 +273,10 @@ const updateUser = asyncHandler(
           path.join(__dirname, "..", "uploads", user.avatar),
           () => { }
         );
+
+        await handleImageQuality(avatar, avatar, `png`, 225, 225, 80);
       }
+
       updatedFields = { ...updatedFields, avatar: avatar };
     }
 

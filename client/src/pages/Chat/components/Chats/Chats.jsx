@@ -57,7 +57,7 @@ const Chats = ({ chats, setChats, socket }) => {
         >
           <img
             src={user?.avatar}
-            alt="avatar"
+            alt=""
           />
           <span>{user?.name}</span>
         </Link>

@@ -113,11 +113,6 @@ const Register = () => {
       dispatch(setUser({ ...user, ...res.data.data }));
       notify("success", res.data.message);
 
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-
       navigate(from, { replace: true });
     }
 

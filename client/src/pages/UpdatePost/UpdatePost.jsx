@@ -100,7 +100,7 @@ const UpdatePost = () => {
               {
                 images.map((image) => (
                   <li key={image}>
-                    <img src={image} alt="image" />
+                    <img src={image} alt="" />
                   </li>
                 ))
               }

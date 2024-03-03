@@ -178,7 +178,7 @@ const UpdateGroup = ({ selectedChat, setSelectedChat, chats, setChats, setOpenCh
                           }
                         }}
                       >
-                        <img src={userData.avatar} alt="avatar" />
+                        <img src={userData.avatar} alt="" />
                         <span>{userData.name}</span>
                       </div>
                     ))

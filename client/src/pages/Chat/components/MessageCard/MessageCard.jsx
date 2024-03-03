@@ -119,7 +119,7 @@ const MessageCard = ({ selectedChat, message, index, messages, setMessages, sock
               (<Link to={`/users/${message.sender._id}`} >
                 <img
                   src={message.sender.avatar}
-                  alt="avatar"
+                  alt=""
                   className={style.sender_avatar}
                 />
               </Link>)

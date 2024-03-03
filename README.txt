@@ -1,15 +1,14 @@
-Server
-Fix corsOptions.js
-Handle images size
-Handle notification system
-
 Client
 problem with logout and browser cache and logout in Authentication
-Problem with settings when delete item the msg no more items shown
-handle post card image animation
+additional small problem with more loading in admin and settings
+Project Documentation
+DB Diagram
+Server API
+Deployment
+Video
 
 
-# Finished
+
 ├───Authentication
 │   └───components
 │       ├───Login
@@ -29,7 +28,7 @@ handle post card image animation
 │       └───UpdateComment
 ├───CreateReport
 ├───UpdateReport
-└───Report
+├───Report
 ├───MainContent
 │   └───components
 │       └───Sidebar

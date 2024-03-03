@@ -65,9 +65,6 @@ const Login = () => {
       dispatch(setUser({ ...user, ...res.data.data }));
       notify("success", res.data.message);
 
-      setEmail('');
-      setPassword('');
-
       navigate(from, { replace: true });
     }
 

@@ -88,7 +88,7 @@ const Post = () => {
                   >
                     <img
                       src={post?.creator?.avatar || defaultAvatar}
-                      alt="avatar"
+                      alt=""
                     />
                     <span>
                       {post?.creator?.name}
@@ -112,7 +112,8 @@ const Post = () => {
                       <img
                         key={image}
                         src={image}
-                        alt="Post image"
+                        alt=""
+                        loading="lazy"
                       />
                     ))
                   }

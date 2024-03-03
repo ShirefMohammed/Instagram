@@ -54,7 +54,7 @@ const PostCard = ({ post }) => {
         >
           <img
             src={post?.creator?.avatar || defaultAvatar}
-            alt="avatar"
+            alt=""
           />
           <span>{post?.creator?.name}</span>
         </Link>
@@ -67,7 +67,7 @@ const PostCard = ({ post }) => {
       >
         <img
           src={post?.images[0] || defaultPostImage}
-          alt="post image"
+          alt=""
           loading="lazy"
         />
       </Link>

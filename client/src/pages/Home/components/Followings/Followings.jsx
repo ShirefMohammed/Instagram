@@ -53,7 +53,7 @@ const Followings = () => {
                     <Link to={`users/${following?._id}`}>
                       <img
                         src={following?.avatar || defaultAvatar}
-                        alt="avatar"
+                        alt=""
                       />
                     </Link>
                   </li>

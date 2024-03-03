@@ -123,7 +123,7 @@ const CreatePost = () => {
                       </button>
                       <img
                         src={URL.createObjectURL(image)}
-                        alt={image?.name}
+                        alt={`selected image ${i + 1}`}
                       />
                     </li>
                   ))
@@ -133,7 +133,7 @@ const CreatePost = () => {
               : (<img
                 className={style.upload_images_icon}
                 src={uploadImageIcon}
-                alt="upload images icon"
+                alt=""
               />)
           }
         </>

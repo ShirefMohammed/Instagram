@@ -13,6 +13,7 @@ const usersRouter = require("./routes/usersRouter");
 const reportsRouter = require("./routes/reportsRouter");
 const postsRouter = require("./routes/postsRouter");
 const chatRouter = require("./routes/chatsRouter");
+const handleCors = require("./middleware/handleCors");
 const handleErrors = require("./middleware/errorHandler");
 const socketController = require("./controllers/socketController");
 
@@ -28,7 +29,7 @@ const _PORT = process.env.PORT || 3000;
 connectDB();
 
 // Cross Origin Resource Sharing
-app.use(cors(corsOptions));
+app.use(handleCors, cors(corsOptions));
 
 // Built-in middleware to handle urlencoded form data
 app.use(express.urlencoded({ extended: false }));

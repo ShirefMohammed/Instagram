@@ -156,7 +156,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                       (<div className={style.groupInfo_info}>
                         <img
                           src={groupImage}
-                          alt="group image"
+                          alt=""
                         />
                         <span>
                           {selectedChat.groupName}
@@ -171,7 +171,7 @@ const SelectedChat = ({ chats, setChats, socket }) => {
                       >
                         <img
                           src={anotherChatUser?.avatar}
-                          alt="avatar"
+                          alt=""
                         />
                         <span>
                           {anotherChatUser?.name}

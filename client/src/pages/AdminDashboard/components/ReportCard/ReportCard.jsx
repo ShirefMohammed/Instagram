@@ -37,7 +37,7 @@ const ReportCard = ({ report, reports, setReports }) => {
       >
         <img
           src={report.sender.avatar}
-          alt="sender avatar"
+          alt=""
           loading="lazy"
         />
         {report.sender.name}

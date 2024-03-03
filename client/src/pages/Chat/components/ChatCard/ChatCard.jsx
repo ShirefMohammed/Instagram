@@ -49,8 +49,8 @@ const ChatCard = ({ chat, socket }) => {
       <div className={style.image_container}>
         {
           chat.isGroupChat ?
-            (<img src={groupImage} alt="group image" />)
-            : (<img src={anotherUser?.avatar} alt="avatar" />)
+            (<img src={groupImage} alt="" />)
+            : (<img src={anotherUser?.avatar} alt="" />)
         }
         {
           connectionStatus ?

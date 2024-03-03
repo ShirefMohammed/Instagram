@@ -171,7 +171,7 @@ const CreateGroupChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGrou
                           }
                         }}
                       >
-                        <img src={userData.avatar} alt="avatar" />
+                        <img src={userData.avatar} alt="" />
                         <span>{userData.name}</span>
                       </div>
                     ))

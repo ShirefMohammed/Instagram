@@ -146,7 +146,7 @@ const Profile = () => {
 
                 <div className={style.user_info}>
                   <div className={style.image_container}>
-                    <img src={userData?.avatar || defaultAvatar} alt="avatar" />
+                    <img src={userData?.avatar || defaultAvatar} alt="" />
                   </div>
 
                   <div className={style.top_container}>

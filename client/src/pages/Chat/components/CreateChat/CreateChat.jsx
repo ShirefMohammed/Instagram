@@ -115,7 +115,7 @@ const CreateChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGroup }) 
                         className={style.user_card}
                         onClick={() => createChat(user._id)}
                       >
-                        <img src={user.avatar} alt="avatar" />
+                        <img src={user.avatar} alt="" />
                         <span>{user.name}</span>
                       </div>
                     ))

@@ -33,7 +33,7 @@ const UserCard = ({ userData, users, setUsers }) => {
     <div className={style.user_card}>
       <img
         src={userData?.avatar || defaultAvatar}
-        alt="avatar"
+        alt=""
         loading="lazy"
       />
 

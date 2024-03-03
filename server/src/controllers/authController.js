@@ -2,12 +2,14 @@ const path = require("node:path");
 const fs = require("node:fs");
 const multer = require('multer');
 const bcrypt = require("bcrypt");
+const sharp = require("sharp");
 const jwt = require("jsonwebtoken");
 const asyncHandler = require("../middleware/asyncHandler");
 const UserModel = require("../models/userModel");
 const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
+const handleImageQuality = require("../utils/handleImageQuality");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -103,6 +105,10 @@ const register = asyncHandler(
         `User with same email already exists`,
         null
       );
+    }
+
+    if (req?.file?.filename) {
+      await handleImageQuality(req.file.filename, req.file.filename, `png`, 225, 225, 80);
     }
 
     // Create Hash Password then Create User

@@ -54,7 +54,7 @@ const CommentCard = ({ comment, postComments, setPostComments }) => {
         >
           <img
             src={comment?.creator?.avatar || defaultAvatar}
-            alt="avatar"
+            alt=""
           />
           <span>
             {comment?.creator?.name}

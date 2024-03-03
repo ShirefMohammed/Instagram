@@ -56,7 +56,7 @@ const SuggestedUserCard = ({ suggestedUser, followedUsers, setFollowedUsers }) =
     <div className={style.user_card}>
       <img
         src={suggestedUser?.avatar || defaultAvatar}
-        alt="avatar"
+        alt=""
       />
 
       <Link to={`/users/${suggestedUser?._id}`}>

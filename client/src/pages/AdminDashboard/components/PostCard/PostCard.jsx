@@ -41,7 +41,7 @@ const PostCard = ({ post, posts, setPosts }) => {
       >
         <img
           src={post?.images[0] || defaultPostImage}
-          alt="post image"
+          alt=""
           loading="lazy"
         />
       </Link>

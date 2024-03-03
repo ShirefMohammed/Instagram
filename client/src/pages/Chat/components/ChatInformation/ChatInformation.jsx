@@ -110,7 +110,7 @@ const ChatInformation = ({ selectedChat, chats, setChats, setOpenChatInfo, setOp
                   key={user._id}
                   className={style.user_card}
                 >
-                  <img src={user.avatar} alt="avatar" />
+                  <img src={user.avatar} alt="" />
                   <span>{user.name}</span>
                 </div>
               ))

@@ -31,6 +31,16 @@
   height: 350px;
   object-fit: cover;
   user-select: none;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  -webkit-animation: 1s shine linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .post_card :is(.delete_btn, .update_post_link) {

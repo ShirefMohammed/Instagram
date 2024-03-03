@@ -88,7 +88,7 @@ const UpdateAvatar = ({ userData }) => {
 
       {/* Avatar */}
       <div className={style.avatar}>
-        <img src={avatar || defaultAvatar} alt="avatar" />
+        <img src={avatar || defaultAvatar} alt="" />
         <input
           type="file"
           accept=".jpeg, .jpg, .png, .jfif"

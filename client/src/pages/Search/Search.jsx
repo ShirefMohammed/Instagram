@@ -65,7 +65,7 @@ const Search = () => {
                 {
                   searchResults.map((user) => (
                     <li key={user._id} className={style.user_card}>
-                      <img src={user?.avatar || defaultAvatar} alt="avatar" />
+                      <img src={user?.avatar || defaultAvatar} alt="" />
                       <Link to={`/users/${user?._id}`}>{user?.name}</Link>
                     </li>
                   ))

@@ -99,7 +99,7 @@ const Sidebar = () => {
                   <img
                     className={style.avatar}
                     src={user?.avatar ? user.avatar : defaultAvatar}
-                    alt="avatar"
+                    alt=""
                   />
                   <span>Profile</span>
                 </Link>

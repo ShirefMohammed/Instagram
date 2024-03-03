@@ -28,6 +28,10 @@
   height: 35px;
   object-fit: cover;
   user-select: none;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  -webkit-animation: 1s shine linear infinite;
   border-radius: 50%;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -46,12 +50,23 @@
 
 .post .images_container img {
   width: 100%;
+  min-height: 300px;
+  background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+  background-size: 200% 100%;
+  animation: 1s shine linear infinite;
+  -webkit-animation: 1s shine linear infinite;
   user-select: none;
   border-radius: 6px;
   -webkit-border-radius: 6px;
   -moz-border-radius: 6px;
   -ms-border-radius: 6px;
   -o-border-radius: 6px;
+}
+
+@keyframes shine {
+  to {
+    background-position-x: -200%;
+  }
 }
 
 .post .images_container img:not(:last-child) {

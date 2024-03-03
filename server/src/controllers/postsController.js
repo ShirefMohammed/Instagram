@@ -10,6 +10,7 @@ const ROLES_LIST = require("../utils/roles_list");
 const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
+const handleImageQuality = require("../utils/handleImageQuality");
 
 const getPosts = asyncHandler(
   async (req, res) => {
@@ -186,6 +187,10 @@ const createPost = asyncHandler(
       creator: creatorId,
       content: content,
       images: images,
+    });
+
+    newPost.images.map(async (image) => {
+        await handleImageQuality(image, image, `jpeg`, 500, null, 80);
     });
 
     newPost.images = createImagesUrl(newPost.images);
