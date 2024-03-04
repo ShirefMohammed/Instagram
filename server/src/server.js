@@ -66,6 +66,21 @@ app.all("*", (req, res) => {
   }
 });
 
+// Ping the server every 14 minutes for render platform
+setInterval(() => {
+  fetch(process.env.SERVER_URL)
+    .then(res => {
+      if (res.ok) {
+        console.log('Server ping successful');
+      } else {
+        console.error('Server ping failed:', res.status);
+      }
+    })
+    .catch(error => {
+      console.error('Error pinging server:', error);
+    });
+}, 840000);
+
 // Handle error middleware
 app.use(handleErrors);
 
@@ -83,18 +98,3 @@ io.on('connection', (socket) => socketController(io, socket));
 server.listen(_PORT, () => {
   console.log(`Server running on ${process.env.SERVER_URL} for port ${_PORT}`);
 });
-
-// Function to ping the server every 14 minutes
-setInterval(() => {
-  fetch(process.env.SERVER_URL)
-    .then(res => {
-      if (res.ok) {
-        console.log('Server ping successful');
-      } else {
-        console.error('Server ping failed:', res.status);
-      }
-    })
-    .catch(error => {
-      console.error('Error pinging server:', error);
-    });
-}, 840000);
