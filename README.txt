@@ -1,6 +1,6 @@
-Client
 problem with logout and browser cache and logout in Authentication
 additional small problem with more loading in admin and settings
+
 Project Documentation
 DB Diagram
 Server API
