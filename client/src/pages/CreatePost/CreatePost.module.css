@@ -58,6 +58,10 @@
   -o-border-radius: 6px;
 }
 
+.create_post .images_container .images_list {
+  list-style: none;
+}
+
 .create_post .images_container .images_list li {
   position: relative;
   width: 100%;
