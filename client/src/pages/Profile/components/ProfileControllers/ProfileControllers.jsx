@@ -112,7 +112,7 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
       {/* Follow btn */}
       <>
         {
-          (user?._id !== userId && !isUserFollowed)
+          (user?.accessToken && user?._id !== userId && !isUserFollowed)
             ? (<button
               type="button"
               onClick={() => followUser(userId)}
@@ -127,7 +127,7 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
       {/* unFollow btn */}
       <>
         {
-          (user?._id !== userId && isUserFollowed)
+          (user?.accessToken && user?._id !== userId && isUserFollowed)
             ? (<button
               type="button"
               onClick={() => unfollowUser(userId)}
@@ -142,7 +142,7 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
       {/* Message btn */}
       <>
         {
-          (user?._id !== userId)
+          (user?.accessToken && user?._id !== userId)
             ? (<button
               type="button"
               onClick={() => createChat(userId)}
