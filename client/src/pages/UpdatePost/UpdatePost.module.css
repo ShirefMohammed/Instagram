@@ -45,6 +45,7 @@
 }
 
 .update_post .images_container {
+  list-style: none;
   width: 100%;
   height: 400px;
   padding: 15px;
