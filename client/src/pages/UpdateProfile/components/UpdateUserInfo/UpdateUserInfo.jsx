@@ -251,6 +251,7 @@ const UpdateUserInfo = ({ userData }) => {
                 </Link>
                 <button
                   type="button"
+                  title="remove link"
                   onClick={() => removeFromLinks(link)}
                 >
                   <FontAwesomeIcon icon={faX} />
@@ -275,6 +276,7 @@ const UpdateUserInfo = ({ userData }) => {
           />
           <button
             type="button"
+            title="add link"
             onClick={addLinkToLinks}
           >
             <FontAwesomeIcon icon={faPlus} />

@@ -80,6 +80,7 @@ const CommentCard = ({ comment, comments, setComments }) => {
 
       <button
         type="button"
+        title="delete comment"
         className={style.delete_btn}
         onClick={() => deleteComment(comment?._id, comment?.post?._id)}
         disabled={deleteLoading ? true : false}

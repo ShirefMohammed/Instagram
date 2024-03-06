@@ -82,6 +82,7 @@ const ReportCard = ({ report, reports, setReports }) => {
 
       <button
         type="button"
+        title="delete report"
         className={style.delete_btn}
         onClick={() => deleteReport(report?._id)}
         disabled={deleteLoading ? true : false}

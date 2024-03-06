@@ -42,6 +42,7 @@ const PostControllers = ({ post }) => {
     <div className={style.post_controllers}>
       <button
         type="button"
+        title="options"
         onClick={() => setOpenOptionsList(prev => !prev)}
       >
         <FontAwesomeIcon icon={faEllipsis} />

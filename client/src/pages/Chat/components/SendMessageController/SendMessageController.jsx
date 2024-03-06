@@ -72,6 +72,7 @@ const SendMessageController = ({ messages, setMessages, socket }) => {
       <div className={style.emoji}>
         <button
           type="button"
+          title="emoji"
           onClick={() => setOpenEmojiPicker(prev => !prev)}
         >
           <FontAwesomeIcon icon={faFaceSmile} />
@@ -96,6 +97,7 @@ const SendMessageController = ({ messages, setMessages, socket }) => {
 
       <button
         type="submit"
+        title="send"
         className={style.submit_btn}
         disabled={sendMessageLoad ? true : false}
         style={sendMessageLoad ? { cursor: "revert" } : {}}

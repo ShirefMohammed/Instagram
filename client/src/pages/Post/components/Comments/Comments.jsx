@@ -165,6 +165,7 @@ const Comments = () => {
         <div className={style.emoji}>
           <button
             type="button"
+            title="emoji"
             onClick={() => setOpenEmojiPicker(prev => !prev)}
           >
             <FontAwesomeIcon icon={faFaceSmile} />
@@ -189,6 +190,7 @@ const Comments = () => {
 
         <button
           type="submit"
+          title="send"
           className={style.submit_btn}
           disabled={sendCommentLoad ? true : false}
           style={sendCommentLoad ? { cursor: "revert" } : {}}

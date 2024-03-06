@@ -142,6 +142,7 @@ const CreateGroupChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGrou
 
           <button
             type="button"
+            title="search"
             onClick={search}
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -208,6 +209,7 @@ const CreateGroupChat = ({ chats, setChats, setOpenCreateChat, setOpenCreateGrou
 
         <button
           type="button"
+          title="close"
           className={style.close_btn}
           onClick={() => setOpenCreateGroup(false)}
         >

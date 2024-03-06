@@ -204,6 +204,7 @@ const ChatInformation = ({ selectedChat, chats, setChats, setOpenChatInfo, setOp
         {/* Close btn */}
         <button
           type="button"
+          title="close"
           className={style.close_btn}
           onClick={() => setOpenChatInfo(false)}
         >

@@ -63,6 +63,7 @@ const PostCard = ({ post }) => {
       {/* Image */}
       <Link
         to={`/posts/${post?._id}`}
+        title="see post"
         className={style.image_container}
       >
         <img
@@ -82,12 +83,16 @@ const PostCard = ({ post }) => {
         {/* Actions */}
         <div className={style.actions}>
           {/* Comments */}
-          <Link to={`/posts/${post?._id}`}>
+          <Link
+            to={`/posts/${post?._id}`}
+            title="comment"
+          >
             <FontAwesomeIcon icon={faComment} />
           </Link>
           {/* Save */}
           <button
             type="button"
+            title="save"
             disabled={saveLoading ? true : false}
             onClick={savePost}
           >
@@ -100,6 +105,7 @@ const PostCard = ({ post }) => {
           {/* Like */}
           <button
             type="button"
+            title="like"
             disabled={likeLoading ? true : false}
             onClick={addLike}
           >

@@ -50,7 +50,10 @@ const Followings = () => {
               {
                 followings.map((following) => (
                   <li key={following?._id}>
-                    <Link to={`users/${following?._id}`}>
+                    <Link
+                      to={`users/${following?._id}`}
+                      title={following?.name}
+                    >
                       <img
                         src={following?.avatar || defaultAvatar}
                         alt=""

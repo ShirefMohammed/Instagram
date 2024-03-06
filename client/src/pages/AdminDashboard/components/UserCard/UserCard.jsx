@@ -61,6 +61,7 @@ const UserCard = ({ userData, users, setUsers }) => {
 
       <button
         type="button"
+        title="delete user"
         className={style.delete_btn}
         onClick={() => deleteUser(userData?._id)}
         disabled={deleteLoading ? true : false}

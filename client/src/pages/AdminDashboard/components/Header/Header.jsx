@@ -29,8 +29,9 @@ const Header = () => {
 
       <nav className={style.links}>
         <button
-          className={style.toggle_links_list_btn}
           type="button"
+          title="options"
+          className={style.toggle_links_list_btn}
           onClick={() => setOpenLinksList(prev => !prev)}
         >
           <FontAwesomeIcon icon={faBars} />

@@ -21,6 +21,7 @@ const PostsViewer = ({ posts, limit, page, setPage, fetchPostsLoad, setFetchPost
                     <Link
                       key={post?._id}
                       to={`/posts/${post?._id}`}
+                      title="see post"
                       className={style.post_card}
                     >
                       <img

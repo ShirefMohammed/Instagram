@@ -32,8 +32,8 @@ const ReportCard = ({ report, reports, setReports }) => {
   return (
     <div className={style.report_card}>
       <Link
-        className={style.sender_profile_link}
         to={`/users/${report.sender._id}`}
+        className={style.sender_profile_link}
       >
         <img
           src={report.sender.avatar}
@@ -88,6 +88,7 @@ const ReportCard = ({ report, reports, setReports }) => {
 
       <button
         type="button"
+        title="delete report"
         className={style.delete_btn}
         onClick={() => deleteReport(report?._id)}
         disabled={deleteLoading ? true : false}

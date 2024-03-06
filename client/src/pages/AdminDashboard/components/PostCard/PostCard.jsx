@@ -37,6 +37,7 @@ const PostCard = ({ post, posts, setPosts }) => {
     <div className={style.post_card}>
       <Link
         to={`/posts/${post?._id}`}
+        title="see post"
         className={style.post_link}
       >
         <img
@@ -48,6 +49,7 @@ const PostCard = ({ post, posts, setPosts }) => {
 
       <button
         type="button"
+        title="delete post"
         className={style.delete_btn}
         onClick={() => deletePost(post?._id)}
         disabled={deleteLoading ? true : false}

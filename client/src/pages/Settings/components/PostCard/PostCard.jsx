@@ -86,6 +86,7 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
     <div className={style.post_card}>
       <Link
         to={`/posts/${post?._id}`}
+        title="see post"
         className={style.post_link}
       >
         <img
@@ -97,6 +98,7 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
 
       <button
         type="button"
+        title="remove post"
         className={style.delete_btn}
         onClick={() => removeAction(post?._id)}
         disabled={removeLoading ? true : false}
@@ -114,6 +116,7 @@ const PostCard = ({ post, removePostType, posts, setPosts }) => {
           removePostType === "deletePost" ?
             (<Link
               to={`/posts/${post?._id}/update`}
+              title="update post"
               className={style.update_post_link}
             >
               <FontAwesomeIcon icon={faPenToSquare} />

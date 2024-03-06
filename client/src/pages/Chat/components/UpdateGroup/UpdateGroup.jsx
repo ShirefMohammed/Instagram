@@ -128,6 +128,7 @@ const UpdateGroup = ({ selectedChat, setSelectedChat, chats, setChats, setOpenCh
                       <span>{userData.name}</span>
                       <button
                         type="button"
+                        title="remove"
                         onClick={() => setUsers(users.filter(item => item._id !== userData._id))}
                       >
                         <FontAwesomeIcon icon={faX} />
@@ -152,6 +153,7 @@ const UpdateGroup = ({ selectedChat, setSelectedChat, chats, setChats, setOpenCh
 
           <button
             type="button"
+            title="search"
             onClick={search}
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} />
@@ -204,6 +206,7 @@ const UpdateGroup = ({ selectedChat, setSelectedChat, chats, setChats, setOpenCh
 
         <button
           type="button"
+          title="close"
           className={style.close_btn}
           onClick={() => {
             setOpenUpdateGroup(false);

@@ -148,6 +148,7 @@ const MessageCard = ({ selectedChat, message, index, messages, setMessages, sock
                 {/* Toggle btn */}
                 <button
                   type="button"
+                  title="options"
                   className={style.toggle_btn}
                   onClick={() => setOpenMsgInfo(prev => !prev)}
                 >

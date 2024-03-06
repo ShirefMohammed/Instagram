@@ -68,6 +68,7 @@ const DeleteAccount = ({ setOpenDeleteAccount }) => {
 
         <button
           type="button"
+          title="close"
           className={style.close_btn}
           onClick={() => setOpenDeleteAccount(false)}
         >

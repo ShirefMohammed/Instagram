@@ -1,11 +1,10 @@
-additional small problem with more loading in admin and settings
 Check accessability
 
 Project Documentation
 DB Diagram
 Server API
 Deployment
-Video
+Screen shots
 
 
 ├───Authentication

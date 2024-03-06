@@ -101,8 +101,8 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
           )
             ? (<button
               type="button"
-              onClick={() => setOpenDeleteAccount(true)}
               title="delete the account"
+              onClick={() => setOpenDeleteAccount(true)}
             >
               <FontAwesomeIcon icon={faTrashAlt} />
             </button>) : ("")
@@ -115,9 +115,9 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
           (user?.accessToken && user?._id !== userId && !isUserFollowed)
             ? (<button
               type="button"
+              title="follow"
               onClick={() => followUser(userId)}
               disabled={followUserLoad ? true : false}
-              title="follow"
             >
               <FontAwesomeIcon icon={faUserPlus} />
             </button>) : ("")
@@ -130,9 +130,9 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
           (user?.accessToken && user?._id !== userId && isUserFollowed)
             ? (<button
               type="button"
+              title="unfollow"
               onClick={() => unfollowUser(userId)}
               disabled={unfollowUserLoad ? true : false}
-              title="unfollow"
             >
               <FontAwesomeIcon icon={faUserTimes} />
             </button>) : ("")
@@ -145,9 +145,9 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
           (user?.accessToken && user?._id !== userId)
             ? (<button
               type="button"
+              title="send message"
               onClick={() => createChat(userId)}
               disabled={createChatLoad ? true : false}
-              title="send message"
             >
               <FontAwesomeIcon icon={faCommentDots} />
             </button>) : ("")
@@ -158,7 +158,10 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
       <>
         {
           (user?._id === userId) ?
-            (<Link to={`/users/${userId}/update`}>
+            (<Link
+              to={`/users/${userId}/update`}
+              title="update"
+            >
               <FontAwesomeIcon icon={faPenToSquare} />
             </Link>) : ("")
         }
@@ -168,7 +171,10 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
       <>
         {
           (user?._id === userId) ?
-            (<Link to={`/settings`}>
+            (<Link
+              to={`/settings`}
+              title="settings"
+            >
               <FontAwesomeIcon icon={faGear} />
             </Link>) : ("")
         }
@@ -181,7 +187,10 @@ const ProfileControllers = ({ userId, setOpenDeleteAccount }) => {
             user?._id === userId
             && user?.roles?.includes(ROLES_LIST.Admin)
           ) ?
-            (<Link to={`/adminDashboard`}>
+            (<Link
+              to={`/adminDashboard`}
+              title="admin dashboard"
+            >
               <FontAwesomeIcon icon={faGauge} />
             </Link>) : ("")
         }

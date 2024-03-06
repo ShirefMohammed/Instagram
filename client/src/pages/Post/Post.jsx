@@ -127,6 +127,7 @@ const Post = () => {
                   <div className={style.actions}>
                     <button
                       type="button"
+                      title="save"
                       disabled={saveLoad ? true : false}
                       onClick={savePost}
                     >
@@ -139,6 +140,7 @@ const Post = () => {
 
                     <button
                       type="button"
+                      title="like"
                       disabled={likeLoad ? true : false}
                       onClick={addLike}
                     >
