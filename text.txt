@@ -1,10 +1,11 @@
-Check accessability
-
-Project Documentation
-DB Diagram
-Server API
-Deployment
+DB Diagram -> done
+Adding a copy of uploaded images in firebase -> done
 Screen shots
+- 
+- 
+- 
+- 
+Project Documentation
 
 
 ├───Authentication
