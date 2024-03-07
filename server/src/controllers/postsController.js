@@ -11,6 +11,8 @@ const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
 const handleImageQuality = require("../utils/handleImageQuality");
+const uploadToFirebase = require("../utils/uploadToFirebase");
+const removeFromFirebase = require("../utils/removeFromFirebase");
 
 const getPosts = asyncHandler(
   async (req, res) => {
@@ -143,8 +145,7 @@ const multerOptions = () => {
       cb(null, 'src/uploads');
     },
     filename: function (req, file, cb) {
-      const ext = file.mimetype.split('/')[1];
-      const fileName = `post-${Date.now()}-${Math.round(Math.random() * 1E9)}.${ext}`;
+      const fileName = `post-${Date.now()}-${Math.round(Math.random() * 1E9)}.jpeg`;
       cb(null, fileName);
     }
   });
@@ -168,19 +169,19 @@ const createPost = asyncHandler(
   async (req, res) => {
     const creatorId = req.userInfo.userId;
     const content = req.body?.content;
-    let images = req?.files;
 
     const IsCreatorExist = await UserModel.exists({ _id: creatorId });
+
     if (!IsCreatorExist) {
       return sendResponse(res, 404, httpStatusText.FAIL, "Creator does not exist", null);
     }
 
-    if (images.length < 1) {
-      return sendResponse(res, 400, httpStatusText.FAIL, "You should upload one image at least", null);
-    }
+    let images = [];
 
-    if (images) {
-      images = images.map(image => image.filename);
+    if (!req?.files || req?.files?.length < 1) {
+      return sendResponse(res, 400, httpStatusText.FAIL, "You should upload one image at least", null);
+    } else {
+      images = req.files.map(image => image.filename);
     }
 
     const newPost = await PostModel.create({
@@ -189,9 +190,22 @@ const createPost = asyncHandler(
       images: images,
     });
 
-    newPost.images.map(async (image) => {
-        await handleImageQuality(image, image, `jpeg`, 500, null, 80);
-    });
+    await Promise.all(newPost.images.map(async (image) => {
+      await handleImageQuality(image, image, 500, null, 80);
+    }));
+
+    if (req?.files) {
+      req.files.map(async (file) => {
+        fs.readFile(
+          path.join(__dirname, '..', 'uploads', file.filename),
+          async (err, data) => {
+            if (err) return console.error('Error reading file:', err);
+            file.buffer = data;
+            await uploadToFirebase(file);
+          }
+        );
+      });
+    }
 
     newPost.images = createImagesUrl(newPost.images);
 
@@ -285,11 +299,15 @@ const deletePost = asyncHandler(
 
     // Delete post images from server
     if (post?.images && post.images.length > 0) {
-      post.images.map((image) => {
+      post.images.map(async (image) => {
+        // Remove images from local uploads folder
         fs.unlink(
           path.join(__dirname, "..", "uploads", image),
           () => { }
         );
+
+        // Remove images from firebase
+        await removeFromFirebase(image);
       });
     }
 

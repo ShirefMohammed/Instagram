@@ -10,6 +10,7 @@ const httpStatusText = require("../utils/httpStatusText");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
 const handleImageQuality = require("../utils/handleImageQuality");
+const uploadToFirebase = require("../utils/uploadToFirebase");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -22,8 +23,7 @@ const multerOptions = () => {
       cb(null, 'src/uploads');
     },
     filename: function (req, file, cb) {
-      const ext = file.mimetype.split('/')[1];
-      const fileName = `user-${Date.now()}-${Math.round(Math.random() * 1E9)}.${ext}`;
+      const fileName = `user-${Date.now()}-${Math.round(Math.random() * 1E9)}.png`;
       cb(null, fileName);
     }
   });
@@ -108,7 +108,18 @@ const register = asyncHandler(
     }
 
     if (req?.file?.filename) {
-      await handleImageQuality(req.file.filename, req.file.filename, `png`, 225, 225, 80);
+      // Process uploaded avatar quality
+      await handleImageQuality(req.file.filename, req.file.filename, 225, 225, 80);
+
+      // Upload new avatar to firebase
+      fs.readFile(
+        path.join(__dirname, '..', 'uploads', req.file.filename),
+        async (err, data) => {
+          if (err) return console.error('Error reading file:', err);
+          req.file.buffer = data;
+          await uploadToFirebase(req.file);
+        }
+      );
     }
 
     // Create Hash Password then Create User

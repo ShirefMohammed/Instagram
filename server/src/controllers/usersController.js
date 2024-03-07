@@ -15,6 +15,8 @@ const ROLES_LIST = require("../utils/roles_list");
 const sendResponse = require("../utils/sendResponse");
 const createImagesUrl = require("../utils/createImagesUrl");
 const handleImageQuality = require("../utils/handleImageQuality");
+const uploadToFirebase = require("../utils/uploadToFirebase");
+const removeFromFirebase = require("../utils/removeFromFirebase");
 
 // Regular expressions
 const NAME_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
@@ -177,8 +179,7 @@ const multerOptions = () => {
       cb(null, 'src/uploads');
     },
     filename: function (req, file, cb) {
-      const ext = file.mimetype.split('/')[1];
-      const fileName = `user-${Date.now()}-${Math.round(Math.random() * 1E9)}.${ext}`;
+      const fileName = `user-${Date.now()}-${Math.round(Math.random() * 1E9)}.png`;
       cb(null, fileName);
     }
   });
@@ -269,13 +270,28 @@ const updateUser = asyncHandler(
     // Update avatar
     if (avatar) {
       if (user.avatar !== "defaultAvatar.png") {
+        // Remove old avatar if it is not default avatar
         fs.unlink(
           path.join(__dirname, "..", "uploads", user.avatar),
           () => { }
         );
 
-        await handleImageQuality(avatar, avatar, `png`, 225, 225, 80);
+        // Remove old avatar from firebase
+        await removeFromFirebase(user.avatar);
       }
+
+      // Process new uploaded avatar quality
+      await handleImageQuality(avatar, avatar, 225, 225, 80);
+
+      // Upload new avatar to firebase
+      fs.readFile(
+        path.join(__dirname, '..', 'uploads', req.file.filename),
+        async (err, data) => {
+          if (err) return console.error('Error reading file:', err);
+          req.file.buffer = data;
+          await uploadToFirebase(req.file);
+        }
+      );
 
       updatedFields = { ...updatedFields, avatar: avatar };
     }
@@ -356,6 +372,9 @@ const deleteUser = asyncHandler(
         path.join(__dirname, "..", "uploads", user.avatar),
         () => { }
       );
+
+      // Remove avatar from firebase
+      await removeFromFirebase(user.avatar);
     }
 
     // delete user posts images and posts comments
@@ -363,11 +382,14 @@ const deleteUser = asyncHandler(
 
     posts.map(async (post) => {
       if (post?.images && post.images.length > 0) {
-        post.images.map((image) => {
+        post.images.map(async (image) => {
           fs.unlink(
             path.join(__dirname, "..", "uploads", image),
             () => { }
           );
+
+          // Remove images from firebase
+          await removeFromFirebase(image);
         });
       }
       await CommentModel.deleteMany({ post: post._id });
