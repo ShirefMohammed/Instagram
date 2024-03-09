@@ -1,0 +1,61 @@
+Structure of Server/src
+
+D:.
+|   server.js
+|
++---config
+|       allowedOrigins.js
+|       connectDB.js
+|       corsOptions.js
+|       firebaseConfig.js
+|       firebaseServiceAccountConfig.js
+|
++---controllers
+|       authController.js
+|       chatsController.js
+|       postsController.js
+|       reportsController.js
+|       socketController.js
+|       usersController.js
+|
++---middleware
+|       asyncHandler.js
+|       errorHandler.js
+|       handleCors.js
+|       verifyJWT.js
+|       verifyRoles.js
+|
++---models
+|       chatModel.js
+|       commentModel.js
+|       messageModel.js
+|       notificationModel.js
+|       postModel.js
+|       reportModel.js
+|       userModel.js
+|
++---routes
+|       authRouter.js
+|       chatsRouter.js
+|       postsRouter.js
+|       reportsRouter.js
+|       usersRouter.js
+|
++---uploads
+|       defaultAvatar.png
+|
++---utils
+|       createImagesUrl.js
+|       downloadAllImagesFromFirebase.js
+|       handleImageQuality.js
+|       httpStatusText.js
+|       removeFromFirebase.js
+|       roles_list.js
+|       sendResponse.js
+|       uploadAllImagesToFirebase.js
+|       uploadToFirebase.js
+|
+\---views
+        404.html
+        index.html
+        register.html

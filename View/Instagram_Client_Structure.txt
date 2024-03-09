@@ -1,0 +1,347 @@
+Structure of Client/src
+
+D:.
+|   App.jsx
+|   index.css
+|   main.jsx
+|
++---api
+|       axios.js
+|
++---assets
+|       defaultAvatar.png
+|       defaultPostImage.png
+|       groupImage.png
+|       InstagramSvgIcon.svg
+|       instagramSvgText.png
+|       uploadImageIcon.svg
+|
++---components
+|   |   index.js
+|   |
+|   +---PersistLogin
+|   |       PersistLogin.jsx
+|   |       PersistLogin.module.css
+|   |
+|   +---PostCard
+|   |       PostCard.jsx
+|   |       PostCard.module.css
+|   |
+|   +---RequireAuth
+|   |       RequireAuth.jsx
+|   |
+|   \---ToastContainerWithProps
+|           ToastContainerWithProps.jsx
+|
++---hooks
+|       index.js
+|       useAxiosPrivate.jsx
+|       useHandleErrors.jsx
+|       useLogout.jsx
+|       useNotify.jsx
+|       useRefreshToken.jsx
+|
++---pages
+|   |   index.js
+|   |
+|   +---AdminDashboard
+|   |   |   AdminDashboard.jsx
+|   |   |   AdminDashboard.module.css
+|   |   |
+|   |   \---components
+|   |       +---Header
+|   |       |       Header.jsx
+|   |       |       Header.module.css
+|   |       |
+|   |       +---PostCard
+|   |       |       PostCard.jsx
+|   |       |       PostCard.module.css
+|   |       |
+|   |       +---Posts
+|   |       |       Posts.jsx
+|   |       |       Posts.module.css
+|   |       |
+|   |       +---ReportCard
+|   |       |       ReportCard.jsx
+|   |       |       ReportCard.module.css
+|   |       |
+|   |       +---Reports
+|   |       |       Reports.jsx
+|   |       |       Reports.module.css
+|   |       |
+|   |       +---UserCard
+|   |       |       UserCard.jsx
+|   |       |       UserCard.module.css
+|   |       |
+|   |       \---Users
+|   |               Users.jsx
+|   |               Users.module.css
+|   |
+|   +---Authentication
+|   |   |   Authentication.jsx
+|   |   |   Authentication.module.css
+|   |   |
+|   |   \---components
+|   |       +---Login
+|   |       |       Login.jsx
+|   |       |       Login.module.css
+|   |       |
+|   |       \---Register
+|   |               Register.jsx
+|   |               Register.module.css
+|   |
+|   +---Chat
+|   |   |   Chat.jsx
+|   |   |   Chat.module.css
+|   |   |
+|   |   \---components
+|   |       +---ChatCard
+|   |       |       ChatCard.jsx
+|   |       |       ChatCard.module.css
+|   |       |
+|   |       +---ChatInformation
+|   |       |       ChatInformation.jsx
+|   |       |       ChatInformation.module.css
+|   |       |
+|   |       +---Chats
+|   |       |       Chats.jsx
+|   |       |       Chats.module.css
+|   |       |
+|   |       +---CreateChat
+|   |       |       CreateChat.jsx
+|   |       |       CreateChat.module.css
+|   |       |
+|   |       +---CreateGroupChat
+|   |       |       CreateGroupChat.jsx
+|   |       |       CreateGroupChat.module.css
+|   |       |
+|   |       +---MessageCard
+|   |       |       MessageCard.jsx
+|   |       |       MessageCard.module.css
+|   |       |
+|   |       +---SelectedChat
+|   |       |       SelectedChat.jsx
+|   |       |       SelectedChat.module.css
+|   |       |
+|   |       +---SendMessageController
+|   |       |       SendMessageController.jsx
+|   |       |       SendMessageController.module.css
+|   |       |
+|   |       \---UpdateGroup
+|   |               UpdateGroup.jsx
+|   |               UpdateGroup.module.css
+|   |
+|   +---CreatePost
+|   |       CreatePost.jsx
+|   |       CreatePost.module.css
+|   |
+|   +---CreateReport
+|   |       CreateReport.jsx
+|   |       CreateReport.module.css
+|   |
+|   +---Explore
+|   |       Explore.jsx
+|   |       Explore.module.css
+|   |
+|   +---Home
+|   |   |   Home.jsx
+|   |   |   Home.module.css
+|   |   |
+|   |   \---components
+|   |       +---Followings
+|   |       |       Followings.jsx
+|   |       |       Followings.module.css
+|   |       |
+|   |       +---SuggestedPosts
+|   |       |       SuggestedPosts.jsx
+|   |       |       SuggestedPosts.module.css
+|   |       |
+|   |       +---SuggestedUserCard
+|   |       |       SuggestedUserCard.jsx
+|   |       |       SuggestedUserCard.module.css
+|   |       |
+|   |       \---SuggestedUsers
+|   |               SuggestedUsers.jsx
+|   |               SuggestedUsers.module.css
+|   |
+|   +---MainContent
+|   |   |   MainContent.jsx
+|   |   |   MainContent.module.css
+|   |   |
+|   |   \---components
+|   |       \---Sidebar
+|   |               Sidebar.jsx
+|   |               Sidebar.module.css
+|   |
+|   +---NoResourceFound
+|   |       NoResourceFound.jsx
+|   |       NoResourceFound.module.css
+|   |
+|   +---NoServerResponse
+|   |       NoServerResponse.jsx
+|   |       NoServerResponse.module.css
+|   |
+|   +---NoTFoundPage
+|   |       NoTFoundPage.jsx
+|   |       NoTFoundPage.module.css
+|   |
+|   +---Notifications
+|   |       Notifications.jsx
+|   |       Notifications.module.css
+|   |
+|   +---Post
+|   |   |   Post.jsx
+|   |   |   Post.module.css
+|   |   |
+|   |   \---components
+|   |       +---CommentCard
+|   |       |       CommentCard.jsx
+|   |       |       CommentCard.module.css
+|   |       |
+|   |       +---Comments
+|   |       |       Comments.jsx
+|   |       |       Comments.module.css
+|   |       |
+|   |       +---PostControllers
+|   |       |       PostControllers.jsx
+|   |       |       PostControllers.module.css
+|   |       |
+|   |       \---UpdateComment
+|   |               UpdateComment.jsx
+|   |               UpdateComment.module.css
+|   |
+|   +---Profile
+|   |   |   Profile.jsx
+|   |   |   Profile.module.css
+|   |   |
+|   |   \---components
+|   |       +---DeleteAccount
+|   |       |       DeleteAccount.jsx
+|   |       |       DeleteAccount.module.css
+|   |       |
+|   |       +---PostsViewer
+|   |       |       PostsViewer.jsx
+|   |       |       PostsViewer.module.css
+|   |       |
+|   |       \---ProfileControllers
+|   |               ProfileControllers.jsx
+|   |               ProfileControllers.module.css
+|   |
+|   +---Report
+|   |       Report.jsx
+|   |       Report.module.css
+|   |
+|   +---Search
+|   |       Search.jsx
+|   |       Search.module.css
+|   |
+|   +---ServerError
+|   |       ServerError.jsx
+|   |       ServerError.module.css
+|   |
+|   +---Settings
+|   |   |   Settings.jsx
+|   |   |   Settings.module.css
+|   |   |
+|   |   \---components
+|   |       +---CommentCard
+|   |       |       CommentCard.jsx
+|   |       |       CommentCard.module.css
+|   |       |
+|   |       +---Controllers
+|   |       |       Controllers.jsx
+|   |       |       Controllers.module.css
+|   |       |
+|   |       +---CreatedComments
+|   |       |       CreatedComments.jsx
+|   |       |       CreatedComments.module.css
+|   |       |
+|   |       +---CreatedPosts
+|   |       |       CreatedPosts.jsx
+|   |       |       CreatedPosts.module.css
+|   |       |
+|   |       +---Followers
+|   |       |       Followers.jsx
+|   |       |       Followers.module.css
+|   |       |
+|   |       +---Followings
+|   |       |       Followings.jsx
+|   |       |       Followings.module.css
+|   |       |
+|   |       +---LikedPosts
+|   |       |       LikedPosts.jsx
+|   |       |       LikedPosts.module.css
+|   |       |
+|   |       +---PostCard
+|   |       |       PostCard.jsx
+|   |       |       PostCard.module.css
+|   |       |
+|   |       +---PostsViewer
+|   |       |       PostsViewer.jsx
+|   |       |       PostsViewer.module.css
+|   |       |
+|   |       +---ReportCard
+|   |       |       ReportCard.jsx
+|   |       |       ReportCard.module.css
+|   |       |
+|   |       +---Reports
+|   |       |       Reports.jsx
+|   |       |       Reports.module.css
+|   |       |       
+|   |       +---SavedPosts
+|   |       |       SavedPosts.jsx
+|   |       |       SavedPosts.module.css
+|   |       |
+|   |       +---UpdateComment
+|   |       |       UpdateComment.jsx
+|   |       |       UpdateComment.module.css
+|   |       |
+|   |       +---UserCard
+|   |       |       UserCard.jsx
+|   |       |       UserCard.module.css
+|   |       |
+|   |       \---UsersViewer
+|   |               UsersViewer.jsx
+|   |               UsersViewer.module.css
+|   |
+|   +---Unauthorized
+|   |       Unauthorized.jsx
+|   |       Unauthorized.module.css
+|   |
+|   +---UpdatePost
+|   |       UpdatePost.jsx
+|   |       UpdatePost.module.css
+|   |
+|   +---UpdateProfile
+|   |   |   UpdateProfile.jsx
+|   |   |   UpdateProfile.module.css
+|   |   |
+|   |   \---components
+|   |       +---DeleteAccount
+|   |       |       DeleteAccount.jsx
+|   |       |       DeleteAccount.module.css
+|   |       |
+|   |       +---UpdateAvatar
+|   |       |       UpdateAvatar.jsx
+|   |       |       UpdateAvatar.module.css
+|   |       |
+|   |       +---UpdatePassword
+|   |       |       UpdatePassword.jsx
+|   |       |       UpdatePassword.module.css
+|   |       |
+|   |       \---UpdateUserInfo
+|   |               UpdateUserInfo.jsx
+|   |               UpdateUserInfo.module.css
+|   |
+|   \---UpdateReport
+|           UpdateReport.jsx
+|           UpdateReport.module.css
+|
++---store
+|   |   store.js
+|   |
+|   \---slices
+|           userSlice.js
+|
+\---utils
+        roles_list.js
