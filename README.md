@@ -24,18 +24,18 @@ user authentication, photo sharing, real-time messaging, and more.
 
 ## Project Features
 
-- User authentication and authorization
-- Profile customization and control
-- Uploading and sharing photos and posts
-- Liking, commenting, and interacting with posts
-- Explore page for discovering new content
-- Searching, finding, following, and discovering other users
-- Sending reports to admins
-- Admin accessibility and control
-- Direct messaging between users
-- Variation in chats like single and group chat
-- Full control in your chats
-- Achieving accessibility, performance, and security
+- 🔒 User authentication and authorization
+- 🖼️ Profile customization and control
+- 📷 Uploading and sharing photos and posts
+- ❤️ Liking, commenting, and interacting with posts
+- 🔍 Explore page for discovering new content
+- 🔎 Searching, finding, following, and discovering other users
+- 🚨 Sending reports to admins
+- 👨‍💼 Admin accessibility and control
+- 💬 Direct messaging between users
+- 📱 Variation in chats like single and group chat
+- 🎮 Full control in your chats
+- 🚀 Achieving accessibility, performance, and security
 
 ## Challenges and Solutions
 
