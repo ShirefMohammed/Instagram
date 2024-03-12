@@ -1,4 +1,5 @@
 const httpStatusText = require("../utils/httpStatusText");
+const sendResponse = require("../utils/sendResponse");
 
 const verifyRoles = (allowedRoles) => {
   return (req, res, next) => {
