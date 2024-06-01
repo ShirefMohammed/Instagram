@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useRefreshToken } from "../../hooks";
+import { FirstReqLoadingMsg } from "../";
 import style from "./PersistLogin.module.css";
 import InstagramSvgIcon from "../../assets/InstagramSvgIcon.svg";
 
 const PersistLogin = () => {
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
 
   const [loading, setLoading] = useState(true);
 
@@ -33,28 +34,28 @@ const PersistLogin = () => {
     <>
       {
         // If no need to remember user
-        !user?.persist ? <Outlet />
-
-          // If refresh is loading to fetch accessToken by jwt
-          : loading ?
-            <div className={style.loading_container}>
-              <img
-                src={InstagramSvgIcon}
-                alt="Instagram_Icon"
-              />
-              <div className={style.creator}>
-                <span>Created by</span>
-                <Link to="https://shiref-mohammed.onrender.com/">
-                  Shiref Mohammed
-                </Link>
-              </div>
+        !user?.persist ? (
+          <Outlet />
+        ) : // If refresh is loading to fetch accessToken by jwt
+        loading ? (
+          <div className={style.loading_container}>
+            {/* Server First Request Loading Message */}
+            <FirstReqLoadingMsg />
+            <img src={InstagramSvgIcon} alt="Instagram_Icon" />
+            <div className={style.creator}>
+              <span>Created by</span>
+              <Link to="https://shiref-mohammed.onrender.com/">
+                Shiref Mohammed
+              </Link>
             </div>
-
-            // If refresh finished loading
-            : <Outlet />
+          </div>
+        ) : (
+          // If refresh finished loading
+          <Outlet />
+        )
       }
     </>
-  )
-}
+  );
+};
 
-export default PersistLogin
+export default PersistLogin;
